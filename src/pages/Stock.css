@@ -1,0 +1,186 @@
+/* Stock.css - Financial Dashboard Theme */
+
+:root {
+    --stock-bg: #020405;
+    /* Đen xanh rất đậm */
+    --stock-card: #0A0C10;
+    --stock-border: rgba(255, 255, 255, 0.08);
+    --stock-highlight: rgba(34, 211, 238, 0.15);
+    /* Cyan highlight */
+
+    --color-up: #10b981;
+    --color-down: #f43f5e;
+    --color-cyan: #22d3ee;
+    --color-blue: #3b82f6;
+}
+
+/* --- Base Layout --- */
+.stock-page-container {
+    min-height: 100vh;
+    background-color: var(--stock-bg);
+    color: #e2e8f0;
+    overflow-x: hidden;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+}
+
+.stock-wrapper {
+    position: relative;
+    z-index: 10;
+    max-width: 1600px;
+    /* Rộng hơn chút cho bảng giá */
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* --- Ambient Background (Financial) --- */
+.stock-ambient-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.stock-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    animation: stock-pulse 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stock-orb-1 {
+    top: -20%;
+    right: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: #0891b2;
+}
+
+/* Cyan */
+.stock-orb-2 {
+    bottom: -20%;
+    left: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: #1e3a8a;
+    animation-delay: -5s;
+}
+
+/* Blue */
+
+@keyframes stock-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.1;
+    }
+
+    100% {
+        transform: scale(1.1);
+        opacity: 0.2;
+    }
+}
+
+/* --- Components --- */
+
+/* Glass Cards */
+.stock-glass-card {
+    background-color: var(--stock-card);
+    border: 1px solid var(--stock-border);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.stock-glass-card:hover {
+    border-color: rgba(34, 211, 238, 0.3);
+    box-shadow: 0 0 30px rgba(34, 211, 238, 0.05);
+}
+
+/* Stats Cards (Mini) */
+.stat-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--stock-border);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: default;
+    transition: all 0.2s;
+}
+
+.stat-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.stat-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Ticker Stock Card */
+.ticker-card {
+    background: rgba(10, 12, 16, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--stock-border);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.ticker-card:hover {
+    background: rgba(34, 211, 238, 0.05);
+    border-color: rgba(34, 211, 238, 0.3);
+    transform: translateY(-2px);
+}
+
+.ticker-symbol {
+    font-family: 'JetBrains Mono', monospace;
+    /* Monospace for financial data */
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.price-up {
+    color: var(--color-up);
+}
+
+.price-down {
+    color: var(--color-down);
+}
+
+/* Market Grid */
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+/* Header Gradient Text */
+.finance-gradient-text {
+    background: linear-gradient(to right, #22d3ee, #3b82f6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Search Bar Override */
+.stock-search-container {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--stock-border);
+    border-radius: 9999px;
+    padding: 0.75rem 1.5rem;
+    transition: border-color 0.2s;
+}
+
+.stock-search-container:focus-within {
+    border-color: var(--color-cyan);
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
+}

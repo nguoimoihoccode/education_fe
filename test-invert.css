@@ -1,0 +1,12 @@
+:root[data-theme='light'] {
+    filter: invert(1) hue-rotate(180deg);
+    background-color: #fff; /* to ensure background is white before invert */
+}
+:root[data-theme='light'] body {
+    background-color: #000; /* Will be inverted to white */
+}
+:root[data-theme='light'] img,
+:root[data-theme='light'] video,
+:root[data-theme='light'] iframe {
+    filter: invert(1) hue-rotate(180deg);
+}

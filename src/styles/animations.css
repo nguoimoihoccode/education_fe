@@ -1,0 +1,568 @@
+/* ========================================
+   CYBERPUNK ANIMATIONS
+   Smooth & Fluid animations for StockVN Pro
+   ======================================== */
+
+/* ========================================
+   SCANLINE EFFECT - CRT Monitor Style
+   ======================================== */
+.scanline-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanline-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 245, 255, 0.03) 50%,
+    transparent 100%
+  );
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Disable scanline on small screens for performance */
+@media (max-width: 768px) {
+  .scanline-effect::before {
+    display: none;
+  }
+}
+
+/* ========================================
+   GLITCH EFFECT - Cyberpunk Style
+   ======================================== */
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+}
+
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 #FF10F0;
+  clip: rect(24px, 550px, 90px, 0);
+  animation: glitch-anim 3s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 #00F5FF;
+  clip: rect(85px, 550px, 140px, 0);
+  animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip: rect(17px, 9999px, 94px, 0);
+  }
+  10% {
+    clip: rect(85px, 9999px, 140px, 0);
+  }
+  20% {
+    clip: rect(48px, 9999px, 3px, 0);
+  }
+  30% {
+    clip: rect(31px, 9999px, 125px, 0);
+  }
+  40% {
+    clip: rect(70px, 9999px, 80px, 0);
+  }
+  50% {
+    clip: rect(2px, 9999px, 108px, 0);
+  }
+  60% {
+    clip: rect(95px, 9999px, 15px, 0);
+  }
+  70% {
+    clip: rect(60px, 9999px, 72px, 0);
+  }
+  80% {
+    clip: rect(40px, 9999px, 110px, 0);
+  }
+  90% {
+    clip: rect(88px, 9999px, 45px, 0);
+  }
+  100% {
+    clip: rect(10px, 9999px, 100px, 0);
+  }
+}
+
+/* Disable glitch on mobile for performance */
+@media (max-width: 768px) {
+  .glitch::before,
+  .glitch::after {
+    display: none;
+  }
+}
+
+/* ========================================
+   NEON GLOW TEXT
+   ======================================== */
+.neon-text {
+  text-shadow: 
+    0 0 7px currentColor,
+    0 0 10px currentColor,
+    0 0 21px currentColor,
+    0 0 42px currentColor;
+  animation: neon-flicker 1.5s infinite alternate;
+}
+
+.neon-text-pink {
+  color: #FF10F0;
+  text-shadow: 
+    0 0 7px #FF10F0,
+    0 0 10px #FF10F0,
+    0 0 21px #FF10F0,
+    0 0 42px #FF10F0,
+    0 0 82px #FF10F0;
+}
+
+.neon-text-cyan {
+  color: #00F5FF;
+  text-shadow: 
+    0 0 7px #00F5FF,
+    0 0 10px #00F5FF,
+    0 0 21px #00F5FF,
+    0 0 42px #00F5FF,
+    0 0 82px #00F5FF;
+}
+
+.neon-text-purple {
+  color: #B026FF;
+  text-shadow: 
+    0 0 7px #B026FF,
+    0 0 10px #B026FF,
+    0 0 21px #B026FF,
+    0 0 42px #B026FF,
+    0 0 82px #B026FF;
+}
+
+/* Reduce glow intensity on mobile */
+@media (max-width: 768px) {
+  .neon-text,
+  .neon-text-pink,
+  .neon-text-cyan,
+  .neon-text-purple {
+    text-shadow: 
+      0 0 5px currentColor,
+      0 0 10px currentColor;
+  }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    opacity: 0.4;
+  }
+}
+
+/* ========================================
+   PRICE FLASH ANIMATIONS
+   ======================================== */
+.price-flash-up {
+  animation: priceFlashUp 0.5s ease-out;
+}
+
+.price-flash-down {
+  animation: priceFlashDown 0.5s ease-out;
+}
+
+@keyframes priceFlashUp {
+  0% {
+    background-color: rgba(0, 255, 159, 0.3);
+    transform: scale(1.05);
+  }
+  100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
+@keyframes priceFlashDown {
+  0% {
+    background-color: rgba(255, 0, 85, 0.3);
+    transform: scale(1.05);
+  }
+  100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
+/* ========================================
+   FLOATING ANIMATION
+   ======================================== */
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.float-slow {
+  animation: float 8s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Reduce float distance on mobile */
+@media (max-width: 768px) {
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+}
+
+/* ========================================
+   GLOW PULSE ANIMATION
+   ======================================== */
+.glow-pulse {
+  animation: glowPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.glow-pulse-fast {
+  animation: glowPulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+  50% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 20px currentColor);
+  }
+}
+
+/* Reduce glow intensity on mobile */
+@media (max-width: 768px) {
+  @keyframes glowPulse {
+    0%, 100% {
+      opacity: 1;
+      filter: drop-shadow(0 0 4px currentColor);
+    }
+    50% {
+      opacity: 0.9;
+      filter: drop-shadow(0 0 10px currentColor);
+    }
+  }
+}
+
+/* ========================================
+   GRID BACKGROUND ANIMATION
+   ======================================== */
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(0, 245, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+/* Smaller grid on mobile */
+@media (max-width: 768px) {
+  .cyber-grid {
+    background-size: 30px 30px;
+  }
+  
+  @keyframes gridMove {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 30px 30px;
+    }
+  }
+}
+
+/* ========================================
+   PARTICLE ANIMATION
+   ======================================== */
+.particle {
+  animation: particleFloat 10s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate(100px, -100px) scale(1.2);
+  }
+}
+
+/* Disable particles on mobile for performance */
+@media (max-width: 768px) {
+  .particle {
+    display: none;
+  }
+}
+
+/* ========================================
+   SMOOTH SLIDE ANIMATIONS
+   ======================================== */
+.slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-down {
+  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-left {
+  animation: slideLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-right {
+  animation: slideRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight {
+  0% {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   GLASSMORPHISM EFFECT
+   ======================================== */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-dark {
+  background: rgba(10, 14, 39, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 245, 255, 0.2);
+}
+
+/* Reduce blur on mobile for performance */
+@media (max-width: 768px) {
+  .glass,
+  .glass-dark {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+}
+
+/* ========================================
+   LOADING SHIMMER
+   ======================================== */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ========================================
+   FADE ANIMATIONS
+   ======================================== */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.fade-up {
+  animation: fadeUp 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   SCALE ANIMATIONS
+   ======================================== */
+.scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   RESPONSIVE UTILITIES
+   ======================================== */
+
+/* Disable heavy animations on reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .scanline-effect::before,
+  .glitch::before,
+  .glitch::after,
+  .particle {
+    display: none;
+  }
+}
+
+/* Performance optimizations for mobile */
+@media (max-width: 768px) {
+  /* Reduce animation complexity */
+  * {
+    will-change: auto !important;
+  }
+  
+  /* Disable expensive effects on scroll */
+  .cyber-grid {
+    animation: none;
+    background-position: 0 0;
+  }
+}
+
+/* High performance mode for large screens */
+@media (min-width: 1920px) {
+  .neon-text,
+  .neon-text-pink,
+  .neon-text-cyan,
+  .neon-text-purple {
+    text-shadow: 
+      0 0 7px currentColor,
+      0 0 10px currentColor,
+      0 0 21px currentColor,
+      0 0 42px currentColor,
+      0 0 82px currentColor,
+      0 0 92px currentColor,
+      0 0 102px currentColor,
+      0 0 151px currentColor;
+  }
+}

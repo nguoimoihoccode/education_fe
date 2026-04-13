@@ -1,0 +1,630 @@
+/* Education.css - Unified Stock Theme (Violet Variant) */
+
+:root {
+    /* Base Colors from Stock.css */
+    --edu-bg: #020405;
+    /* Black/Blue Dark */
+    --edu-card: #0A0C10;
+    /* Almost Black */
+    --edu-border: rgba(255, 255, 255, 0.08);
+
+    /* Default Accent (Violet 500) */
+    --color-accent-50: 245 243 255;
+    --color-accent-100: 237 233 254;
+    --color-accent-200: 221 214 254;
+    --color-accent-300: 196 181 253;
+    --color-accent-400: 167 139 250;
+    --color-accent-500: 139 92 246;
+    --color-accent-600: 124 58 237;
+    --color-accent-700: 109 40 217;
+    --color-accent-800: 91 33 182;
+    --color-accent-900: 76 29 149;
+    --color-accent-950: 46 16 101;
+    
+    /* Education Specific Accents */
+    --edu-highlight: rgba(139, 92, 246, 0.15);
+    /* Violet Highlight */
+    --edu-accent: #8b5cf6;
+    /* Violet 500 */
+    --edu-amber: #f59e0b;
+    --edu-emerald: #10b981;
+
+    --text-primary: #e2e8f0;
+    /* Slate 200 */
+    --text-secondary: #94a3b8;
+    /* Slate 400 */
+}
+
+/* --- Base Layout (Matched Stock.css) --- */
+.education-container {
+    color: var(--text-primary);
+    padding-bottom: 8rem;
+    overflow-x: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+}
+
+.dashboard-wrapper {
+    position: relative;
+    z-index: 10;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.detail-wrapper,
+.lesson-wrapper {
+    position: relative;
+    z-index: 10;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .dashboard-wrapper {
+        padding: 3rem 2.5rem;
+    }
+    .detail-wrapper,
+    .lesson-wrapper {
+        padding: 3.5rem 2.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .dashboard-wrapper {
+        padding: 4rem;
+    }
+    .detail-wrapper,
+    .lesson-wrapper {
+        padding: 4.5rem 4rem;
+    }
+}
+
+/* --- Ambient Background (Violet Variant for Edu) --- */
+.ambient-background {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    perspective: 1000px;
+    /* Add depth perspective */
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.2;
+    animation: orb-float 20s infinite ease-in-out alternate;
+    transform-style: preserve-3d;
+}
+
+.orb-1 {
+    top: -10%;
+    left: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle at 30% 30%, #F59E0B, transparent 70%);
+    /* Amber */
+    animation-duration: 25s;
+}
+
+.orb-2 {
+    bottom: -20%;
+    right: -10%;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle at 70% 70%, #8B5CF6, transparent 70%);
+    /* Violet */
+    animation-delay: -5s;
+    animation-duration: 30s;
+}
+
+.orb-3 {
+    top: 40%;
+    left: 30%;
+    width: 40vw;
+    height: 40vw;
+    background: radial-gradient(circle at 50% 50%, #10B981, transparent 60%);
+    /* Emerald */
+    opacity: 0.15;
+    animation-delay: -10s;
+    animation-duration: 35s;
+}
+
+@keyframes orb-float {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate3d(30px, -50px, 20px) scale(1.1);
+    }
+
+    66% {
+        transform: translate3d(-20px, 20px, -20px) scale(0.95);
+    }
+
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+.noise-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    /* Subtle noise */
+    pointer-events: none;
+}
+
+/* --- Glass Cards (Unified with Stock) --- */
+.glass-card {
+    background-color: rgba(30, 41, 59, 0.4);
+    /* More transparent for 3D feel */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    /* Highlight top */
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Bouncy 3D feel */
+    backdrop-filter: blur(12px);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: visible;
+}
+
+.glass-card:hover {
+    border-color: rgba(245, 158, 11, 0.3);
+    /* Amber hover */
+    background-color: rgba(30, 41, 59, 0.6);
+    transform: translateY(-4px) scale(1.005);
+    box-shadow:
+        0 20px 25px -5px rgba(0, 0, 0, 0.2),
+        0 10px 10px -5px rgba(0, 0, 0, 0.1),
+        0 0 20px rgba(245, 158, 11, 0.1);
+    /* Amber glow */
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(115deg,
+            transparent 40%,
+            rgba(255, 255, 255, 0.05) 45%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 55%,
+            transparent 60%);
+    transform: skewX(-20deg);
+    transition: left 0.7s ease;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: inherit;
+}
+
+.glass-card:hover::before {
+    left: 100%;
+    transition: left 0.7s ease;
+}
+
+/* Card with overflow hidden (for images, gradients) */
+.glass-card-clip {
+    overflow: hidden;
+}
+
+/* Education buttons — override any global resets */
+.education-container button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* Hero CTA button */
+.card-featured button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+.card-featured button:hover {
+    transform: scale(1.05);
+}
+
+/* --- Typography & Elements --- */
+.text-gradient {
+    background: linear-gradient(to right, #f59e0b, #ec4899, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--edu-border);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.08);
+    /* Stock hover style */
+    color: white;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Search Bar (Matched Stock) */
+.search-input-container {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--edu-border);
+    border-radius: 9999px;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    min-width: 280px;
+    transition: all 0.2s;
+}
+
+.search-input-container:focus-within {
+    border-color: var(--edu-accent);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+}
+
+/* Tabs */
+.tab-container {
+    display: inline-flex;
+    background: #0A0C10;
+    /* Stock Card Bg */
+    border: 1px solid var(--edu-border);
+    padding: 0.375rem;
+    border-radius: 1rem;
+    gap: 0.25rem;
+}
+
+.tab-btn {
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.tab-btn.active {
+    background: rgba(139, 92, 246, 0.15);
+    /* Violet specific */
+    color: #a78bfa;
+    box-shadow: none;
+    /* Flat style like stock tabs if any */
+}
+
+/* Lesson Content Typography (JetBrains for Code) */
+.lesson-content {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #cbd5e1;
+}
+
+.lesson-content h1,
+.lesson-content h2 {
+    color: white;
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.lesson-content code {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.375rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    color: #f472b6;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Consistent border */
+}
+
+.lesson-content pre {
+    background: #020405;
+    /* Darker than card */
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid var(--edu-border);
+    overflow-x: auto;
+    margin: 2rem 0;
+}
+
+/* Chips */
+.chip {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    /* Less rounded to match stock tags sometimes, or keep pills */
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--edu-border);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chip:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.chip.active {
+    background: var(--edu-highlight);
+    border-color: rgba(139, 92, 246, 0.3);
+    color: #a78bfa;
+}
+
+/* Interactive Elements (Exercises) */
+.exercise-option {
+    border: 1px solid var(--edu-border);
+    background: rgba(255, 255, 255, 0.02);
+    /* ... transitions ... */
+}
+
+.exercise-option:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.exercise-option.selected {
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    color: #fbbf24;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+    0% {
+        transform: scale(1);
+        opacity: 0.15;
+    }
+
+    100% {
+        transform: scale(1.1);
+        opacity: 0.25;
+    }
+}
+
+.fade-in-entry {
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Specific Stock-like Components */
+.stat-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--edu-border);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Bento Grid Standard */
+.bento-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
+}
+
+@media(min-width: 1024px) {
+    .bento-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.card-featured {
+    grid-column: span 1;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+}
+
+@media(min-width: 1024px) {
+    .card-featured {
+        grid-column: span 2;
+        grid-row: span 2;
+        min-height: 380px;
+    }
+}
+
+/* Detail Header Card */
+.detail-header-card {
+    background: var(--edu-card);
+    border: 1px solid var(--edu-border);
+    border-radius: 1.5rem;
+    overflow: hidden;
+}
+
+/* Category Scroll */
+.category-scroll {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.category-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hero Gradient Overlay */
+.hero-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(245, 158, 11, 0.06), transparent);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Search Pill */
+.search-pill-wrapper {
+    position: relative;
+}
+
+.search-pill-glow {
+    position: absolute;
+    inset: -1px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(245, 158, 11, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.search-pill-wrapper:focus-within .search-pill-glow {
+    opacity: 1;
+}
+
+/* Float animation */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+/* Generated from Stitch Theme */
+.glass-pane {
+    background: rgba(24, 28, 30, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.glow-emerald {
+    filter: blur(100px);
+    background: radial-gradient(circle, rgba(78, 222, 163, 0.1) 0%, transparent 70%);
+}
+
+.glow-violet {
+    filter: blur(100px);
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Dynamic App Settings Overrides */
+:root[data-theme='light'] {
+    --edu-bg: #f8fafc;
+    --edu-card: #ffffff;
+    --edu-border: rgba(0, 0, 0, 0.1);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+}
+
+
+/* Compact Mode */
+:root[data-compact='true'] .gap-6 {
+    gap: 1rem !important;
+}
+:root[data-compact='true'] .p-6, :root[data-compact='true'] .p-8 {
+    padding: 1.25rem !important;
+}
+:root[data-compact='true'] .py-8 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+}
+
+/* Reduced Motion */
+:root[data-reduced-motion='true'] * {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* High Contrast */
+:root[data-high-contrast='true'] {
+    --edu-border: rgba(255, 255, 255, 0.5);
+    background: #000;
+}
+:root[data-high-contrast='true'] .text-slate-500, :root[data-high-contrast='true'] .text-slate-400 {
+    color: #f1f5f9 !important; /* maximum brightness */
+}
+:root[data-high-contrast='true'] .border-white\/10 {
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Font Sizes */
+:root[data-font-size='small'] {
+    font-size: 14px;
+}
+:root[data-font-size='large'] {
+    font-size: 18px;
+}
+:root[data-theme='light'] {
+    filter: invert(1) hue-rotate(180deg);
+    background-color: #fff; /* to ensure background is white before invert */
+}
+:root[data-theme='light'] body {
+    background-color: #000; /* Will be inverted to white */
+}
+:root[data-theme='light'] img,
+:root[data-theme='light'] video,
+:root[data-theme='light'] iframe {
+    filter: invert(1) hue-rotate(180deg);
+}

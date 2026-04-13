@@ -1,0 +1,620 @@
+/* ============================================
+   STOCK REDESIGN - Dark Premium Glass
+   Inspired by Angular DPU (sidebar/header layout)
+   Colors matched to existing dark system
+   ============================================ */
+
+/* ---- Design Tokens ---- */
+:root {
+    /* Primary palette - Green (keep from DPU but on dark) */
+    --stock-primary-50: #f0fdf4;
+    --stock-primary-100: #dcfce7;
+    --stock-primary-200: #bbf7d0;
+    --stock-primary-300: #86efac;
+    --stock-primary-400: #4ade80;
+    --stock-primary-500: #22c55e;
+    --stock-primary-600: #16a34a;
+    --stock-primary-700: #15803d;
+
+    /* Dark surfaces - matched to existing system */
+    --stock-surface-900: #0a0c10;
+    /* Deepest bg */
+    --stock-surface-800: #0f172a;
+    /* Main bg (matches --bg-primary) */
+    --stock-surface-700: #1e293b;
+    /* Card bg (matches --bg-secondary) */
+    --stock-surface-600: #334155;
+    /* Elevated (matches --bg-tertiary) */
+    --stock-surface-500: #475569;
+
+    /* Text on dark */
+    --stock-text-primary: #f1f5f9;
+    /* Bright white */
+    --stock-text-secondary: #94a3b8;
+    /* Muted */
+    --stock-text-tertiary: #64748b;
+    /* Dim */
+    --stock-text-disabled: #475569;
+
+    /* Accent palette */
+    --stock-accent-teal: #14b8a6;
+    --stock-accent-cyan: #22d3ee;
+    --stock-accent-indigo: #818cf8;
+    --stock-accent-amber: #fbbf24;
+    --stock-accent-rose: #fb7185;
+
+    /* Financial colors */
+    --stock-up: #10b981;
+    --stock-up-light: #34d399;
+    --stock-up-bg: rgba(16, 185, 129, 0.1);
+    --stock-down: #f43f5e;
+    --stock-down-light: #fb7185;
+    --stock-down-bg: rgba(244, 63, 94, 0.1);
+
+    /* Glass surfaces - DARK */
+    --stock-glass-bg: rgba(15, 23, 42, 0.8);
+    --stock-glass-border: rgba(255, 255, 255, 0.06);
+    --stock-glass-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        0 1px 2px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+    /* Typography */
+    --stock-font: 'Inter', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --stock-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Transitions */
+    --stock-transition: 200ms ease;
+    --stock-transition-slow: 300ms ease;
+}
+
+/* ---- Glass Card (Dark) ---- */
+.stock-card {
+    border-radius: 1rem;
+    padding: 1.25rem;
+    position: relative;
+    background: var(--stock-glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--stock-glass-border);
+    box-shadow: var(--stock-glass-shadow);
+    transition: all var(--stock-transition);
+    animation: stockFadeIn 0.4s ease-out;
+}
+
+.stock-card:hover {
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(34, 197, 94, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transform: translateY(-2px);
+    border-color: rgba(34, 197, 94, 0.2);
+}
+
+/* ---- Stat Cards ---- */
+.stock-stat-card {
+    border-radius: 1rem;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--stock-glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--stock-glass-border);
+    box-shadow: var(--stock-glass-shadow);
+    transition: all var(--stock-transition);
+    cursor: pointer;
+}
+
+.stock-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--stock-primary-500), var(--stock-accent-teal));
+    opacity: 0;
+    transition: opacity var(--stock-transition);
+}
+
+.stock-stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(34, 197, 94, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 197, 94, 0.06);
+}
+
+.stock-stat-card:hover::before {
+    opacity: 1;
+}
+
+/* ---- Icon Boxes ---- */
+.stock-icon-box {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--stock-transition);
+    flex-shrink: 0;
+}
+
+.stock-icon-box.stock-icon-up {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--stock-up-light);
+}
+
+.stock-icon-box.stock-icon-down {
+    background: rgba(244, 63, 94, 0.12);
+    color: var(--stock-down-light);
+}
+
+.stock-icon-box.stock-icon-primary {
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--stock-primary-400);
+}
+
+.stock-icon-box.stock-icon-teal {
+    background: rgba(20, 184, 166, 0.12);
+    color: var(--stock-accent-teal);
+}
+
+.stock-icon-box.stock-icon-indigo {
+    background: rgba(129, 140, 248, 0.12);
+    color: var(--stock-accent-indigo);
+}
+
+.stock-icon-box.stock-icon-amber {
+    background: rgba(251, 191, 36, 0.12);
+    color: var(--stock-accent-amber);
+}
+
+.stock-icon-box.stock-icon-rose {
+    background: rgba(251, 113, 133, 0.12);
+    color: var(--stock-accent-rose);
+}
+
+/* ---- Buttons ---- */
+.stock-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all var(--stock-transition);
+    background: linear-gradient(135deg, var(--stock-primary-500), var(--stock-primary-600));
+    box-shadow: 0 2px 10px rgba(34, 197, 94, 0.25);
+}
+
+.stock-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.35);
+    background: linear-gradient(135deg, var(--stock-primary-400), var(--stock-primary-500));
+}
+
+.stock-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--stock-text-secondary);
+    border: 1px solid var(--stock-glass-border);
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: all var(--stock-transition);
+}
+
+.stock-btn-secondary:hover {
+    background: rgba(51, 65, 85, 0.5);
+    border-color: rgba(34, 197, 94, 0.2);
+    color: var(--stock-primary-400);
+    transform: translateY(-1px);
+}
+
+/* ---- Header Glass (Dark) ---- */
+.stock-header-glass {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--stock-glass-border);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Sidebar (Dark) ---- */
+.stock-sidebar {
+    background: rgba(10, 12, 16, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--stock-glass-border);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
+}
+
+.stock-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.75rem;
+    color: var(--stock-text-tertiary);
+    transition: all var(--stock-transition);
+    position: relative;
+    font-size: 0.875rem;
+    text-decoration: none;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.stock-sidebar-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 0;
+    background: linear-gradient(180deg, var(--stock-primary-500), var(--stock-accent-teal));
+    border-radius: 0 2px 2px 0;
+    transition: height var(--stock-transition);
+}
+
+.stock-sidebar-link:hover {
+    background: rgba(34, 197, 94, 0.06);
+    color: var(--stock-text-primary);
+    transform: translateX(2px);
+}
+
+.stock-sidebar-link.active {
+    font-weight: 600;
+    color: var(--stock-primary-400);
+    background: rgba(34, 197, 94, 0.08);
+}
+
+.stock-sidebar-link.active::before {
+    height: 50%;
+}
+
+/* ---- Price Display ---- */
+.stock-price-up {
+    color: var(--stock-up-light);
+    font-weight: 600;
+}
+
+.stock-price-down {
+    color: var(--stock-down-light);
+    font-weight: 600;
+}
+
+.stock-change-badge-up {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--stock-up-bg);
+    color: var(--stock-up-light);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.stock-change-badge-down {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--stock-down-bg);
+    color: var(--stock-down-light);
+    border: 1px solid rgba(244, 63, 94, 0.15);
+}
+
+/* ---- Table (Dark) ---- */
+.stock-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stock-table thead tr {
+    border-bottom: 1px solid var(--stock-glass-border);
+}
+
+.stock-table thead th {
+    text-align: left;
+    padding: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--stock-text-tertiary);
+}
+
+.stock-table tbody tr {
+    transition: background-color var(--stock-transition);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.stock-table tbody tr:hover {
+    background: rgba(34, 197, 94, 0.04);
+}
+
+.stock-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.stock-table tbody td {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--stock-text-secondary);
+}
+
+/* ---- Ticker Card (Dark) ---- */
+.stock-ticker-card {
+    border-radius: 1rem;
+    padding: 1.25rem;
+    background: var(--stock-glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--stock-glass-border);
+    box-shadow: var(--stock-glass-shadow);
+    transition: all var(--stock-transition-slow);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.stock-ticker-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--stock-primary-500), transparent);
+    opacity: 0;
+    transition: opacity var(--stock-transition);
+}
+
+.stock-ticker-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(34, 197, 94, 0.2);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 197, 94, 0.06);
+}
+
+.stock-ticker-card:hover::after {
+    opacity: 1;
+}
+
+/* ---- Modern Search (Dark) ---- */
+.stock-search-modern {
+    position: relative;
+}
+
+.stock-search-modern input {
+    width: 100%;
+    padding: 0.625rem 1rem 0.625rem 2.75rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid var(--stock-glass-border);
+    color: var(--stock-text-primary);
+    transition: all var(--stock-transition);
+}
+
+.stock-search-modern input:focus {
+    border-color: rgba(34, 197, 94, 0.4);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.08);
+    background: rgba(30, 41, 59, 0.8);
+    outline: none;
+}
+
+.stock-search-modern input::placeholder {
+    color: var(--stock-text-tertiary);
+}
+
+.stock-search-modern .search-icon {
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--stock-text-tertiary);
+}
+
+/* ---- Live Indicator ---- */
+.stock-live-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.stock-live-indicator.connected {
+    background: var(--stock-up-bg);
+    color: var(--stock-up-light);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.stock-live-indicator.disconnected {
+    background: var(--stock-down-bg);
+    color: var(--stock-down-light);
+    border: 1px solid rgba(244, 63, 94, 0.2);
+}
+
+/* ---- Gradient Text ---- */
+.stock-gradient-text {
+    background: linear-gradient(135deg, var(--stock-primary-400), var(--stock-accent-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ---- Divider ---- */
+.stock-divider-gradient {
+    height: 1px;
+    width: 100%;
+    margin: 1rem 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+}
+
+/* ---- Market Index Card ---- */
+.stock-index-card {
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--stock-glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--stock-glass-border);
+    box-shadow: var(--stock-glass-shadow);
+    transition: all var(--stock-transition);
+}
+
+.stock-index-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(34, 197, 94, 0.15);
+}
+
+/* ---- Period Toggle ---- */
+.stock-period-toggle {
+    display: inline-flex;
+    padding: 0.25rem;
+    border-radius: 0.75rem;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid var(--stock-glass-border);
+}
+
+.stock-period-btn {
+    padding: 0.375rem 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--stock-text-tertiary);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--stock-transition);
+}
+
+.stock-period-btn:hover {
+    color: var(--stock-primary-400);
+}
+
+.stock-period-btn.active {
+    background: linear-gradient(135deg, var(--stock-primary-500), var(--stock-primary-600));
+    color: white;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25);
+}
+
+/* ---- Scrollbar (Dark) ---- */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.3);
+}
+
+/* ---- Animations ---- */
+@keyframes stockFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stock-fade-in {
+    animation: stockFadeIn 0.4s ease-out;
+}
+
+/* ---- Progress bar ---- */
+.stock-progress-bar {
+    height: 4px;
+    border-radius: 9999px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.stock-progress-bar .fill-up {
+    height: 100%;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--stock-primary-500), var(--stock-accent-teal));
+    transition: width 500ms ease;
+}
+
+.stock-progress-bar .fill-down {
+    height: 100%;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--stock-down), var(--stock-accent-rose));
+    transition: width 500ms ease;
+}
+
+/* ---- Avatar / Symbol Badge ---- */
+.stock-symbol-avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    font-family: var(--stock-font-mono);
+    background: linear-gradient(135deg, var(--stock-primary-500), var(--stock-accent-teal));
+    color: white;
+    flex-shrink: 0;
+}
+
+/* ---- Notification Dot ---- */
+.stock-notification-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: linear-gradient(135deg, var(--stock-accent-rose), #f43f5e);
+    box-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
+    animation: stockPulse 2s infinite;
+}
+
+@keyframes stockPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
