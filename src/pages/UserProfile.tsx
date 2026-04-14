@@ -327,14 +327,14 @@ export default function UserProfile() {
                 />
                 <StatCard
                   icon={Brain}
-                  value={progress?.totalVocabulary || 0}
+                  value={progress?.learnedVocabularies || 0}
                   label="Vocab Learned"
                   color="fuchsia"
                 />
                 <StatCard
                   icon={Clock}
-                  value={progress?.totalTimeSpent ? Math.round(progress.totalTimeSpent / 60) : 0}
-                  label="Hours Studied"
+                  value={progress?.streak?.totalXp || 0}
+                  label="Total XP"
                   color="emerald"
                 />
               </div>

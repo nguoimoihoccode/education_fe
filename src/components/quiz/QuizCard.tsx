@@ -87,7 +87,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
     }
   };
 
-  const diffConfig = getDifficultyConfig(quiz.difficulty);
+  const diffConfig = getDifficultyConfig(quiz.difficulty ?? undefined);
 
   return (
     <div
