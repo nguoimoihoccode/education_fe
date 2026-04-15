@@ -7,6 +7,7 @@ import { Login } from '@/pages/Login';
 import { Register } from '@/pages/Register';
 import { GoogleCallback } from '@/pages/GoogleCallback';
 import LandingPage from '@/pages/LandingPage';
+import LandingPageNew from '@/pages/landing/LandingPageNew';
 import Education from '@/pages/Education';
 import CourseDetail from '@/pages/CourseDetail';
 import LessonView from '@/pages/LessonView';
@@ -318,6 +319,7 @@ function App() {
               path="/coming-soon"
               element={<ComingSoon />}
             />
+            <Route path="/dashboard-landing" element={<LandingPageNew />} />
             <Route path="/" element={<LandingPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /Users/nguyenthucphuc/project/stock/education_fe/src/*.ts /Users/nguyenthucphuc/project/stock/education_fe/src/*.tsx)",
+      "Bash(wc -l /Users/nguyenthucphuc/project/stock/education_fe/src/**/*.ts /Users/nguyenthucphuc/project/stock/education_fe/src/**/*.tsx)",
+      "Bash(grep -r \"import.*from.*$\" /Users/nguyenthucphuc/project/stock/education_fe/src --include=\"*.ts\" --include=\"*.tsx\")"
+    ]
+  }
+}

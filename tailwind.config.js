@@ -142,6 +142,8 @@ export default {
         headline: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'JetBrains Mono', 'Fira Code', 'monospace'],
         cyber: ['Orbitron', 'Rajdhani', 'sans-serif'],
+        heading: ["'Instrument Serif'", 'serif'],
+        body: ["'Barlow'", 'sans-serif'],
       },
       fontSize: {
         // Responsive font sizes

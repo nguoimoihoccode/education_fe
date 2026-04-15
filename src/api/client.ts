@@ -1,14 +1,69 @@
 import axios from 'axios';
+import { setupCache, buildMemoryStorage, buildWebStorage } from 'axios-cache-interceptor';
 import { useAuthStore } from '../store/auth.store';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-export const apiClient = axios.create({
+// Tạo base axios instance
+const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Setup cache interceptor
+// - Memory storage cho speed, web storage (sessionStorage) cho persistence across refreshes
+export const apiClient = setupCache(axiosInstance, {
+  // Cache storage: kết hợp memory + sessionStorage
+  storage: buildWebStorage(sessionStorage, 'edupro-api-cache:'),
+  
+  // Các config mặc định cho tất cả requests
+  ttl: 5 * 60 * 1000, // 5 phút - giống staleTime của TanStack Query
+
+  // Chỉ cache GET requests
+  methods: ['get'],
+
+  // Interpret cache-control headers từ server (nếu có)
+  interpretHeader: true,
+
+  // Cho phép ETag / If-None-Match
+  etag: true,
+
+  // Cho phép Last-Modified / If-Modified-Since
+  modifiedSince: true,
+
+  // Stale-while-revalidate: dùng cache cũ trong khi fetch data mới
+  staleIfError: true,
+});
+
+// ============================================
+// Cache config cho từng loại API
+// ============================================
+export const CACHE_PROFILES = {
+  // Data ít thay đổi - cache lâu
+  STATIC: {
+    cache: {
+      ttl: 30 * 60 * 1000, // 30 phút
+    },
+  },
+  // Data thay đổi thường xuyên - cache ngắn
+  DYNAMIC: {
+    cache: {
+      ttl: 2 * 60 * 1000, // 2 phút
+    },
+  },
+  // Realtime data - không cache
+  NO_CACHE: {
+    cache: false as const,
+  },
+  // Data user-specific - cache vừa
+  USER: {
+    cache: {
+      ttl: 5 * 60 * 1000, // 5 phút
+    },
+  },
+} as const;
 
 // Request interceptor để thêm token vào header
 apiClient.interceptors.request.use(
@@ -80,6 +135,9 @@ apiClient.interceptors.response.use(
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('auth-storage'); // Zustand persisted state
+
+        // Clear API cache khi logout
+        apiClient.storage.clear();
 
         // Chỉ redirect nếu không phải request login
         if (!originalRequest.url?.includes('/auth/login')) {

@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, CACHE_PROFILES } from './client';
 import type {
     Language,
     Course,
@@ -16,7 +16,7 @@ import type {
 // ==================== PUBLIC ENDPOINTS ====================
 
 export const getLanguages = async (): Promise<Language[]> => {
-    const response = await apiClient.get('/education/languages');
+    const response = await apiClient.get('/education/languages', CACHE_PROFILES.STATIC);
     return response.data;
 };
 
@@ -108,11 +108,11 @@ export const submitExercises = async (
 };
 
 export const getUserProgress = async (): Promise<UserProgress> => {
-    const response = await apiClient.get('/education/progress');
+    const response = await apiClient.get('/education/progress', CACHE_PROFILES.USER);
     return response.data;
 };
 
 export const getUserStreak = async (): Promise<UserStreak> => {
-    const response = await apiClient.get('/education/streak');
+    const response = await apiClient.get('/education/streak', CACHE_PROFILES.DYNAMIC);
     return response.data;
 };

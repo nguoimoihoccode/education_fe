@@ -57,7 +57,12 @@ export const Layout = ({ children }: LayoutProps) => {
 
     // Only skip layout for auth pages (login, register, callback)
     const authPaths = ['/login', '/register', '/auth/callback'];
+    // Also skip layout for the premium landing page
+    const noLayoutPaths = ['/dashboard-landing'];
     if (!isAuthenticated && authPaths.includes(location.pathname)) {
+        return <>{children}</>;
+    }
+    if (noLayoutPaths.includes(location.pathname)) {
         return <>{children}</>;
     }
 

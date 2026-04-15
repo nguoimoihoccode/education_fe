@@ -1,0 +1,215 @@
+/* Landing Page Design System */
+:root {
+  --lp-background: 213 45% 67%;
+  --lp-foreground: 0 0% 100%;
+  --lp-card: 213 45% 62%;
+  --lp-card-foreground: 0 0% 100%;
+  --lp-primary: 0 0% 100%;
+  --lp-primary-foreground: 213 45% 67%;
+  --lp-secondary: 213 45% 72%;
+  --lp-secondary-foreground: 0 0% 100%;
+  --lp-muted: 213 35% 60%;
+  --lp-muted-foreground: 0 0% 100% / 0.7;
+  --lp-accent: 213 45% 72%;
+  --lp-accent-foreground: 0 0% 100%;
+  --lp-destructive: 0 84.2% 60.2%;
+  --lp-border: 0 0% 100% / 0.2;
+  --lp-input: 0 0% 100% / 0.2;
+  --lp-ring: 0 0% 100% / 0.3;
+  --lp-radius: 9999px;
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+  --glass-blur: 16px;
+}
+
+/* Liquid Glass - Subtle */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.15) 80%,
+    rgba(255, 255, 255, 0.45) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Liquid Glass - Strong (for CTA buttons) */
+.liquid-glass-strong {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+  border: none;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.05),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass-strong::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.2) 80%,
+    rgba(255, 255, 255, 0.5) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Landing page reset to avoid conflict with main app styles */
+.landing-page-root {
+  font-family: 'Barlow', sans-serif;
+  color: white;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.landing-page-root *,
+.landing-page-root *::before,
+.landing-page-root *::after {
+  box-sizing: border-box;
+}
+
+/* Override global video/img/svg constraints from index.css */
+.landing-page-root video {
+  max-width: none;
+  height: auto;
+}
+
+.landing-page-root video.absolute,
+.landing-page-root video[class*="absolute"] {
+  height: 100%;
+  max-width: none;
+}
+
+.landing-page-root svg {
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  display: inline-block;
+}
+
+.landing-page-root img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Smooth scrollbar for landing page */
+.landing-page-root::-webkit-scrollbar {
+  width: 6px;
+}
+.landing-page-root::-webkit-scrollbar-track {
+  background: transparent;
+}
+.landing-page-root::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+/* Video background helpers */
+.video-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gradient-fade-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(to bottom, black, transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gradient-fade-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(to top, black, transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Button hover effects */
+.lp-btn-glass {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lp-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.lp-btn-white {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lp-btn-white:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.15);
+}
+
+/* Feature card hover */
+.lp-feature-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lp-feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Navigation link hover */
+.lp-nav-link {
+  transition: color 0.2s ease;
+}
+.lp-nav-link:hover {
+  color: white;
+}
