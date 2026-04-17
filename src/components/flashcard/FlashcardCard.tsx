@@ -124,33 +124,45 @@ export function FlashcardCard({
           )}
         >
           {/* Back Content */}
-          <div className="text-center flex-1 flex flex-col items-center justify-center w-full">
-            <h3 className="text-3xl md:text-5xl font-black font-headline text-transparent bg-clip-text bg-gradient-to-br from-white to-accent-200 mb-8 drop-shadow-md">
-              {flashcard.back}
-            </h3>
-
-            {flashcard.example && (
-              <div className="mt-4 p-5 rounded-2xl bg-black/40 border border-white/10 max-w-md w-full text-left">
-                <p className="text-sm md:text-base font-medium italic mb-3 text-slate-300">"{flashcard.example}"</p>
-                {flashcard.exampleTranslation && (
-                  <p className="text-xs md:text-sm font-bold text-accent-400">{flashcard.exampleTranslation}</p>
-                )}
+          <div className="flex-1 flex flex-col items-center justify-center w-full overflow-y-auto py-2">
+            <div className="w-full max-w-xl text-center">
+              <div className="mb-3 text-[11px] font-bold uppercase tracking-[0.3em] text-accent-300/80">
+                Meaning
               </div>
-            )}
+              <h3 className="text-3xl md:text-5xl font-black font-headline text-transparent bg-clip-text bg-gradient-to-br from-white to-accent-200 mb-5 drop-shadow-md">
+                {flashcard.back}
+              </h3>
 
-            {flashcard.description && (
-              <div className="mt-4 p-4 rounded-2xl bg-white/5 border border-white/10 text-sm font-medium text-slate-200 max-w-md w-full text-left">
-                <div className="text-xs font-bold uppercase tracking-widest text-sky-300 mb-2">Usage</div>
-                <p className="whitespace-pre-line">{flashcard.description}</p>
-              </div>
-            )}
+              {flashcard.description && (
+                <div className="mt-4 p-5 rounded-2xl bg-white/5 border border-white/10 text-left shadow-[0_10px_30px_rgba(15,23,42,0.25)]">
+                  <div className="text-xs font-bold uppercase tracking-widest text-sky-300 mb-2">
+                    Usage & Context
+                  </div>
+                  <p className="text-sm md:text-base font-medium text-slate-200 whitespace-pre-line leading-relaxed">
+                    {flashcard.description}
+                  </p>
+                </div>
+              )}
 
-            {flashcard.notes && (
-              <div className="mt-4 p-4 rounded-2xl bg-accent-500/10 border border-accent-500/20 text-sm font-medium text-accent-200 max-w-md w-full text-left">
-                <div className="text-xs font-bold uppercase tracking-widest text-accent-400 mb-1">Notes:</div>
-                {flashcard.notes}
-              </div>
-            )}
+              {flashcard.example && (
+                <div className="mt-4 p-5 rounded-2xl bg-black/40 border border-white/10 w-full text-left">
+                  <div className="text-xs font-bold uppercase tracking-widest text-emerald-300 mb-2">
+                    Example
+                  </div>
+                  <p className="text-sm md:text-base font-medium italic mb-3 text-slate-300">"{flashcard.example}"</p>
+                  {flashcard.exampleTranslation && (
+                    <p className="text-xs md:text-sm font-bold text-accent-400">{flashcard.exampleTranslation}</p>
+                  )}
+                </div>
+              )}
+
+              {flashcard.notes && (
+                <div className="mt-4 p-4 rounded-2xl bg-accent-500/10 border border-accent-500/20 text-sm font-medium text-accent-200 w-full text-left">
+                  <div className="text-xs font-bold uppercase tracking-widest text-accent-400 mb-1">Notes</div>
+                  {flashcard.notes}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Difficulty Badge */}
