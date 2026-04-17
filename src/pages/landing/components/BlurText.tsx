@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variant } from 'framer-motion';
 
 interface BlurTextProps {
   text: string;
@@ -43,24 +43,23 @@ const BlurText = ({
 
   const yInitial = direction === 'bottom' ? 50 : -50;
 
+  const hiddenVariant: Variant = { filter: 'blur(10px)', opacity: 0, y: yInitial };
+  const visibleVariant: Variant = { filter: 'blur(0px)', opacity: 1, y: 0 };
+
   return (
     <Component className={className} ref={ref as React.RefObject<HTMLHeadingElement>}>
       {elements.map((el, i) => (
         <motion.span
           key={i}
-          initial={{ filter: 'blur(10px)', opacity: 0, y: yInitial }}
-          animate={
-            isVisible
-              ? [
-                  { filter: 'blur(5px)', opacity: 0.5, y: direction === 'bottom' ? -5 : 5 },
-                  { filter: 'blur(0px)', opacity: 1, y: 0 },
-                ]
-              : { filter: 'blur(10px)', opacity: 0, y: yInitial }
-          }
+          initial="hidden"
+          animate={isVisible ? 'visible' : 'hidden'}
+          variants={{
+            hidden: hiddenVariant,
+            visible: visibleVariant,
+          }}
           transition={{
             duration: 0.7,
             delay: (i * delay) / 1000,
-            times: [0, 0.5, 1],
             ease: 'easeOut',
           }}
           style={{ display: 'inline-block', willChange: 'filter, opacity, transform' }}

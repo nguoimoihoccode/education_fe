@@ -9,14 +9,15 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['vite.svg'],
+      includeAssets: ['favicon.svg'],
       workbox: {
-        // Precache tất cả assets khi build
+        // Precache static assets khi build
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-        
-        // Runtime caching strategies
+
+        // Runtime caching - CHỈ fonts + images
+        // API caching do axios-cache-interceptor + TanStack Query xử lý
         runtimeCaching: [
-          // Google Fonts - Cache First (fonts ít thay đổi)
+          // Google Fonts stylesheets
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
@@ -24,13 +25,12 @@ export default defineConfig({
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 năm
+                maxAgeSeconds: 60 * 60 * 24 * 365,
               },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
+          // Google Fonts files
           {
             urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
             handler: 'CacheFirst',
@@ -40,33 +40,10 @@ export default defineConfig({
                 maxEntries: 10,
                 maxAgeSeconds: 60 * 60 * 24 * 365,
               },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
-          // API GET requests - StaleWhileRevalidate (cache + background update)
-          {
-            urlPattern: ({ url }) => {
-              const apiUrl = process.env.VITE_API_URL || 'http://localhost:3000';
-              return url.origin === new URL(apiUrl).origin && url.pathname.match(/^\/(courses|languages|education|flashcard|quiz|leaderboard|community)/);
-            },
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 5, // 5 phút
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-              matchOptions: {
-                ignoreSearch: false,
-              },
-            },
-          },
-          // Images - Cache First
+          // Images
           {
             urlPattern: /\.(?:png|gif|jpg|jpeg|svg|webp)$/,
             handler: 'CacheFirst',
@@ -74,27 +51,29 @@ export default defineConfig({
               cacheName: 'images-cache',
               expiration: {
                 maxEntries: 60,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 ngày
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
             },
           },
-          // Video/HLS streams - Network Only (quá lớn để cache)
+          // Video/HLS - network only
           {
             urlPattern: /\.(?:mp4|m3u8|ts)$/,
             handler: 'NetworkOnly',
           },
         ],
+
+        // Không intercept API requests - để axios + TanStack Query handle
+        navigateFallbackDenylist: [/^\/api/],
       },
-      
+
       // PWA Manifest
       manifest: {
         name: 'EduPro - Learning Platform',
         short_name: 'EduPro',
-        description: 'Nền tảng học tập thông minh với AI - Khóa học, Flashcards, Quiz & AI Tutor',
+        description: 'Nền tảng học tập thông minh với AI',
         theme_color: '#020405',
         background_color: '#020405',
         display: 'standalone',
-        orientation: 'portrait-primary',
         scope: '/',
         start_url: '/',
         categories: ['education', 'productivity'],
@@ -123,5 +102,59 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+  },
+
+  // ============================================
+  // Build optimization — manual chunks
+  // ============================================
+  build: {
+    // Target modern browsers for smaller output
+    target: 'es2020',
+
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // React core — shared by everything, cached long-term
+          if (id.includes('node_modules/react/') ||
+              id.includes('node_modules/react-dom/') ||
+              id.includes('node_modules/react-router')) {
+            return 'vendor-react';
+          }
+
+          // Framer Motion — large animation lib, lazy pages only
+          if (id.includes('node_modules/framer-motion') || id.includes('node_modules/motion')) {
+            return 'vendor-motion';
+          }
+
+          // TanStack Query
+          if (id.includes('node_modules/@tanstack')) {
+            return 'vendor-query';
+          }
+
+          // Axios + cache
+          if (id.includes('node_modules/axios')) {
+            return 'vendor-axios';
+          }
+
+          // HLS.js — only needed for landing page
+          if (id.includes('node_modules/hls.js')) {
+            return 'vendor-hls';
+          }
+
+          // Lucide icons
+          if (id.includes('node_modules/lucide-react')) {
+            return 'vendor-icons';
+          }
+
+          // All other node_modules
+          if (id.includes('node_modules/')) {
+            return 'vendor-misc';
+          }
+        },
+      },
+    },
+
+    // Smaller chunks, better caching
+    chunkSizeWarningLimit: 300,
   },
 })

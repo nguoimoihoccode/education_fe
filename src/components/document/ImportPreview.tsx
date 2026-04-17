@@ -300,6 +300,12 @@ export function ImportPreview({
                               <span className="text-slate-300 italic">{editedCard.example}</span>
                             </div>
                           )}
+                          {editedCard.description && (
+                            <div className="flex items-start gap-2 text-sm bg-black/20 rounded-xl px-4 py-3 border border-white/5 md:col-span-2">
+                              <span className="text-[10px] font-bold text-sky-400 uppercase tracking-widest shrink-0 mt-0.5">Usage</span>
+                              <span className="text-slate-300 whitespace-pre-line">{editedCard.description}</span>
+                            </div>
+                          )}
                           {editedCard.sourceSection && (
                             <div className="flex items-start gap-2 text-sm bg-black/20 rounded-xl px-4 py-3 border border-white/5">
                               <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest shrink-0 mt-0.5">Source</span>

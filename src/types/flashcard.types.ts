@@ -21,6 +21,7 @@ export interface Flashcard {
   pronunciation: string | null;
   example: string | null;
   exampleTranslation: string | null;
+  description: string | null;
   audioUrl: string | null;
   imageUrl: string | null;
   notes: string | null;
@@ -128,6 +129,7 @@ export interface CreateFlashcardDto {
   pronunciation?: string;
   example?: string;
   exampleTranslation?: string;
+  description?: string;
   audioUrl?: string;
   imageUrl?: string;
   notes?: string;
@@ -147,6 +149,7 @@ export interface UpdateFlashcardDto {
   pronunciation?: string;
   example?: string;
   exampleTranslation?: string;
+  description?: string;
   audioUrl?: string;
   imageUrl?: string;
   notes?: string;

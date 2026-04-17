@@ -59,6 +59,7 @@ export default function FlashcardReviewPage() {
   });
 
   const handleReview = (flashcardId: string, quality: number) => {
+    if (reviewMutation.isPending) return;
     reviewMutation.mutate({ flashcardId, quality });
     setCurrentIndex(currentIndex + 1);
   };

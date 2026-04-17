@@ -54,6 +54,7 @@ export interface SuggestedFlashcard {
   pronunciation?: string;
   example?: string;
   exampleTranslation?: string;
+  description?: string;
   notes?: string;
   difficulty: number;
   sourceSection: string;

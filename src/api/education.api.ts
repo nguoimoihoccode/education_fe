@@ -26,17 +26,17 @@ export const getCourses = async (params?: {
     page?: number;
     limit?: number;
 }): Promise<CoursesResponse> => {
-    const response = await apiClient.get('/education/courses', { params });
+    const response = await apiClient.get('/education/courses', { params, ...CACHE_PROFILES.DYNAMIC });
     return response.data;
 };
 
 export const getCourseById = async (id: string): Promise<Course> => {
-    const response = await apiClient.get(`/education/courses/${id}`);
+    const response = await apiClient.get(`/education/courses/${id}`, CACHE_PROFILES.DYNAMIC);
     return response.data;
 };
 
 export const getLanguageById = async (id: string): Promise<Language> => {
-    const response = await apiClient.get(`/education/languages/${id}`);
+    const response = await apiClient.get(`/education/languages/${id}`, CACHE_PROFILES.STATIC);
     return response.data;
 };
 
@@ -48,7 +48,7 @@ export const enrollCourse = async (courseId: string): Promise<UserCourse> => {
 };
 
 export const getMyCourses = async (): Promise<UserCourse[]> => {
-    const response = await apiClient.get('/education/my-courses');
+    const response = await apiClient.get('/education/my-courses', CACHE_PROFILES.USER);
     return response.data;
 };
 
@@ -56,12 +56,12 @@ export const getLessonsByCourse = async (courseId: string, params?: {
     page?: number;
     limit?: number;
 }): Promise<LessonsResponse> => {
-    const response = await apiClient.get(`/education/courses/${courseId}/lessons`, { params });
+    const response = await apiClient.get(`/education/courses/${courseId}/lessons`, { params, ...CACHE_PROFILES.DYNAMIC });
     return response.data;
 };
 
 export const getLessonById = async (id: string): Promise<Lesson> => {
-    const response = await apiClient.get(`/education/lessons/${id}`);
+    const response = await apiClient.get(`/education/lessons/${id}`, CACHE_PROFILES.DYNAMIC);
     return response.data;
 };
 
@@ -73,12 +73,13 @@ export const completeLesson = async (
 };
 
 export const getVocabularyByLesson = async (lessonId: string): Promise<Vocabulary[]> => {
-    const response = await apiClient.get(`/education/lessons/${lessonId}/vocabulary`);
+    const response = await apiClient.get(`/education/lessons/${lessonId}/vocabulary`, CACHE_PROFILES.DYNAMIC);
     return response.data;
 };
 
 export const getVocabularyToReview = async (limit?: number): Promise<Vocabulary[]> => {
     const response = await apiClient.get('/education/vocabulary/review', {
+        ...CACHE_PROFILES.NO_CACHE,
         params: { limit },
     });
     return response.data;
@@ -92,7 +93,7 @@ export const reviewVocabulary = async (
 };
 
 export const getExercisesByLesson = async (lessonId: string): Promise<Exercise[]> => {
-    const response = await apiClient.get(`/education/lessons/${lessonId}/exercises`);
+    const response = await apiClient.get(`/education/lessons/${lessonId}/exercises`, CACHE_PROFILES.DYNAMIC);
     return response.data;
 };
 

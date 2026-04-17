@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, CACHE_PROFILES } from './client';
 
 // ==================== TYPES ====================
 
@@ -88,7 +88,7 @@ export const getStudyGroups = async (params?: {
   limit?: number;
 }): Promise<PaginatedResponse<StudyGroup>> => {
   try {
-    const response = await apiClient.get('/community/groups', { params });
+    const response = await apiClient.get('/community/groups', { params, ...CACHE_PROFILES.DYNAMIC });
     return response.data;
   } catch {
     return { data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } };
@@ -119,7 +119,7 @@ export const getCommunityEvents = async (params?: {
   limit?: number;
 }): Promise<PaginatedResponse<CommunityEvent>> => {
   try {
-    const response = await apiClient.get('/community/events', { params });
+    const response = await apiClient.get('/community/events', { params, ...CACHE_PROFILES.DYNAMIC });
     return response.data;
   } catch {
     return { data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } };
@@ -151,7 +151,7 @@ export const getForumThreads = async (params?: {
   limit?: number;
 }): Promise<PaginatedResponse<ForumThread>> => {
   try {
-    const response = await apiClient.get('/community/forum/threads', { params });
+    const response = await apiClient.get('/community/forum/threads', { params, ...CACHE_PROFILES.DYNAMIC });
     return response.data;
   } catch {
     return { data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } };
@@ -165,7 +165,7 @@ export const getSharedResources = async (params?: {
   limit?: number;
 }): Promise<PaginatedResponse<SharedResource>> => {
   try {
-    const response = await apiClient.get('/community/resources', { params });
+    const response = await apiClient.get('/community/resources', { params, ...CACHE_PROFILES.DYNAMIC });
     return response.data;
   } catch {
     return { data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } };
@@ -174,7 +174,7 @@ export const getSharedResources = async (params?: {
 
 export const getTopMembers = async (limit?: number): Promise<TopMember[]> => {
   try {
-    const response = await apiClient.get('/community/top-members', { params: { limit } });
+    const response = await apiClient.get('/community/top-members', { params: { limit }, ...CACHE_PROFILES.DYNAMIC });
     return response.data;
   } catch {
     return [];
@@ -183,7 +183,7 @@ export const getTopMembers = async (limit?: number): Promise<TopMember[]> => {
 
 export const getCommunityStats = async (): Promise<CommunityStats> => {
   try {
-    const response = await apiClient.get('/community/stats');
+    const response = await apiClient.get('/community/stats', CACHE_PROFILES.STATIC);
     return response.data;
   } catch {
     return { totalMembers: 0, totalDiscussions: 0, totalResources: 0, eventsThisMonth: 0 };

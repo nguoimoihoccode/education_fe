@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, CACHE_PROFILES } from './client';
 import type {
   FlashcardDeck,
   Flashcard,
@@ -28,7 +28,7 @@ export const getFlashcardDecks = async (params?: {
   page?: number;
   limit?: number;
 }): Promise<FlashcardDecksResponse> => {
-  const response = await apiClient.get('/flashcards/decks', { params });
+  const response = await apiClient.get('/flashcards/decks', { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
@@ -36,12 +36,12 @@ export const getPublicFlashcardDecks = async (params?: {
   page?: number;
   limit?: number;
 }): Promise<FlashcardDecksResponse> => {
-  const response = await apiClient.get('/flashcards/decks/public', { params });
+  const response = await apiClient.get('/flashcards/decks/public', { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
 export const getFlashcardDeckById = async (deckId: string): Promise<FlashcardDeck> => {
-  const response = await apiClient.get(`/flashcards/decks/${deckId}`);
+  const response = await apiClient.get(`/flashcards/decks/${deckId}`, CACHE_PROFILES.DYNAMIC);
   return response.data;
 };
 
@@ -50,13 +50,13 @@ export const getDecksByTopic = async (topic: string, params?: {
   page?: number;
   limit?: number;
 }): Promise<FlashcardDecksResponse> => {
-  const response = await apiClient.get(`/flashcards/decks/topic/${topic}`, { params });
+  const response = await apiClient.get(`/flashcards/decks/topic/${topic}`, { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
 // Get all available topics for flashcards
 export const getAvailableTopics = async (): Promise<string[]> => {
-  const response = await apiClient.get('/flashcards/topics');
+  const response = await apiClient.get('/flashcards/topics', CACHE_PROFILES.STATIC);
   return response.data;
 };
 
@@ -84,12 +84,12 @@ export const getFlashcards = async (params?: {
   page?: number;
   limit?: number;
 }): Promise<FlashcardsResponse> => {
-  const response = await apiClient.get('/flashcards', { params });
+  const response = await apiClient.get('/flashcards', { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
 export const getFlashcardById = async (flashcardId: string): Promise<Flashcard> => {
-  const response = await apiClient.get(`/flashcards/${flashcardId}`);
+  const response = await apiClient.get(`/flashcards/${flashcardId}`, CACHE_PROFILES.DYNAMIC);
   return response.data;
 };
 
@@ -120,7 +120,7 @@ export const searchFlashcards = async (params: {
   page?: number;
   limit?: number;
 }): Promise<FlashcardsResponse> => {
-  const response = await apiClient.get('/flashcards/search', { params });
+  const response = await apiClient.get('/flashcards/search', { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
@@ -168,24 +168,24 @@ export const getDueFlashcards = async (params?: {
   deckId?: string;
   limit?: number;
 }): Promise<Flashcard[]> => {
-  const response = await apiClient.get('/flashcards/review/due', { params });
+  const response = await apiClient.get('/flashcards/review/due', { params, ...CACHE_PROFILES.NO_CACHE });
   return response.data;
 };
 
 export const getReviewStats = async (): Promise<FlashcardStats> => {
-  const response = await apiClient.get('/flashcards/review/stats');
+  const response = await apiClient.get('/flashcards/review/stats', CACHE_PROFILES.USER);
   return response.data;
 };
 
 // ==================== STATISTICS ====================
 
 export const getFlashcardStats = async (): Promise<FlashcardStats> => {
-  const response = await apiClient.get('/flashcards/stats');
+  const response = await apiClient.get('/flashcards/stats', CACHE_PROFILES.USER);
   return response.data;
 };
 
 export const getDeckStats = async (deckId: string): Promise<DeckStats> => {
-  const response = await apiClient.get(`/flashcards/decks/${deckId}/stats`);
+  const response = await apiClient.get(`/flashcards/decks/${deckId}/stats`, CACHE_PROFILES.USER);
   return response.data;
 };
 
@@ -193,6 +193,6 @@ export const getReviewHistory = async (params?: {
   page?: number;
   limit?: number;
 }): Promise<{ items: ReviewSession[]; total: number; page: number; limit: number; totalPages: number }> => {
-  const response = await apiClient.get('/flashcards/history', { params });
+  const response = await apiClient.get('/flashcards/history', { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };

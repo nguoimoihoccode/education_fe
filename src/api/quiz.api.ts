@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, CACHE_PROFILES } from './client';
 import type {
   Quiz,
   QuizQuestion,
@@ -31,7 +31,7 @@ export const getQuizzes = async (params?: {
   page?: number;
   limit?: number;
 }): Promise<PaginatedQuizResponse> => {
-  const response = await apiClient.get('/quizzes', { params });
+  const response = await apiClient.get('/quizzes', { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
@@ -39,12 +39,12 @@ export const getPublicQuizzes = async (params?: {
   page?: number;
   limit?: number;
 }): Promise<PaginatedQuizResponse> => {
-  const response = await apiClient.get('/quizzes/public', { params });
+  const response = await apiClient.get('/quizzes/public', { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
 export const getQuizById = async (id: string): Promise<Quiz> => {
-  const response = await apiClient.get(`/quizzes/${id}`);
+  const response = await apiClient.get(`/quizzes/${id}`, CACHE_PROFILES.DYNAMIC);
   return response.data;
 };
 
@@ -65,7 +65,7 @@ export const deleteQuiz = async (id: string): Promise<void> => {
 // ==================== QUESTION MANAGEMENT ====================
 
 export const getQuizQuestions = async (quizId: string): Promise<QuizQuestion[]> => {
-  const response = await apiClient.get(`/quizzes/${quizId}/questions`);
+  const response = await apiClient.get(`/quizzes/${quizId}/questions`, CACHE_PROFILES.DYNAMIC);
   return response.data;
 };
 
@@ -134,7 +134,7 @@ export const completeQuizSession = async (sessionId: string): Promise<QuizSessio
 };
 
 export const getQuizSession = async (sessionId: string): Promise<QuizSession> => {
-  const response = await apiClient.get(`/quizzes/sessions/${sessionId}`);
+  const response = await apiClient.get(`/quizzes/sessions/${sessionId}`, CACHE_PROFILES.NO_CACHE);
   return response.data;
 };
 
@@ -142,29 +142,29 @@ export const getQuizSessions = async (
   quizId: string,
   params?: { page?: number; limit?: number }
 ): Promise<PaginatedQuizSessionResponse> => {
-  const response = await apiClient.get(`/quizzes/${quizId}/sessions`, { params });
+  const response = await apiClient.get(`/quizzes/${quizId}/sessions`, { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
 export const getAllQuizSessions = async (params?: { page?: number; limit?: number }): Promise<PaginatedQuizSessionResponse> => {
-  const response = await apiClient.get('/quizzes/sessions', { params });
+  const response = await apiClient.get('/quizzes/sessions', { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
 // ==================== STATISTICS & HISTORY ====================
 
 export const getQuizStats = async (): Promise<QuizStats> => {
-  const response = await apiClient.get('/quizzes/stats');
+  const response = await apiClient.get('/quizzes/stats', CACHE_PROFILES.USER);
   return response.data;
 };
 
 export const getQuizStatsByTopic = async (topic: string): Promise<TopicStats> => {
-  const response = await apiClient.get(`/quizzes/stats/topic/${topic}`);
+  const response = await apiClient.get(`/quizzes/stats/topic/${topic}`, CACHE_PROFILES.USER);
   return response.data;
 };
 
 export const getQuizHistory = async (params?: { page?: number; limit?: number }): Promise<PaginatedQuizHistoryResponse> => {
-  const response = await apiClient.get('/quizzes/history', { params });
+  const response = await apiClient.get('/quizzes/history', { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };
 
@@ -172,10 +172,10 @@ export const getWrongAnswers = async (
   sessionId?: string
 ): Promise<WrongAnswer[]> => {
   if (sessionId) {
-    const response = await apiClient.get(`/quizzes/sessions/${sessionId}/wrong`);
+    const response = await apiClient.get(`/quizzes/sessions/${sessionId}/wrong`, CACHE_PROFILES.NO_CACHE);
     return response.data;
   }
-  const response = await apiClient.get('/quizzes/wrong-answers');
+  const response = await apiClient.get('/quizzes/wrong-answers', CACHE_PROFILES.NO_CACHE);
   return response.data;
 };
 
@@ -183,6 +183,6 @@ export const getLeaderboard = async (
   quizId: string,
   params?: { page?: number; limit?: number }
 ): Promise<PaginatedLeaderboardResponse> => {
-  const response = await apiClient.get(`/quizzes/${quizId}/leaderboard`, { params });
+  const response = await apiClient.get(`/quizzes/${quizId}/leaderboard`, { params, ...CACHE_PROFILES.DYNAMIC });
   return response.data;
 };

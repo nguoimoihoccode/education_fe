@@ -115,8 +115,8 @@ export default function LessonView() {
 
                             <div className="mt-16 pt-8 border-t border-white/10 flex flex-col items-center">
                                 <p className="text-slate-400 mb-4 text-sm uppercase tracking-widest">Done reading?</p>
-                                <button onClick={() => completeMutation.mutate()} className="px-10 py-4 rounded-2xl bg-white text-black font-bold hover:scale-105 transition-transform flex items-center gap-3 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-white/50">
-                                    <CheckCircle2 className="w-6 h-6" /> Mark Complete
+                                <button onClick={() => completeMutation.mutate()} disabled={completeMutation.isPending} className="px-10 py-4 rounded-2xl bg-white text-black font-bold hover:scale-105 transition-transform flex items-center gap-3 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-white/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                                    <CheckCircle2 className="w-6 h-6" /> {completeMutation.isPending ? 'Completing...' : 'Mark Complete'}
                                 </button>
                             </div>
                         </div>

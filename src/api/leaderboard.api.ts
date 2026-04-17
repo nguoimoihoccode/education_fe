@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, CACHE_PROFILES } from './client';
 
 // ==================== TYPES ====================
 
@@ -45,7 +45,7 @@ export const getLeaderboard = async (params?: {
   search?: string;
 }): Promise<LeaderboardResponse> => {
   try {
-    const response = await apiClient.get('/education/leaderboard', { params });
+    const response = await apiClient.get('/education/leaderboard', { params, ...CACHE_PROFILES.DYNAMIC });
     return response.data;
   } catch {
     // Fallback: build leaderboard from available data
@@ -55,7 +55,7 @@ export const getLeaderboard = async (params?: {
 
 export const getGlobalStats = async (): Promise<GlobalStats> => {
   try {
-    const response = await apiClient.get('/education/leaderboard/stats');
+    const response = await apiClient.get('/education/leaderboard/stats', CACHE_PROFILES.STATIC);
     return response.data;
   } catch {
     return {
@@ -69,7 +69,7 @@ export const getGlobalStats = async (): Promise<GlobalStats> => {
 
 export const getCurrentUserRank = async (): Promise<LeaderboardUser | null> => {
   try {
-    const response = await apiClient.get('/education/leaderboard/me');
+    const response = await apiClient.get('/education/leaderboard/me', CACHE_PROFILES.USER);
     return response.data;
   } catch {
     return null;

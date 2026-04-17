@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, CACHE_PROFILES } from './client';
 import type {
   UploadedFile,
   ImportPreview,
@@ -23,7 +23,7 @@ export const parseDocument = async (fileId: string): Promise<void> => {
 };
 
 export const generateImportPreview = async (fileId: string): Promise<ImportPreview> => {
-  const response = await apiClient.get(`/documents/${fileId}/preview`);
+  const response = await apiClient.get(`/documents/${fileId}/preview`, CACHE_PROFILES.NO_CACHE);
   return response.data;
 };
 

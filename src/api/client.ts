@@ -137,7 +137,7 @@ apiClient.interceptors.response.use(
         localStorage.removeItem('auth-storage'); // Zustand persisted state
 
         // Clear API cache khi logout
-        apiClient.storage.clear();
+        apiClient.storage.clear?.();
 
         // Chỉ redirect nếu không phải request login
         if (!originalRequest.url?.includes('/auth/login')) {

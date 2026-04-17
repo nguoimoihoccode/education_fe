@@ -138,6 +138,13 @@ export function FlashcardCard({
               </div>
             )}
 
+            {flashcard.description && (
+              <div className="mt-4 p-4 rounded-2xl bg-white/5 border border-white/10 text-sm font-medium text-slate-200 max-w-md w-full text-left">
+                <div className="text-xs font-bold uppercase tracking-widest text-sky-300 mb-2">Usage</div>
+                <p className="whitespace-pre-line">{flashcard.description}</p>
+              </div>
+            )}
+
             {flashcard.notes && (
               <div className="mt-4 p-4 rounded-2xl bg-accent-500/10 border border-accent-500/20 text-sm font-medium text-accent-200 max-w-md w-full text-left">
                 <div className="text-xs font-bold uppercase tracking-widest text-accent-400 mb-1">Notes:</div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Users,
@@ -35,6 +35,7 @@ import {
 } from '@/api/social.api';
 import type { SocialPost as ApiSocialPost, SocialComment as ApiComment } from '@/api/social.api';
 import toast from 'react-hot-toast';
+import { useThrottle } from '@/hooks/useRateLimit';
 import './Education.css';
 
 /* ============ Types ============ */
@@ -163,7 +164,7 @@ export default function Social() {
         { tag: '#VocabChallenge', posts: '756 posts' },
       ];
 
-  const handleLike = async (postId: string) => {
+  const handleLikeRaw = useCallback(async (postId: string) => {
     // Optimistic update
     setLocalPosts((prev) =>
       prev.map((p) =>
@@ -174,14 +175,16 @@ export default function Social() {
     );
     // Fire API call (best-effort)
     likePost(postId).catch(() => {});
-  };
+  }, []);
+  const handleLike = useThrottle(handleLikeRaw, 500);
 
-  const handleBookmark = async (postId: string) => {
+  const handleBookmarkRaw = useCallback(async (postId: string) => {
     setLocalPosts((prev) =>
       prev.map((p) => (p.id === postId ? { ...p, isBookmarked: !p.isBookmarked } : p))
     );
     bookmarkPost(postId).catch(() => {});
-  };
+  }, []);
+  const handleBookmark = useThrottle(handleBookmarkRaw, 500);
 
   const toggleComments = (postId: string) => {
     setExpandedComments((prev) => {
@@ -290,7 +293,7 @@ export default function Social() {
                           </button>
                           <button
                             onClick={handleCreatePost}
-                            disabled={!newPostText.trim()}
+                            disabled={!newPostText.trim() || createPostMutation.isPending}
                             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white text-sm font-bold hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
                           >
                             <Send className="w-3.5 h-3.5" />

@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, CACHE_PROFILES } from './client';
 
 // ==================== TYPES ====================
 
@@ -65,7 +65,7 @@ export const getSocialFeed = async (params?: {
   limit?: number;
 }): Promise<SocialFeedResponse> => {
   try {
-    const response = await apiClient.get('/social/feed', { params });
+    const response = await apiClient.get('/social/feed', { params, ...CACHE_PROFILES.DYNAMIC });
     return response.data;
   } catch {
     return { data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } };
@@ -105,7 +105,7 @@ export const addComment = async (
 
 export const getTrendingTopics = async (): Promise<TrendingTopic[]> => {
   try {
-    const response = await apiClient.get('/social/trending');
+    const response = await apiClient.get('/social/trending', CACHE_PROFILES.STATIC);
     return response.data;
   } catch {
     return [];

@@ -1,40 +1,95 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { Layout } from '@/components/layout';
 import { ProtectedRoute } from '@/components/auth';
-import { Login } from '@/pages/Login';
-import { Register } from '@/pages/Register';
-import { GoogleCallback } from '@/pages/GoogleCallback';
-import LandingPage from '@/pages/LandingPage';
-import LandingPageNew from '@/pages/landing/LandingPageNew';
-import Education from '@/pages/Education';
-import CourseDetail from '@/pages/CourseDetail';
-import LessonView from '@/pages/LessonView';
-import FlashcardDecks from '@/pages/FlashcardDecks';
-import FlashcardReview from '@/pages/FlashcardReview';
-import DocumentImportPage from '@/pages/DocumentImport';
-import QuizListPage from '@/pages/quiz/QuizListPage';
-import QuizDetailPage from '@/pages/quiz/QuizDetailPage';
-import QuizSessionPage from '@/pages/quiz/QuizSessionPage';
-import QuizResultPage from '@/pages/quiz/QuizResultPage';
-import QuizStatsPage from '@/pages/quiz/QuizStatsPage';
-import UserProfile from '@/pages/UserProfile';
-import AiTutor from '@/pages/AiTutor';
-import Leaderboard from '@/pages/Leaderboard';
-import Social from '@/pages/Social';
-import PremiumUpgrade from '@/pages/PremiumUpgrade';
-import CommunityHub from '@/pages/CommunityHub';
-import AdvancedSettings from '@/pages/AdvancedSettings';
-import NotFoundPage from '@/pages/NotFoundPage';
-import Onboarding from '@/pages/Onboarding';
-import ScholarProfile from '@/pages/ScholarProfile';
-import ComingSoon from '@/pages/ComingSoon';
-import DataExportLogs from '@/pages/DataExportLogs';
 import { queryClient } from '@/config';
 import { useSettingsStore } from '@/store/settings.store';
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 
+// ============================================
+// Lazy-loaded route components
+// Mỗi page sẽ được tách thành chunk riêng,
+// chỉ tải khi user navigate đến route đó
+// ============================================
+
+// Auth pages (nhỏ, load nhanh)
+const Login = lazy(() => import('@/pages/Login').then(m => ({ default: m.Login })));
+const Register = lazy(() => import('@/pages/Register').then(m => ({ default: m.Register })));
+const GoogleCallback = lazy(() => import('@/pages/GoogleCallback').then(m => ({ default: m.GoogleCallback })));
+
+// Landing pages
+const LandingPage = lazy(() => import('@/pages/LandingPage'));
+const LandingPageNew = lazy(() => import('@/pages/landing/LandingPageNew'));
+
+// Education core
+const Education = lazy(() => import('@/pages/Education'));
+const CourseDetail = lazy(() => import('@/pages/CourseDetail'));
+const LessonView = lazy(() => import('@/pages/LessonView'));
+
+// Flashcards
+const FlashcardDecks = lazy(() => import('@/pages/FlashcardDecks'));
+const FlashcardReview = lazy(() => import('@/pages/FlashcardReview'));
+const DocumentImportPage = lazy(() => import('@/pages/DocumentImport'));
+
+// Quiz
+const QuizListPage = lazy(() => import('@/pages/quiz/QuizListPage'));
+const QuizDetailPage = lazy(() => import('@/pages/quiz/QuizDetailPage'));
+const QuizSessionPage = lazy(() => import('@/pages/quiz/QuizSessionPage'));
+const QuizResultPage = lazy(() => import('@/pages/quiz/QuizResultPage'));
+const QuizStatsPage = lazy(() => import('@/pages/quiz/QuizStatsPage'));
+
+// Social & Community
+const UserProfile = lazy(() => import('@/pages/UserProfile'));
+const AiTutor = lazy(() => import('@/pages/AiTutor'));
+const Leaderboard = lazy(() => import('@/pages/Leaderboard'));
+const Social = lazy(() => import('@/pages/Social'));
+const CommunityHub = lazy(() => import('@/pages/CommunityHub'));
+const ScholarProfile = lazy(() => import('@/pages/ScholarProfile'));
+
+// Settings & Misc
+const PremiumUpgrade = lazy(() => import('@/pages/PremiumUpgrade'));
+const AdvancedSettings = lazy(() => import('@/pages/AdvancedSettings'));
+const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const DataExportLogs = lazy(() => import('@/pages/DataExportLogs'));
+const ComingSoon = lazy(() => import('@/pages/ComingSoon'));
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
+
+// ============================================
+// Loading Fallback
+// ============================================
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative">
+          <div
+            className="w-12 h-12 rounded-full border-2 border-transparent animate-spin"
+            style={{
+              borderTopColor: '#10b981',
+              borderRightColor: '#10b981',
+            }}
+          />
+          <div
+            className="absolute inset-1 w-10 h-10 rounded-full border-2 border-transparent animate-spin"
+            style={{
+              borderBottomColor: '#0d9488',
+              animationDirection: 'reverse',
+              animationDuration: '0.8s',
+            }}
+          />
+        </div>
+        <p className="text-sm font-medium" style={{ color: 'var(--text-secondary, #94a3b8)' }}>
+          Đang tải...
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// Settings Effect (theme, accent, font size)
+// ============================================
 function SettingsEffect() {
   const { theme, accentColor, fontSize, reducedMotion, compactMode, highContrast } = useSettingsStore();
 
@@ -115,6 +170,9 @@ function SettingsEffect() {
   return null;
 }
 
+// ============================================
+// App Component
+// ============================================
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -145,184 +203,186 @@ function App() {
           }}
         />
         <Layout>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/auth/callback" element={<GoogleCallback />} />
-            <Route path="/education" element={<Education />} />
-            <Route path="/education/courses/:id" element={<CourseDetail />} />
-            <Route
-              path="/education/lessons/:id"
-              element={
-                <ProtectedRoute>
-                  <LessonView />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/flashcards"
-              element={
-                <ProtectedRoute>
-                  <FlashcardDecks />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/flashcards/decks"
-              element={
-                <ProtectedRoute>
-                  <FlashcardDecks />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/flashcards/review"
-              element={
-                <ProtectedRoute>
-                  <FlashcardReview />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/flashcards/document-import"
-              element={
-                <ProtectedRoute>
-                  <DocumentImportPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/quiz"
-              element={
-                <ProtectedRoute>
-                  <QuizListPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/quiz/:id"
-              element={
-                <ProtectedRoute>
-                  <QuizDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/quiz/:quizId/session"
-              element={
-                <ProtectedRoute>
-                  <QuizSessionPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/quiz/session/:sessionId/result"
-              element={
-                <ProtectedRoute>
-                  <QuizResultPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/quiz/stats"
-              element={
-                <ProtectedRoute>
-                  <QuizStatsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/quiz/history"
-              element={
-                <ProtectedRoute>
-                  <QuizStatsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <UserProfile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/ai-tutor"
-              element={
-                <ProtectedRoute>
-                  <AiTutor />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/leaderboard"
-              element={
-                <ProtectedRoute>
-                  <Leaderboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/social"
-              element={
-                <ProtectedRoute>
-                  <Social />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/premium"
-              element={
-                <ProtectedRoute>
-                  <PremiumUpgrade />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/community"
-              element={
-                <ProtectedRoute>
-                  <CommunityHub />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <AdvancedSettings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/data-logs"
-              element={
-                <ProtectedRoute>
-                  <DataExportLogs />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/onboarding"
-              element={
-                <ProtectedRoute>
-                  <Onboarding />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/scholar/:username"
-              element={<ScholarProfile />}
-            />
-            <Route
-              path="/coming-soon"
-              element={<ComingSoon />}
-            />
-            <Route path="/dashboard-landing" element={<LandingPageNew />} />
-            <Route path="/" element={<LandingPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/auth/callback" element={<GoogleCallback />} />
+              <Route path="/education" element={<Education />} />
+              <Route path="/education/courses/:id" element={<CourseDetail />} />
+              <Route
+                path="/education/lessons/:id"
+                element={
+                  <ProtectedRoute>
+                    <LessonView />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/flashcards"
+                element={
+                  <ProtectedRoute>
+                    <FlashcardDecks />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/flashcards/decks"
+                element={
+                  <ProtectedRoute>
+                    <FlashcardDecks />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/flashcards/review"
+                element={
+                  <ProtectedRoute>
+                    <FlashcardReview />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/flashcards/document-import"
+                element={
+                  <ProtectedRoute>
+                    <DocumentImportPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/quiz"
+                element={
+                  <ProtectedRoute>
+                    <QuizListPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/quiz/:id"
+                element={
+                  <ProtectedRoute>
+                    <QuizDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/quiz/:quizId/session"
+                element={
+                  <ProtectedRoute>
+                    <QuizSessionPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/quiz/session/:sessionId/result"
+                element={
+                  <ProtectedRoute>
+                    <QuizResultPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/quiz/stats"
+                element={
+                  <ProtectedRoute>
+                    <QuizStatsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/quiz/history"
+                element={
+                  <ProtectedRoute>
+                    <QuizStatsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <UserProfile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/ai-tutor"
+                element={
+                  <ProtectedRoute>
+                    <AiTutor />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/leaderboard"
+                element={
+                  <ProtectedRoute>
+                    <Leaderboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/social"
+                element={
+                  <ProtectedRoute>
+                    <Social />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/premium"
+                element={
+                  <ProtectedRoute>
+                    <PremiumUpgrade />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/community"
+                element={
+                  <ProtectedRoute>
+                    <CommunityHub />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <AdvancedSettings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/data-logs"
+                element={
+                  <ProtectedRoute>
+                    <DataExportLogs />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/onboarding"
+                element={
+                  <ProtectedRoute>
+                    <Onboarding />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/scholar/:username"
+                element={<ScholarProfile />}
+              />
+              <Route
+                path="/coming-soon"
+                element={<ComingSoon />}
+              />
+              <Route path="/dashboard-landing" element={<LandingPageNew />} />
+              <Route path="/" element={<LandingPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
         </Layout>
       </BrowserRouter>
     </QueryClientProvider>
