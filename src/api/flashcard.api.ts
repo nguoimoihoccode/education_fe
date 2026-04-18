@@ -1,4 +1,9 @@
 import { apiClient, CACHE_PROFILES } from './client';
+import {
+  buildReviewSessionResponse,
+  normalizeCollectionPage,
+  normalizeFlashcardStats,
+} from './normalizers';
 import type {
   FlashcardDeck,
   Flashcard,
@@ -29,7 +34,7 @@ export const getFlashcardDecks = async (params?: {
   limit?: number;
 }): Promise<FlashcardDecksResponse> => {
   const response = await apiClient.get('/flashcards/decks', { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  return normalizeCollectionPage<FlashcardDeck>(response.data, 'decks');
 };
 
 export const getPublicFlashcardDecks = async (params?: {
@@ -37,7 +42,7 @@ export const getPublicFlashcardDecks = async (params?: {
   limit?: number;
 }): Promise<FlashcardDecksResponse> => {
   const response = await apiClient.get('/flashcards/decks/public', { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  return normalizeCollectionPage<FlashcardDeck>(response.data, 'decks');
 };
 
 export const getFlashcardDeckById = async (deckId: string): Promise<FlashcardDeck> => {
@@ -51,7 +56,7 @@ export const getDecksByTopic = async (topic: string, params?: {
   limit?: number;
 }): Promise<FlashcardDecksResponse> => {
   const response = await apiClient.get(`/flashcards/decks/topic/${topic}`, { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  return normalizeCollectionPage<FlashcardDeck>(response.data, 'decks');
 };
 
 // Get all available topics for flashcards
@@ -85,7 +90,7 @@ export const getFlashcards = async (params?: {
   limit?: number;
 }): Promise<FlashcardsResponse> => {
   const response = await apiClient.get('/flashcards', { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  return normalizeCollectionPage<Flashcard>(response.data, 'flashcards');
 };
 
 export const getFlashcardById = async (flashcardId: string): Promise<Flashcard> => {
@@ -100,7 +105,7 @@ export const createFlashcard = async (dto: CreateFlashcardDto): Promise<Flashcar
 
 export const bulkCreateFlashcards = async (dto: BulkCreateFlashcardDto): Promise<Flashcard[]> => {
   const response = await apiClient.post('/flashcards/bulk', dto);
-  return response.data;
+  return Array.isArray(response.data?.created) ? response.data.created : [];
 };
 
 export const updateFlashcard = async (
@@ -121,7 +126,7 @@ export const searchFlashcards = async (params: {
   limit?: number;
 }): Promise<FlashcardsResponse> => {
   const response = await apiClient.get('/flashcards/search', { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  return normalizeCollectionPage<Flashcard>(response.data, 'flashcards');
 };
 
 // ==================== IMPORT FROM VOCABULARY ====================
@@ -137,7 +142,11 @@ export const importFromVocabularyBulk = async (
   dto: ImportFromVocabularyBulkDto
 ): Promise<{ imported: number; skipped: number; deckId: string }> => {
   const response = await apiClient.post('/flashcards/import/vocabulary/bulk', dto);
-  return response.data;
+  return {
+    imported: response.data?.totalImported ?? 0,
+    skipped: response.data?.totalSkipped ?? 0,
+    deckId: response.data?.results?.find?.((item: { deckId?: string }) => item.deckId)?.deckId ?? '',
+  };
 };
 
 // ==================== REVIEW SYSTEM ====================
@@ -145,8 +154,12 @@ export const importFromVocabularyBulk = async (
 export const startReviewSession = async (
   dto: StartReviewSessionDto
 ): Promise<ReviewSessionResponse> => {
-  const response = await apiClient.post('/flashcards/review/start', dto);
-  return response.data;
+  const [sessionResponse, flashcards] = await Promise.all([
+    apiClient.post('/flashcards/review/start', dto),
+    getDueFlashcards({ deckId: dto.deckId, limit: dto.limit }),
+  ]);
+
+  return buildReviewSessionResponse(sessionResponse.data, flashcards);
 };
 
 export const reviewFlashcard = async (
@@ -174,19 +187,33 @@ export const getDueFlashcards = async (params?: {
 
 export const getReviewStats = async (): Promise<FlashcardStats> => {
   const response = await apiClient.get('/flashcards/review/stats', CACHE_PROFILES.USER);
-  return response.data;
+  return normalizeFlashcardStats(response.data);
 };
 
 // ==================== STATISTICS ====================
 
 export const getFlashcardStats = async (): Promise<FlashcardStats> => {
   const response = await apiClient.get('/flashcards/stats', CACHE_PROFILES.USER);
-  return response.data;
+  return normalizeFlashcardStats(response.data);
 };
 
 export const getDeckStats = async (deckId: string): Promise<DeckStats> => {
   const response = await apiClient.get(`/flashcards/decks/${deckId}/stats`, CACHE_PROFILES.USER);
-  return response.data;
+  const data = response.data;
+  const statusStats = data?.statusStats ?? {};
+
+  return {
+    deckId: data?.deck?.id ?? deckId,
+    deckName: data?.deck?.name ?? '',
+    totalCards: data?.totalFlashcards ?? 0,
+    dueCards: data?.dueCount ?? 0,
+    masteredCards: statusStats.MASTERED ?? 0,
+    learningCards: statusStats.LEARNING ?? 0,
+    newCards: statusStats.NEW ?? 0,
+    totalReviews: 0,
+    averageAccuracy: 0,
+    lastReviewed: null,
+  };
 };
 
 export const getReviewHistory = async (params?: {
@@ -194,5 +221,5 @@ export const getReviewHistory = async (params?: {
   limit?: number;
 }): Promise<{ items: ReviewSession[]; total: number; page: number; limit: number; totalPages: number }> => {
   const response = await apiClient.get('/flashcards/history', { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  return normalizeCollectionPage<ReviewSession>(response.data, 'sessions');
 };

@@ -1,4 +1,9 @@
 import { apiClient, CACHE_PROFILES } from './client';
+import {
+  normalizeCollectionPage,
+  normalizeQuizSessionObject,
+  normalizeWrongAnswers,
+} from './normalizers';
 import type {
   Quiz,
   QuizQuestion,
@@ -32,7 +37,7 @@ export const getQuizzes = async (params?: {
   limit?: number;
 }): Promise<PaginatedQuizResponse> => {
   const response = await apiClient.get('/quizzes', { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  return normalizeCollectionPage<Quiz>(response.data, 'quizzes');
 };
 
 export const getPublicQuizzes = async (params?: {
@@ -40,12 +45,19 @@ export const getPublicQuizzes = async (params?: {
   limit?: number;
 }): Promise<PaginatedQuizResponse> => {
   const response = await apiClient.get('/quizzes/public', { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  return normalizeCollectionPage<Quiz>(response.data, 'quizzes');
 };
 
 export const getQuizById = async (id: string): Promise<Quiz> => {
-  const response = await apiClient.get(`/quizzes/${id}`, CACHE_PROFILES.DYNAMIC);
-  return response.data;
+  const [quizResponse, questions] = await Promise.all([
+    apiClient.get(`/quizzes/${id}`, CACHE_PROFILES.DYNAMIC),
+    getQuizQuestions(id),
+  ]);
+
+  return {
+    ...quizResponse.data,
+    questions,
+  };
 };
 
 export const createQuiz = async (dto: CreateQuizDto): Promise<Quiz> => {
@@ -66,7 +78,11 @@ export const deleteQuiz = async (id: string): Promise<void> => {
 
 export const getQuizQuestions = async (quizId: string): Promise<QuizQuestion[]> => {
   const response = await apiClient.get(`/quizzes/${quizId}/questions`, CACHE_PROFILES.DYNAMIC);
-  return response.data;
+  return Array.isArray(response.data?.questions)
+    ? response.data.questions
+    : Array.isArray(response.data)
+      ? response.data
+      : [];
 };
 
 export const createQuizQuestion = async (
@@ -82,7 +98,7 @@ export const bulkCreateQuizQuestions = async (
   dto: BulkCreateQuizQuestionDto
 ): Promise<QuizQuestion[]> => {
   const response = await apiClient.post(`/quizzes/${quizId}/questions/bulk`, dto);
-  return response.data;
+  return Array.isArray(response.data?.created) ? response.data.created : [];
 };
 
 export const updateQuizQuestion = async (
@@ -113,7 +129,7 @@ export const startQuizSession = async (
   dto?: StartQuizSessionDto
 ): Promise<QuizSession> => {
   const response = await apiClient.post(`/quizzes/${quizId}/start`, dto);
-  return response.data;
+  return normalizeQuizSessionObject(response.data as QuizSession);
 };
 
 export const submitQuizAnswer = async (
@@ -130,12 +146,12 @@ export const submitQuizAnswer = async (
 
 export const completeQuizSession = async (sessionId: string): Promise<QuizSession> => {
   const response = await apiClient.post(`/quizzes/sessions/${sessionId}/complete`);
-  return response.data;
+  return normalizeQuizSessionObject(response.data as QuizSession);
 };
 
 export const getQuizSession = async (sessionId: string): Promise<QuizSession> => {
   const response = await apiClient.get(`/quizzes/sessions/${sessionId}`, CACHE_PROFILES.NO_CACHE);
-  return response.data;
+  return normalizeQuizSessionObject(response.data as QuizSession);
 };
 
 export const getQuizSessions = async (
@@ -143,29 +159,77 @@ export const getQuizSessions = async (
   params?: { page?: number; limit?: number }
 ): Promise<PaginatedQuizSessionResponse> => {
   const response = await apiClient.get(`/quizzes/${quizId}/sessions`, { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  const normalized = normalizeCollectionPage<QuizSession>(response.data, 'sessions');
+  return {
+    ...normalized,
+    items: normalized.items.map((session) => normalizeQuizSessionObject(session)),
+  };
 };
 
 export const getAllQuizSessions = async (params?: { page?: number; limit?: number }): Promise<PaginatedQuizSessionResponse> => {
   const response = await apiClient.get('/quizzes/sessions', { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  const normalized = normalizeCollectionPage<QuizSession>(response.data, 'sessions');
+  return {
+    ...normalized,
+    items: normalized.items.map((session) => normalizeQuizSessionObject(session)),
+  };
 };
 
 // ==================== STATISTICS & HISTORY ====================
 
 export const getQuizStats = async (): Promise<QuizStats> => {
   const response = await apiClient.get('/quizzes/stats', CACHE_PROFILES.USER);
-  return response.data;
+  const data = response.data;
+
+  return {
+    totalQuizzes: data?.totalQuizzes ?? 0,
+    totalAttempts: data?.totalSessions ?? 0,
+    averageScore: data?.averageScore ?? 0,
+    highestScore: 0,
+    lowestScore: 0,
+    averageTimePerQuestion: 0,
+    watchedTopics: [],
+    completedQuizzes: data?.totalSessions ?? 0,
+    passedQuizzes:
+      typeof data?.passRate === 'number' && typeof data?.totalSessions === 'number'
+        ? Math.round((data.totalSessions * data.passRate) / 100)
+        : 0,
+  };
 };
 
 export const getQuizStatsByTopic = async (topic: string): Promise<TopicStats> => {
   const response = await apiClient.get(`/quizzes/stats/topic/${topic}`, CACHE_PROFILES.USER);
-  return response.data;
+  const data = response.data;
+
+  return {
+    topic: data?.topic ?? topic,
+    totalAttempts: data?.totalSessions ?? 0,
+    averageScore: data?.averageScore ?? 0,
+    highestScore: 0,
+    lowestScore: 0,
+    favoriteQuestionTypes: [],
+    strengths: [],
+    weaknesses: [],
+  };
 };
 
 export const getQuizHistory = async (params?: { page?: number; limit?: number }): Promise<PaginatedQuizHistoryResponse> => {
   const response = await apiClient.get('/quizzes/history', { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  const normalized = normalizeCollectionPage<QuizHistoryItem>(response.data, 'sessions');
+
+  return {
+    ...normalized,
+    items: normalized.items.map((item: QuizHistoryItem & { quiz?: Quiz; startedAt?: string; completedAt?: string }) => ({
+      ...item,
+      quizName: item.quizName ?? item.quiz?.name ?? '',
+      topic: item.topic ?? item.quiz?.topic ?? '',
+      status: item.status ?? (item.completedAt ? 'COMPLETED' : 'IN_PROGRESS'),
+      totalAnswers: item.totalAnswers ?? ((item.correctAnswers ?? 0) + ((item as { wrongAnswers?: number }).wrongAnswers ?? 0)),
+      startTime: item.startTime ?? item.startedAt ?? '',
+      endTime: item.endTime ?? item.completedAt ?? '',
+      passed: item.passed ?? false,
+    })),
+  };
 };
 
 export const getWrongAnswers = async (
@@ -173,10 +237,10 @@ export const getWrongAnswers = async (
 ): Promise<WrongAnswer[]> => {
   if (sessionId) {
     const response = await apiClient.get(`/quizzes/sessions/${sessionId}/wrong`, CACHE_PROFILES.NO_CACHE);
-    return response.data;
+    return normalizeWrongAnswers(response.data);
   }
   const response = await apiClient.get('/quizzes/wrong-answers', CACHE_PROFILES.NO_CACHE);
-  return response.data;
+  return normalizeWrongAnswers(response.data);
 };
 
 export const getLeaderboard = async (
@@ -184,5 +248,14 @@ export const getLeaderboard = async (
   params?: { page?: number; limit?: number }
 ): Promise<PaginatedLeaderboardResponse> => {
   const response = await apiClient.get(`/quizzes/${quizId}/leaderboard`, { params, ...CACHE_PROFILES.DYNAMIC });
-  return response.data;
+  const normalized = normalizeCollectionPage<LeaderboardEntry & { username?: string }>(response.data, 'leaderboard');
+
+  return {
+    ...normalized,
+    items: normalized.items.map((entry) => ({
+      ...entry,
+      userName: entry.userName ?? entry.username ?? '',
+      accuracy: entry.accuracy ?? 0,
+    })),
+  };
 };

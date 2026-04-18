@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Trophy, XCircle,RotateCw, Home, BarChart2 } from 'lucide-react';
 import { getQuizSession, getWrongAnswers, getQuizById } from '@/api/quiz.api';
+import { getQuizResultView } from './quizResultView';
 import '../Education.css';
 
 export default function QuizResultPage() {
@@ -62,11 +63,18 @@ export default function QuizResultPage() {
     );
   }
 
-  const isPassed = session.passed;
-  const totalQuestions = quiz.questionCount;
-  const correctCount = session.correctAnswers;
-  const incorrectCount = totalQuestions - correctCount;
-  const passThreshold = quiz.passingScore;
+  const {
+    isPassed,
+    totalQuestions,
+    correctCount,
+    incorrectCount,
+    passThreshold,
+    canRetry,
+    certificateUrl,
+  } = getQuizResultView(
+    session as typeof session & { userRetries?: number },
+    quiz as typeof quiz & { certificateUrl?: string | null },
+  );
 
   return (
     <div className="education-container">
@@ -111,10 +119,10 @@ export default function QuizResultPage() {
             </div>
           </div>
 
-          {(quiz as any).certificateUrl && isPassed && (
+          {certificateUrl && isPassed && (
             <div className="mt-6">
               <a
-                href={(quiz as any).certificateUrl}
+                href={certificateUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium hover:scale-105 transition-transform"
@@ -128,7 +136,7 @@ export default function QuizResultPage() {
 
         {/* Actions */}
         <div className="flex flex-wrap gap-4 mb-8 justify-center">
-          {quiz.allowRetry && !isPassed && ((session as any).userRetries || 0) < quiz.maxRetries && (
+          {canRetry && !isPassed && (
             <Link
               to={`/quiz/${quiz.id}/session`}
               className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all"

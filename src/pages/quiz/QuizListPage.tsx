@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import {
   Plus,
   Search,
-  Filter,
   BookOpen,
   TrendingUp,
   Target,
@@ -15,10 +14,23 @@ import {
   getQuizzes,
   getQuizStats,
   createQuiz,
+  deleteQuiz,
+  updateQuiz,
 } from '@/api/quiz.api';
 import { QuizCard, QuizStats } from '@/components/quiz';
 import { Pagination } from '@/components/ui';
-import type { Quiz, CreateQuizDto, QuizDifficulty, QuizQuestionType } from '@/types/quiz.types';
+import type { Quiz, UpdateQuizDto } from '@/types/quiz.types';
+import {
+  buildCreateQuizDto,
+  buildUpdateQuizDto,
+  createDefaultQuizFormState,
+  createQuizFormStateFromQuiz,
+  extractAvailableTopics,
+  getQuizCreateErrorMessage,
+  getQuizDeleteErrorMessage,
+  getQuizUpdateErrorMessage,
+  type QuizListFormState,
+} from './quizListView';
 import toast from 'react-hot-toast';
 import '../Education.css';
 
@@ -30,22 +42,8 @@ export default function QuizListPage() {
   const [topicFilter, setTopicFilter] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [topics, setTopics] = useState<string[]>([]);
-
-  // Form state for creating a quiz
-  const [newQuizName, setNewQuizName] = useState('');
-  const [newQuizDescription, setNewQuizDescription] = useState('');
-  const [newQuizTopic, setNewQuizTopic] = useState('');
-  const [newQuizDifficulty, setNewQuizDifficulty] = useState<QuizDifficulty>('MEDIUM');
-  const [newQuizQuestionType, setNewQuizQuestionType] = useState<QuizQuestionType>('MIXED');
-  const [newQuizQuestionCount, setNewQuizQuestionCount] = useState(10);
-  const [newQuizTimeLimit, setNewQuizTimeLimit] = useState(10); // minutes
-  const [newQuizPassingScore, setNewQuizPassingScore] = useState(70);
-  const [newQuizShuffleQuestions, setNewQuizShuffleQuestions] = useState(true);
-  const [newQuizShuffleAnswers, setNewQuizShuffleAnswers] = useState(true);
-  const [newQuizShowCorrectAnswer, setNewQuizShowCorrectAnswer] = useState(true);
-  const [newQuizAllowRetry, setNewQuizAllowRetry] = useState(false);
-  const [newQuizMaxRetries, setNewQuizMaxRetries] = useState(0);
+  const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null);
+  const [form, setForm] = useState<QuizListFormState>(createDefaultQuizFormState());
 
   // Fetch quizzes
   const { data: quizzesData, isLoading: isLoadingQuizzes } = useQuery({
@@ -59,16 +57,9 @@ export default function QuizListPage() {
     queryFn: getQuizStats,
   });
 
-  // Fetch topics for filter (we could have an API for this; for now extract from quizzes)
-  // In a full implementation, there would be an endpoint to get all distinct topics
-  // For now, we'll collect from quiz data and also include any additional topics the user might type
-
   const quizzes = quizzesData?.items || [];
-  const totalQuizzes = quizzesData?.total || 0;
   const totalPages = quizzesData?.totalPages || 1;
-
-  const allTopics = Array.from(new Set(quizzes.map((q: Quiz) => q.topic).filter(Boolean) as string[]));
-  const availableTopics = [...new Set([...allTopics, ...topics])];
+  const availableTopics = extractAvailableTopics(quizzes);
 
   const filteredQuizzes = quizzes.filter((quiz: Quiz) => {
     const matchesSearch = quiz.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -77,59 +68,83 @@ export default function QuizListPage() {
     return matchesSearch && matchesTopic;
   });
 
+  const isEditMode = Boolean(editingQuiz);
+
+  const resetQuizForm = () => {
+    setForm(createDefaultQuizFormState());
+    setEditingQuiz(null);
+  };
+
+  const closeQuizModal = () => {
+    setShowCreateModal(false);
+    resetQuizForm();
+  };
+
+  const openCreateModal = () => {
+    resetQuizForm();
+    setShowCreateModal(true);
+  };
+
+  const openEditModal = (quiz: Quiz) => {
+    setEditingQuiz(quiz);
+    setForm(createQuizFormStateFromQuiz(quiz));
+    setShowCreateModal(true);
+  };
+
   // Mutations
   const createQuizMutation = useMutation({
-    mutationFn: (dto: CreateQuizDto) => createQuiz(dto),
+    mutationFn: createQuiz,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       queryClient.invalidateQueries({ queryKey: ['quizStats'] });
       toast.success('Quiz created successfully!');
-      resetCreateForm();
-      setShowCreateModal(false);
+      closeQuizModal();
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to create quiz.');
+    onError: (error) => {
+      toast.error(getQuizCreateErrorMessage(error));
     },
   });
 
-  const resetCreateForm = () => {
-    setNewQuizName('');
-    setNewQuizDescription('');
-    setNewQuizTopic('');
-    setNewQuizDifficulty('MEDIUM');
-    setNewQuizQuestionType('MIXED');
-    setNewQuizQuestionCount(10);
-    setNewQuizTimeLimit(10);
-    setNewQuizPassingScore(70);
-    setNewQuizShuffleQuestions(true);
-    setNewQuizShuffleAnswers(true);
-    setNewQuizShowCorrectAnswer(true);
-    setNewQuizAllowRetry(false);
-    setNewQuizMaxRetries(0);
-  };
+  const updateQuizMutation = useMutation({
+    mutationFn: ({ quizId, dto }: { quizId: string; dto: UpdateQuizDto }) => updateQuiz(quizId, dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quizzes'] });
+      queryClient.invalidateQueries({ queryKey: ['quizStats'] });
+      toast.success('Quiz updated successfully!');
+      closeQuizModal();
+    },
+    onError: (error) => {
+      toast.error(getQuizUpdateErrorMessage(error));
+    },
+  });
 
-  const handleCreateQuiz = () => {
-    if (!newQuizName.trim()) {
+  const deleteQuizMutation = useMutation({
+    mutationFn: (quizId: string) => deleteQuiz(quizId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quizzes'] });
+      queryClient.invalidateQueries({ queryKey: ['quizStats'] });
+      toast.success('Quiz deleted successfully!');
+    },
+    onError: (error) => {
+      toast.error(getQuizDeleteErrorMessage(error));
+    },
+  });
+
+  const handleSubmitQuizForm = () => {
+    if (!form.name.trim()) {
       toast.error('Please enter a quiz name');
       return;
     }
 
-    createQuizMutation.mutate({
-      name: newQuizName,
-      description: newQuizDescription || undefined,
-      topic: newQuizTopic || undefined,
-      questionType: newQuizQuestionType,
-      questionCount: newQuizQuestionCount,
-      timeLimit: newQuizTimeLimit * 60, // convert minutes to seconds
-      passingScore: newQuizPassingScore,
-      difficulty: newQuizDifficulty,
-      isPublic: false,
-      shuffleQuestions: newQuizShuffleQuestions,
-      shuffleAnswers: newQuizShuffleAnswers,
-      showCorrectAnswer: newQuizShowCorrectAnswer,
-      allowRetry: newQuizAllowRetry,
-      maxRetries: newQuizMaxRetries,
-    });
+    if (editingQuiz) {
+      updateQuizMutation.mutate({
+        quizId: editingQuiz.id,
+        dto: buildUpdateQuizDto(form),
+      });
+      return;
+    }
+
+    createQuizMutation.mutate(buildCreateQuizDto(form));
   };
 
   const handlePageChange = (page: number) => {
@@ -154,7 +169,7 @@ export default function QuizListPage() {
           </div>
 
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={openCreateModal}
             className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold hover:scale-105 transition-transform shadow-lg shadow-accent-900/30"
           >
             <Plus className="w-5 h-5" />
@@ -268,14 +283,12 @@ export default function QuizListPage() {
                   key={quiz.id}
                   quiz={quiz}
                   onStartQuiz={() => {}}
-                  onEdit={() => {
-                    // Could open edit modal
-                    toast.success('Edit functionality coming soon!');
+                  onEdit={(quiz) => {
+                    openEditModal(quiz);
                   }}
-                  onDelete={(q: Quiz) => {
-                    if (window.confirm(`Delete quiz "${q.name}"?`)) {
-                      // deleteQuizMutation would be needed
-                      toast.success('Delete functionality coming soon!');
+                  onDelete={(quiz: Quiz) => {
+                    if (window.confirm(`Delete quiz "${quiz.name}"?`)) {
+                      deleteQuizMutation.mutate(quiz.id);
                     }
                   }}
                 />
@@ -318,12 +331,14 @@ export default function QuizListPage() {
               <div>
                 <h2 className="text-2xl font-black font-headline text-white flex items-center gap-3">
                   <Plus className="w-6 h-6 text-accent-400" />
-                  Create New Quiz
+                  {isEditMode ? 'Edit Quiz' : 'Create New Quiz'}
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">Configure your quiz settings</p>
+                <p className="text-sm text-slate-500 mt-1">
+                  {isEditMode ? 'Update quiz settings' : 'Configure your quiz settings'}
+                </p>
               </div>
               <button
-                onClick={() => setShowCreateModal(false)}
+                onClick={closeQuizModal}
                 className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white transition-all border border-transparent hover:border-white/10 text-xl"
               >
                 &times;
@@ -339,8 +354,8 @@ export default function QuizListPage() {
                   </label>
                   <input
                     type="text"
-                    value={newQuizName}
-                    onChange={(e) => setNewQuizName(e.target.value)}
+                    value={form.name}
+                    onChange={(e) => setForm((current) => ({ ...current, name: e.target.value }))}
                     placeholder="e.g., JavaScript Basics"
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all"
                   />
@@ -352,8 +367,8 @@ export default function QuizListPage() {
                   </label>
                   <input
                     type="text"
-                    value={newQuizTopic}
-                    onChange={(e) => setNewQuizTopic(e.target.value)}
+                    value={form.topic}
+                    onChange={(e) => setForm((current) => ({ ...current, topic: e.target.value }))}
                     placeholder="e.g., JavaScript"
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all"
                   />
@@ -365,8 +380,8 @@ export default function QuizListPage() {
                   Description
                 </label>
                 <textarea
-                  value={newQuizDescription}
-                  onChange={(e) => setNewQuizDescription(e.target.value)}
+                  value={form.description}
+                  onChange={(e) => setForm((current) => ({ ...current, description: e.target.value }))}
                   placeholder="Brief description of this quiz..."
                   rows={3}
                   className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none"
@@ -379,8 +394,8 @@ export default function QuizListPage() {
                     Difficulty
                   </label>
                   <select
-                    value={newQuizDifficulty}
-                    onChange={(e) => setNewQuizDifficulty(e.target.value as QuizDifficulty)}
+                    value={form.difficulty}
+                    onChange={(e) => setForm((current) => ({ ...current, difficulty: e.target.value as QuizListFormState['difficulty'] }))}
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all appearance-none cursor-pointer"
                   >
                     <option value="EASY" className="bg-slate-800">🟢  Easy</option>
@@ -395,8 +410,8 @@ export default function QuizListPage() {
                     Question Type
                   </label>
                   <select
-                    value={newQuizQuestionType}
-                    onChange={(e) => setNewQuizQuestionType(e.target.value as QuizQuestionType)}
+                    value={form.questionType}
+                    onChange={(e) => setForm((current) => ({ ...current, questionType: e.target.value as QuizListFormState['questionType'] }))}
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all appearance-none cursor-pointer"
                   >
                     <option value="MIXED" className="bg-slate-800">Mixed</option>
@@ -414,9 +429,10 @@ export default function QuizListPage() {
                     type="number"
                     min="1"
                     max="100"
-                    value={newQuizQuestionCount}
-                    onChange={(e) => setNewQuizQuestionCount(parseInt(e.target.value) || 10)}
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all"
+                    value={form.questionCount}
+                    onChange={(e) => setForm((current) => ({ ...current, questionCount: parseInt(e.target.value, 10) || 10 }))}
+                    disabled={isEditMode}
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -428,9 +444,10 @@ export default function QuizListPage() {
                     type="number"
                     min="0.5"
                     step="0.5"
-                    value={newQuizTimeLimit}
-                    onChange={(e) => setNewQuizTimeLimit(parseFloat(e.target.value) || 10)}
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all"
+                    value={form.timeLimitMinutes}
+                    onChange={(e) => setForm((current) => ({ ...current, timeLimitMinutes: parseFloat(e.target.value) || 10 }))}
+                    disabled={isEditMode}
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -444,9 +461,10 @@ export default function QuizListPage() {
                     type="number"
                     min="0"
                     max="100"
-                    value={newQuizPassingScore}
-                    onChange={(e) => setNewQuizPassingScore(parseInt(e.target.value) || 70)}
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all"
+                    value={form.passingScore}
+                    onChange={(e) => setForm((current) => ({ ...current, passingScore: parseInt(e.target.value, 10) || 70 }))}
+                    disabled={isEditMode}
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -458,8 +476,8 @@ export default function QuizListPage() {
                     type="number"
                     min="0"
                     max="10"
-                    value={newQuizMaxRetries}
-                    onChange={(e) => setNewQuizMaxRetries(parseInt(e.target.value) || 0)}
+                    value={form.maxRetries}
+                    onChange={(e) => setForm((current) => ({ ...current, maxRetries: parseInt(e.target.value, 10) || 0 }))}
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all"
                   />
                 </div>
@@ -472,8 +490,8 @@ export default function QuizListPage() {
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5 transition-all">
                     <input
                       type="checkbox"
-                      checked={newQuizShuffleQuestions}
-                      onChange={(e) => setNewQuizShuffleQuestions(e.target.checked)}
+                      checked={form.shuffleQuestions}
+                      onChange={(e) => setForm((current) => ({ ...current, shuffleQuestions: e.target.checked }))}
                       className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                     />
                     <div>
@@ -484,8 +502,8 @@ export default function QuizListPage() {
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5 transition-all">
                     <input
                       type="checkbox"
-                      checked={newQuizShuffleAnswers}
-                      onChange={(e) => setNewQuizShuffleAnswers(e.target.checked)}
+                      checked={form.shuffleAnswers}
+                      onChange={(e) => setForm((current) => ({ ...current, shuffleAnswers: e.target.checked }))}
                       className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                     />
                     <div>
@@ -496,8 +514,8 @@ export default function QuizListPage() {
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5 transition-all">
                     <input
                       type="checkbox"
-                      checked={newQuizShowCorrectAnswer}
-                      onChange={(e) => setNewQuizShowCorrectAnswer(e.target.checked)}
+                      checked={form.showCorrectAnswer}
+                      onChange={(e) => setForm((current) => ({ ...current, showCorrectAnswer: e.target.checked }))}
                       className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                     />
                     <div>
@@ -508,8 +526,8 @@ export default function QuizListPage() {
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5 transition-all">
                     <input
                       type="checkbox"
-                      checked={newQuizAllowRetry}
-                      onChange={(e) => setNewQuizAllowRetry(e.target.checked)}
+                      checked={form.allowRetry}
+                      onChange={(e) => setForm((current) => ({ ...current, allowRetry: e.target.checked }))}
                       className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                     />
                     <div>
@@ -523,17 +541,23 @@ export default function QuizListPage() {
 
             <div className="flex gap-4 mt-8 pt-6 border-t border-white/5">
               <button
-                onClick={() => setShowCreateModal(false)}
+                onClick={closeQuizModal}
                 className="flex-1 px-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all"
               >
                 Cancel
               </button>
               <button
-                onClick={handleCreateQuiz}
-                disabled={createQuizMutation.isPending}
+                onClick={handleSubmitQuizForm}
+                disabled={createQuizMutation.isPending || updateQuizMutation.isPending}
                 className="flex-1 px-4 py-3.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {createQuizMutation.isPending ? 'Creating...' : 'Create Quiz'}
+                {createQuizMutation.isPending
+                  ? 'Creating...'
+                  : updateQuizMutation.isPending
+                    ? 'Saving...'
+                    : isEditMode
+                      ? 'Save Changes'
+                      : 'Create Quiz'}
               </button>
             </div>
           </div>

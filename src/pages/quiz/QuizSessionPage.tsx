@@ -1,8 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Clock, CheckCircle, XCircle, ArrowRight, AlertCircle } from 'lucide-react';
-import { getQuizById, startQuizSession, submitQuizAnswer, completeQuizSession } from '@/api/quiz.api';
+import {
+  getQuizById,
+  getQuizSession,
+  startQuizSession,
+  submitQuizAnswer,
+  completeQuizSession,
+} from '@/api/quiz.api';
+import { getQuizSessionView } from './sessionView';
+import type { QuizSession } from '@/types/quiz.types';
+import toast from 'react-hot-toast';
 import '../Education.css';
 
 export default function QuizSessionPage() {
@@ -14,7 +23,6 @@ export default function QuizSessionPage() {
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const [timeSpentOnQuestion, setTimeSpentOnQuestion] = useState<number>(0);
-  const [questionTimer, setQuestionTimer] = useState<number | ReturnType<typeof setInterval> | null>(null);
   const [feedback, setFeedback] = useState<{ isCorrect: boolean; correctAnswer: string; explanation?: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -45,25 +53,6 @@ export default function QuizSessionPage() {
     },
   });
 
-  // Submit answer mutation
-  const submitMutation = useMutation({
-    mutationFn: (payload: { sessionId: string; questionId: string; answer: string; timeSpent: number }) =>
-      submitQuizAnswer(payload.sessionId, payload),
-    onSuccess: (result) => {
-      setFeedback({
-        isCorrect: result.isCorrect,
-        correctAnswer: result.correctAnswer,
-        explanation: result.explanation,
-      });
-      // Invalidate session to refetch updated state
-      queryClient.invalidateQueries({ queryKey: ['quizSession', sessionId] });
-    },
-    onError: () => {
-      toast.error('Failed to submit answer');
-      setIsSubmitting(false);
-    },
-  });
-
   // Complete session mutation
   const completeMutation = useMutation({
     mutationFn: (sessionId: string) => completeQuizSession(sessionId),
@@ -78,12 +67,64 @@ export default function QuizSessionPage() {
     },
   });
 
-  // Start the quiz on mount
-  useEffect(() => {
+  const {
+    totalQuestions,
+    displayQuestionIndex,
+    currentQuestion,
+    shouldFinishAfterFeedback,
+    progress,
+  } = getQuizSessionView(quiz ?? {}, session ?? {}, !!feedback);
+
+  const startCurrentSession = useEffectEvent(() => {
     if (quizId && !sessionId) {
       startMutation.mutate();
     }
-  }, [quizId]);
+  });
+
+  const completeCurrentSession = useEffectEvent(() => {
+    if (session && !completeMutation.isPending) {
+      completeMutation.mutate(session.id);
+    }
+  });
+
+  // Submit answer mutation
+  const submitMutation = useMutation({
+    mutationFn: (payload: { sessionId: string; questionId: string; answer: string; timeSpent: number }) =>
+      submitQuizAnswer(payload.sessionId, payload),
+    onSuccess: async (result) => {
+      if (sessionId) {
+        queryClient.setQueryData<QuizSession>(['quizSession', sessionId], (current) => {
+          if (!current) return current;
+
+          return {
+            ...current,
+            currentQuestionIndex: current.currentQuestionIndex + 1,
+            totalAnswers: current.totalAnswers + 1,
+            correctAnswers: result.isCorrect
+              ? current.correctAnswers + 1
+              : current.correctAnswers,
+          };
+        });
+      }
+
+      setFeedback({
+        isCorrect: result.isCorrect,
+        correctAnswer: result.correctAnswer,
+        explanation: result.explanation,
+      });
+      setIsSubmitting(false);
+      await queryClient.invalidateQueries({ queryKey: ['quizSession', sessionId] });
+    },
+    onError: () => {
+      toast.error('Failed to submit answer');
+      setIsSubmitting(false);
+    },
+  });
+
+  // Start the quiz on mount
+  useEffect(() => {
+    startCurrentSession();
+  }, [quizId, sessionId]);
 
   // Timer countdown for entire quiz
   useEffect(() => {
@@ -97,8 +138,7 @@ export default function QuizSessionPage() {
         const remaining = totalTime - elapsed;
         setTimeRemaining(remaining > 0 ? remaining : 0);
         if (remaining <= 0) {
-          // Time's up - auto submit current answer or complete
-          handleComplete(/* auto = true */);
+          completeCurrentSession();
         }
       };
       updateTimer();
@@ -113,26 +153,34 @@ export default function QuizSessionPage() {
       const timer = setInterval(() => {
         setTimeSpentOnQuestion((prev) => prev + 1);
       }, 1000);
-      setQuestionTimer(timer);
       return () => clearInterval(timer);
     }
   }, [session, feedback, isSubmitting]);
 
   // Auto-advance when feedback is shown
   useEffect(() => {
-    if (feedback && session && quiz) {
+    if (feedback && shouldFinishAfterFeedback) {
       const delay = setTimeout(() => {
         setFeedback(null);
         setSelectedAnswer('');
         setTimeSpentOnQuestion(0);
-        // If this was the last question, complete
-        if (session.currentQuestionIndex >= quiz.questionCount - 1) {
-          handleComplete();
-        }
+        completeCurrentSession();
       }, 2000); // 2 second delay to show feedback
       return () => clearTimeout(delay);
     }
-  }, [feedback, session, quiz]);
+  }, [feedback, shouldFinishAfterFeedback]);
+
+  useEffect(() => {
+    if (feedback && !shouldFinishAfterFeedback) {
+      const delay = setTimeout(() => {
+        setFeedback(null);
+        setSelectedAnswer('');
+        setTimeSpentOnQuestion(0);
+      }, 2000);
+
+      return () => clearTimeout(delay);
+    }
+  }, [feedback, shouldFinishAfterFeedback]);
 
   const handleAnswerSelect = (answer: string) => {
     if (!feedback && !isSubmitting) {
@@ -143,8 +191,10 @@ export default function QuizSessionPage() {
   const handleSubmit = () => {
     if (!selectedAnswer || !session || !quiz || isSubmitting) return;
     setIsSubmitting(true);
-    const currentQuestion = quiz.questions?.[session.currentQuestionIndex];
-    if (!currentQuestion) return;
+    if (!currentQuestion) {
+      setIsSubmitting(false);
+      return;
+    }
     submitMutation.mutate({
       sessionId: session.id,
       questionId: currentQuestion.id,
@@ -154,26 +204,16 @@ export default function QuizSessionPage() {
     // setIsSubmitting will be reset in onError or after feedback clears
   };
 
-  const handleComplete = () => {
-    if (session && !completeMutation.isPending) {
-      completeMutation.mutate(session.id);
-    }
-  };
-
   const handleNext = () => {
     if (feedback) {
       setFeedback(null);
       setSelectedAnswer('');
       setTimeSpentOnQuestion(0);
-      // If last question already handled in effect, but if user manually clicks Next before auto
-      if (session && quiz && session.currentQuestionIndex >= quiz.questionCount - 1) {
-        handleComplete();
+      if (shouldFinishAfterFeedback) {
+        completeCurrentSession();
       }
     }
   };
-
-  // Compute current question
-  const currentQuestion = quiz?.questions?.[session?.currentQuestionIndex ?? 0];
 
   if (isLoadingQuiz) {
     return (
@@ -214,10 +254,6 @@ export default function QuizSessionPage() {
     );
   }
 
-  const totalQuestions = quiz.questionCount;
-  const currentQIndex = session.currentQuestionIndex;
-  const progress = ((currentQIndex + (feedback ? 1 : 0)) / totalQuestions) * 100;
-
   return (
     <div className="education-container">
       
@@ -229,7 +265,7 @@ export default function QuizSessionPage() {
             <div className="flex-1">
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 truncate">{quiz.name}</h1>
               <div className="flex items-center gap-4 text-sm text-slate-400">
-                <span>Question {currentQIndex + 1} of {totalQuestions}</span>
+                <span>Question {displayQuestionIndex + 1} of {totalQuestions}</span>
                 <span className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
                   {timeRemaining !== null ? formatTime(timeRemaining) : '--:--'}
@@ -377,7 +413,7 @@ export default function QuizSessionPage() {
                   onClick={handleNext}
                   className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-all"
                 >
-                  {session.currentQuestionIndex < totalQuestions - 1 ? 'Next Question' : 'Finish'}
+                  {shouldFinishAfterFeedback ? 'Finish' : 'Next Question'}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}
@@ -403,18 +439,4 @@ function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
-
-// Need to import toast
-import toast from 'react-hot-toast';
-
-// Need to import getQuizSession - define locally if not exported from api
-import type { QuizSession } from '@/types/quiz.types';
-
-// Helper function that uses apiClient; we can import from api client directly
-import { apiClient } from '@/api/client';
-
-async function getQuizSession(sessionId: string): Promise<QuizSession> {
-  const response = await apiClient.get(`/quizzes/sessions/${sessionId}`);
-  return response.data;
 }

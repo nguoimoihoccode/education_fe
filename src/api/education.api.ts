@@ -1,4 +1,5 @@
 import { apiClient, CACHE_PROFILES } from './client';
+import { normalizeCollectionPage } from './normalizers';
 import type {
     Language,
     Course,
@@ -27,7 +28,7 @@ export const getCourses = async (params?: {
     limit?: number;
 }): Promise<CoursesResponse> => {
     const response = await apiClient.get('/education/courses', { params, ...CACHE_PROFILES.DYNAMIC });
-    return response.data;
+    return normalizeCollectionPage<Course>(response.data, 'courses');
 };
 
 export const getCourseById = async (id: string): Promise<Course> => {
@@ -57,7 +58,7 @@ export const getLessonsByCourse = async (courseId: string, params?: {
     limit?: number;
 }): Promise<LessonsResponse> => {
     const response = await apiClient.get(`/education/courses/${courseId}/lessons`, { params, ...CACHE_PROFILES.DYNAMIC });
-    return response.data;
+    return normalizeCollectionPage<Lesson>(response.data, 'lessons');
 };
 
 export const getLessonById = async (id: string): Promise<Lesson> => {
@@ -74,7 +75,11 @@ export const completeLesson = async (
 
 export const getVocabularyByLesson = async (lessonId: string): Promise<Vocabulary[]> => {
     const response = await apiClient.get(`/education/lessons/${lessonId}/vocabulary`, CACHE_PROFILES.DYNAMIC);
-    return response.data;
+    return Array.isArray(response.data?.vocabulary)
+        ? response.data.vocabulary
+        : Array.isArray(response.data)
+            ? response.data
+            : [];
 };
 
 export const getVocabularyToReview = async (limit?: number): Promise<Vocabulary[]> => {

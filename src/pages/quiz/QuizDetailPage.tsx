@@ -1,7 +1,8 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Clock, Target, List, BarChart2, Play } from 'lucide-react';
+import { List, BarChart2, Play } from 'lucide-react';
 import { getQuizById } from '@/api/quiz.api';
+import type { QuizQuestion } from '@/types/quiz.types';
 import '../Education.css';
 
 export default function QuizDetailPage() {
@@ -158,7 +159,7 @@ export default function QuizDetailPage() {
 
             {quiz.questions && quiz.questions.length > 0 ? (
               <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-                {quiz.questions.map((question, idx) => (
+                {quiz.questions.map((question: QuizQuestion, idx) => (
                   <div key={question.id} className="p-4 bg-white/5 rounded-xl border border-white/5">
                     <div className="flex items-start justify-between mb-2">
                       <span className="text-sm font-bold text-accent-400">Question {idx + 1}</span>
