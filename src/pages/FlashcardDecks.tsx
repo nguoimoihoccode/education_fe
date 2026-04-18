@@ -15,10 +15,21 @@ import {
   getFlashcardStats,
   createFlashcardDeck,
   deleteFlashcardDeck,
+  updateFlashcardDeck,
 } from '@/api/flashcard.api';
 import { FlashcardDeckCard, FlashcardStats } from '@/components/flashcard';
 import { Pagination } from '@/components/ui';
-import type { FlashcardDeck, CreateFlashcardDeckDto } from '@/types/flashcard.types';
+import type { FlashcardDeck, UpdateFlashcardDeckDto } from '@/types/flashcard.types';
+import {
+  buildCreateDeckDto,
+  buildUpdateDeckDto,
+  createDefaultDeckFormState,
+  createDeckFormStateFromDeck,
+  getDeckCreateErrorMessage,
+  getDeckDeleteErrorMessage,
+  getDeckUpdateErrorMessage,
+  type FlashcardDeckFormState,
+} from './flashcardDeckView';
 import toast from 'react-hot-toast';
 import './Education.css';
 
@@ -28,10 +39,8 @@ export default function FlashcardDecks() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newDeckName, setNewDeckName] = useState('');
-  const [newDeckDescription, setNewDeckDescription] = useState('');
-  const [newDeckIcon, setNewDeckIcon] = useState('📚');
-  const [newDeckColor, setNewDeckColor] = useState('#4F46E5');
+  const [editingDeck, setEditingDeck] = useState<FlashcardDeck | null>(null);
+  const [deckForm, setDeckForm] = useState<FlashcardDeckFormState>(createDefaultDeckFormState());
   const itemsPerPage = 9;
 
   // Query data
@@ -46,26 +55,56 @@ export default function FlashcardDecks() {
   });
 
   const decks = decksData?.items || [];
-  const totalDecks = decksData?.total || 0;
   const totalPages = decksData?.totalPages || 1;
 
   const filteredDecks = decks.filter((deck) =>
     deck.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const isEditMode = Boolean(editingDeck);
+
+  const resetDeckForm = () => {
+    setDeckForm(createDefaultDeckFormState());
+    setEditingDeck(null);
+  };
+
+  const closeDeckModal = () => {
+    setShowCreateModal(false);
+    resetDeckForm();
+  };
+
+  const openCreateDeckModal = () => {
+    resetDeckForm();
+    setShowCreateModal(true);
+  };
+
+  const openEditDeckModal = (deck: FlashcardDeck) => {
+    setEditingDeck(deck);
+    setDeckForm(createDeckFormStateFromDeck(deck));
+    setShowCreateModal(true);
+  };
+
   // Mutations
   const createDeckMutation = useMutation({
-    mutationFn: (dto: CreateFlashcardDeckDto) => createFlashcardDeck(dto),
+    mutationFn: createFlashcardDeck,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flashcardDecks'] });
       toast.success('Deck created successfully!');
-      setShowCreateModal(false);
-      setNewDeckName('');
-      setNewDeckDescription('');
-      setNewDeckIcon('📚');
-      setNewDeckColor('#4F46E5');
+      closeDeckModal();
     },
-    onError: () => toast.error('Failed to create deck.'),
+    onError: (error) => toast.error(getDeckCreateErrorMessage(error)),
+  });
+
+  const updateDeckMutation = useMutation({
+    mutationFn: ({ deckId, dto }: { deckId: string; dto: UpdateFlashcardDeckDto }) =>
+      updateFlashcardDeck(deckId, dto),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['flashcardDecks'] });
+      queryClient.invalidateQueries({ queryKey: ['flashcardStats'] });
+      toast.success('Deck updated successfully!');
+      closeDeckModal();
+    },
+    onError: (error) => toast.error(getDeckUpdateErrorMessage(error)),
   });
 
   const deleteDeckMutation = useMutation({
@@ -75,22 +114,24 @@ export default function FlashcardDecks() {
       queryClient.invalidateQueries({ queryKey: ['flashcardStats'] });
       toast.success('Deck deleted successfully!');
     },
-    onError: () => toast.error('Failed to delete deck.'),
+    onError: (error) => toast.error(getDeckDeleteErrorMessage(error)),
   });
 
-  const handleCreateDeck = () => {
-    if (!newDeckName.trim()) {
+  const handleSubmitDeckForm = () => {
+    if (!deckForm.name.trim()) {
       toast.error('Please enter a deck name');
       return;
     }
 
-    createDeckMutation.mutate({
-      name: newDeckName,
-      description: newDeckDescription,
-      icon: newDeckIcon,
-      color: newDeckColor,
-      isPublic: false,
-    });
+    if (editingDeck) {
+      updateDeckMutation.mutate({
+        deckId: editingDeck.id,
+        dto: buildUpdateDeckDto(deckForm),
+      });
+      return;
+    }
+
+    createDeckMutation.mutate(buildCreateDeckDto(deckForm));
   };
 
   const handleDeleteDeck = (deck: FlashcardDeck) => {
@@ -126,7 +167,7 @@ export default function FlashcardDecks() {
           </div>
 
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={openCreateDeckModal}
             className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.3)]"
           >
             <Plus className="w-5 h-5" />
@@ -233,6 +274,7 @@ export default function FlashcardDecks() {
                 <FlashcardDeckCard
                   key={deck.id}
                   deck={deck}
+                  onEdit={openEditDeckModal}
                   onDelete={handleDeleteDeck}
                   onStartReview={handleStartReview}
                 />
@@ -267,7 +309,9 @@ export default function FlashcardDecks() {
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 border border-white/10 rounded-3xl shadow-2xl max-w-md w-full p-8">
-            <h2 className="text-2xl font-black font-headline text-white mb-6">Create New Deck</h2>
+            <h2 className="text-2xl font-black font-headline text-white mb-6">
+              {isEditMode ? 'Edit Deck' : 'Create New Deck'}
+            </h2>
 
             <div className="space-y-5">
               <div>
@@ -276,8 +320,8 @@ export default function FlashcardDecks() {
                 </label>
                 <input
                   type="text"
-                  value={newDeckName}
-                  onChange={(e) => setNewDeckName(e.target.value)}
+                  value={deckForm.name}
+                  onChange={(e) => setDeckForm((current) => ({ ...current, name: e.target.value }))}
                   placeholder="e.g., Japanese Basics"
                   className="w-full px-4 py-3 bg-black/40 rounded-xl border border-white/5 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all text-white placeholder-slate-600"
                 />
@@ -288,8 +332,8 @@ export default function FlashcardDecks() {
                   Description
                 </label>
                 <textarea
-                  value={newDeckDescription}
-                  onChange={(e) => setNewDeckDescription(e.target.value)}
+                  value={deckForm.description}
+                  onChange={(e) => setDeckForm((current) => ({ ...current, description: e.target.value }))}
                   placeholder="Optional description..."
                   rows={3}
                   className="w-full px-4 py-3 bg-black/40 rounded-xl border border-white/5 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none text-white placeholder-slate-600"
@@ -303,8 +347,8 @@ export default function FlashcardDecks() {
                   </label>
                   <input
                     type="text"
-                    value={newDeckIcon}
-                    onChange={(e) => setNewDeckIcon(e.target.value)}
+                    value={deckForm.icon}
+                    onChange={(e) => setDeckForm((current) => ({ ...current, icon: e.target.value }))}
                     placeholder="📚"
                     className="w-full px-4 py-3 bg-black/40 rounded-xl border border-white/5 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all text-center text-2xl text-white"
                   />
@@ -316,8 +360,8 @@ export default function FlashcardDecks() {
                   </label>
                   <input
                     type="color"
-                    value={newDeckColor}
-                    onChange={(e) => setNewDeckColor(e.target.value)}
+                    value={deckForm.color}
+                    onChange={(e) => setDeckForm((current) => ({ ...current, color: e.target.value }))}
                     className="w-full h-[58px] p-1 rounded-xl bg-black/40 border border-white/5 focus:border-accent-500 outline-none transition-all cursor-pointer"
                   />
                 </div>
@@ -326,17 +370,23 @@ export default function FlashcardDecks() {
 
             <div className="flex gap-3 mt-8">
               <button
-                onClick={() => setShowCreateModal(false)}
+                onClick={closeDeckModal}
                 className="flex-1 px-4 py-3 rounded-xl bg-white/5 text-white font-bold hover:bg-white/10 transition-all border border-white/5"
               >
                 Cancel
               </button>
               <button
-                onClick={handleCreateDeck}
-                disabled={createDeckMutation.isPending}
+                onClick={handleSubmitDeckForm}
+                disabled={createDeckMutation.isPending || updateDeckMutation.isPending}
                 className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold hover:from-accent-500 hover:to-indigo-500 transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(139,92,246,0.3)]"
               >
-                {createDeckMutation.isPending ? 'Creating...' : 'Create Deck'}
+                {createDeckMutation.isPending
+                  ? 'Creating...'
+                  : updateDeckMutation.isPending
+                    ? 'Saving...'
+                    : isEditMode
+                      ? 'Save Changes'
+                      : 'Create Deck'}
               </button>
             </div>
           </div>
