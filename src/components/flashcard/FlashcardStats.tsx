@@ -2,16 +2,15 @@ import React from 'react';
 import {
   BookOpen,
   TrendingUp,
-  Flame,
   Award,
   Target,
-  Clock,
   CheckCircle,
-  XCircle,
-  Zap,
+  Flame,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import type { FlashcardStats, DeckStats } from '@/types/flashcard.types';
 import clsx from 'clsx';
+import { buildFlashcardStatsView } from './flashcardStatsView';
 
 interface FlashcardStatsProps {
   stats: FlashcardStats;
@@ -20,38 +19,29 @@ interface FlashcardStatsProps {
 }
 
 export function FlashcardStats({ stats, deckStats, className }: FlashcardStatsProps) {
-  const accuracy = stats.totalReviews > 0
-    ? Math.round((stats.masteredFlashcards / stats.totalReviews) * 100)
-    : 0;
+  const view = buildFlashcardStatsView(stats, deckStats);
 
   return (
     <div className={clsx('space-y-6', className)}>
       {/* Overview Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard
-          icon={BookOpen}
-          value={stats.totalFlashcards}
-          label="Total Cards"
-          color="indigo"
-        />
-        <StatCard
-          icon={Target}
-          value={stats.dueFlashcards}
-          label="Due Today"
-          color="orange"
-        />
-        <StatCard
-          icon={CheckCircle}
-          value={stats.masteredFlashcards}
-          label="Mastered"
-          color="green"
-        />
-        <StatCard
-          icon={Flame}
-          value={stats.currentStreak}
-          label="Day Streak"
-          color="red"
-        />
+        {view.overview.map((item) => (
+          <StatCard
+            key={item.label}
+            icon={
+              item.label === 'Total Cards'
+                ? BookOpen
+                : item.label === 'Due Today'
+                  ? Target
+                  : item.label === 'Mastered'
+                    ? CheckCircle
+                    : Flame
+            }
+            value={item.value}
+            label={item.label}
+            color={item.color}
+          />
+        ))}
       </div>
 
       {/* Learning Progress */}
@@ -62,30 +52,15 @@ export function FlashcardStats({ stats, deckStats, className }: FlashcardStatsPr
         </h3>
 
         <div className="space-y-6">
-          <ProgressBar
-            label="New Cards"
-            current={stats.newFlashcards}
-            total={stats.totalFlashcards}
-            color="bg-blue-500"
-          />
-          <ProgressBar
-            label="Learning"
-            current={stats.learningFlashcards}
-            total={stats.totalFlashcards}
-            color="bg-amber-500"
-          />
-          <ProgressBar
-            label="Reviewing"
-            current={stats.learningFlashcards}
-            total={stats.totalFlashcards}
-            color="bg-accent-500"
-          />
-          <ProgressBar
-            label="Mastered"
-            current={stats.masteredFlashcards}
-            total={stats.totalFlashcards}
-            color="bg-emerald-500"
-          />
+          {view.progress.map((item) => (
+            <ProgressBar
+              key={item.label}
+              label={item.label}
+              current={item.current}
+              total={item.total}
+              color={item.color}
+            />
+          ))}
         </div>
       </div>
 
@@ -97,27 +72,17 @@ export function FlashcardStats({ stats, deckStats, className }: FlashcardStatsPr
         </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-4 bg-black/20 rounded-2xl border border-white/5">
-            <div className="text-3xl font-black font-mono text-white">{stats.totalReviews}</div>
-            <div className="text-sm font-bold text-slate-500 mt-1 uppercase tracking-wider">Reviews</div>
-          </div>
-          <div className="text-center p-4 bg-black/20 rounded-2xl border border-white/5">
-            <div className="text-3xl font-black font-mono text-emerald-400">{accuracy}%</div>
-            <div className="text-sm font-bold text-slate-500 mt-1 uppercase tracking-wider">Accuracy</div>
-          </div>
-          <div className="text-center p-4 bg-black/20 rounded-2xl border border-white/5">
-            <div className="text-3xl font-black font-mono text-accent-400">{stats.longestStreak}</div>
-            <div className="text-sm font-bold text-slate-500 mt-1 uppercase tracking-wider">Best Streak</div>
-          </div>
-          <div className="text-center p-4 bg-black/20 rounded-2xl border border-white/5">
-            <div className="text-3xl font-black font-mono text-amber-400">{stats.totalXp}</div>
-            <div className="text-sm font-bold text-slate-500 mt-1 uppercase tracking-wider">Total XP</div>
-          </div>
+          {view.performance.map((item) => (
+            <div key={item.label} className="text-center p-4 bg-black/20 rounded-2xl border border-white/5">
+              <div className="text-3xl font-black font-mono text-white">{item.value}</div>
+              <div className="text-sm font-bold text-slate-500 mt-1 uppercase tracking-wider">{item.label}</div>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Deck Stats */}
-      {deckStats && deckStats.length > 0 && (
+      {view.deckStats.length > 0 && (
         <div className="bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl">
           <h3 className="text-xl font-bold font-headline text-white mb-6 flex items-center gap-3">
             <BookOpen className="w-6 h-6 text-accent-400" />
@@ -125,7 +90,7 @@ export function FlashcardStats({ stats, deckStats, className }: FlashcardStatsPr
           </h3>
 
           <div className="space-y-4">
-            {deckStats.map((deck) => (
+            {view.deckStats.map((deck) => (
               <div
                 key={deck.deckId}
                 className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl bg-black/20 hover:bg-white/5 transition-colors border border-white/5 gap-4"
@@ -147,12 +112,6 @@ export function FlashcardStats({ stats, deckStats, className }: FlashcardStatsPr
                     </span>
                   </div>
                 </div>
-                <div className="text-left md:text-right">
-                  <div className="text-2xl font-black text-emerald-400">
-                    {deck.averageAccuracy}%
-                  </div>
-                  <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Accuracy</div>
-                </div>
               </div>
             ))}
           </div>
@@ -169,8 +128,8 @@ function StatCard({
   label,
   color,
 }: {
-  icon: any;
-  value: number;
+  icon: LucideIcon;
+  value: number | string;
   label: string;
   color: string;
 }) {
@@ -180,6 +139,7 @@ function StatCard({
     green: { text: 'text-emerald-400', glow: 'bg-emerald-500/10 group-hover:bg-emerald-500/20' },
     orange: { text: 'text-orange-400', glow: 'bg-orange-500/10 group-hover:bg-orange-500/20' },
     red: { text: 'text-red-400', glow: 'bg-red-500/10 group-hover:bg-red-500/20' },
+    amber: { text: 'text-amber-400', glow: 'bg-amber-500/10 group-hover:bg-amber-500/20' },
     purple: { text: 'text-accent-400', glow: 'bg-accent-500/10 group-hover:bg-accent-500/20' }
   };
   const config = colorConfigs[color as keyof typeof colorConfigs] || colorConfigs.indigo;

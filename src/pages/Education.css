@@ -220,6 +220,13 @@
     transition: left 0.7s ease;
 }
 
+/* Quiz-specific override: remove sweeping shine effect for calmer UX */
+.quiz-ui-static .glass-card::before,
+.quiz-ui-static .glass-card:hover::before {
+    content: none;
+    transition: none;
+}
+
 /* Card with overflow hidden (for images, gradients) */
 .glass-card-clip {
     overflow: hidden;

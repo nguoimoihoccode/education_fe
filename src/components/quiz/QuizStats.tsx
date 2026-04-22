@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   BookOpen,
   TrendingUp,
-  Flame,
-  Award,
   Target,
   Clock,
   CheckCircle,
-  XCircle,
-  Zap,
   Eye,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import type { QuizStats as QuizStatsType, TopicStats } from '@/types/quiz.types';
 import clsx from 'clsx';
 
@@ -18,27 +15,6 @@ interface QuizStatsProps {
   stats: QuizStatsType;
   topicStats?: TopicStats[];
   className?: string;
-}
-
-// Animated Number Component
-function AnimatedNumber({ value, duration = 2000 }: { value: number; duration?: number }) {
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    let start: number;
-    let raf: number;
-    const step = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      setDisplay(Math.round(easeOutQuart * value));
-      if (progress < 1) {
-        raf = requestAnimationFrame(step);
-      }
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [value, duration]);
-  return <>{display}</>;
 }
 
 export function QuizStats({ stats, topicStats, className }: QuizStatsProps) {
@@ -118,7 +94,7 @@ export function QuizStats({ stats, topicStats, className }: QuizStatsProps) {
             {topicStats.map((topic) => (
               <div
                 key={topic.topic}
-                className="p-5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
+                className="p-5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
                   <h4 className="font-bold text-white">{topic.topic}</h4>
@@ -196,7 +172,7 @@ function StatCard({
   subtext,
   color,
 }: {
-  icon: any;
+  icon: LucideIcon;
   value: number;
   label: string;
   subtext?: string;
@@ -212,12 +188,9 @@ function StatCard({
   const config = colorConfigs[color as keyof typeof colorConfigs] || colorConfigs.violet;
 
   return (
-    <div className="glass-pane p-6 md:p-8 rounded-2xl relative overflow-hidden group hover:shadow-[0_0_30px_rgba(255,255,255,0.02)] transition-all duration-300">
-      <div className={`absolute -right-8 -top-8 w-32 h-32 rounded-full blur-3xl transition-colors duration-500 ${config.glow}`}></div>
+    <div className="glass-pane p-6 md:p-8 rounded-2xl relative overflow-hidden group hover:shadow-[0_0_30px_rgba(255,255,255,0.02)]">
       <p className="text-slate-400 text-sm font-medium mb-1">{label}</p>
-      <h3 className={`text-4xl font-black ${config.text}`}>
-        <AnimatedNumber value={value} />
-      </h3>
+      <h3 className={`text-4xl font-black ${config.text}`}>{value}</h3>
       {subtext && (
         <div className={`mt-4 pt-4 border-t border-white/5 flex items-center gap-2 text-xs font-bold ${config.text}`}>
           <Icon className="w-4 h-4" />
@@ -248,16 +221,14 @@ function ProgressBar({
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-bold text-white">{label}</span>
         <span className="text-sm font-black text-slate-300">
-          <AnimatedNumber value={current} /> {unit}
+          {current} {unit}
         </span>
       </div>
       <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
         <div
-          className={clsx('h-full transition-all duration-1000 ease-out relative', color)}
+          className={clsx('h-full relative', color)}
           style={{ width: `${percentage}%` }}
-        >
-          <div className="absolute inset-0 bg-white/20 blur-[2px]"></div>
-        </div>
+        ></div>
       </div>
     </div>
   );

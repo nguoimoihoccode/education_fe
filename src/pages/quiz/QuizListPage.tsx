@@ -153,7 +153,7 @@ export default function QuizListPage() {
   };
 
   return (
-    <div className="education-container">
+    <div className="education-container quiz-ui-static">
 
       <div className="dashboard-wrapper">
         {/* Header */}
@@ -170,7 +170,7 @@ export default function QuizListPage() {
 
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold hover:scale-105 transition-transform shadow-lg shadow-accent-900/30"
+            className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold shadow-lg shadow-accent-900/30"
           >
             <Plus className="w-5 h-5" />
             Create Quiz
@@ -188,7 +188,7 @@ export default function QuizListPage() {
         <div className="grid md:grid-cols-3 gap-4 mb-10">
           <Link
             to="/quiz/history"
-            className="glass-card p-6 group hover:-translate-y-1 transition-all border-white/10 hover:border-accent-500/30 cursor-pointer"
+            className="glass-card p-6 group border-white/10 hover:border-accent-500/30 cursor-pointer"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500/20 to-fuchsia-500/20 flex items-center justify-center">
@@ -206,7 +206,7 @@ export default function QuizListPage() {
 
           <Link
             to="/quiz/stats"
-            className="glass-card p-6 group hover:-translate-y-1 transition-all border-white/10 hover:border-emerald-500/30 cursor-pointer"
+            className="glass-card p-6 group border-white/10 hover:border-emerald-500/30 cursor-pointer"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
@@ -224,7 +224,7 @@ export default function QuizListPage() {
 
           <Link
             to="/quiz"
-            className="glass-card p-6 group hover:-translate-y-1 transition-all border-white/10 hover:border-amber-500/30 cursor-pointer"
+            className="glass-card p-6 group border-white/10 hover:border-amber-500/30 cursor-pointer"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
@@ -273,7 +273,7 @@ export default function QuizListPage() {
         {/* Quizzes Grid */}
         {isLoadingQuizzes ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-2 border-accent-500/40 rounded-full"></div>
           </div>
         ) : (
           <>
@@ -337,10 +337,10 @@ export default function QuizListPage() {
                   {isEditMode ? 'Update quiz settings' : 'Configure your quiz settings'}
                 </p>
               </div>
-              <button
-                onClick={closeQuizModal}
-                className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white transition-all border border-transparent hover:border-white/10 text-xl"
-              >
+                <button
+                  onClick={closeQuizModal}
+                  className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white border border-transparent hover:border-white/10 text-xl"
+                >
                 &times;
               </button>
             </div>
@@ -357,7 +357,7 @@ export default function QuizListPage() {
                     value={form.name}
                     onChange={(e) => setForm((current) => ({ ...current, name: e.target.value }))}
                     placeholder="e.g., JavaScript Basics"
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none"
                   />
                 </div>
 
@@ -370,7 +370,7 @@ export default function QuizListPage() {
                     value={form.topic}
                     onChange={(e) => setForm((current) => ({ ...current, topic: e.target.value }))}
                     placeholder="e.g., JavaScript"
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none"
                   />
                 </div>
               </div>
@@ -384,7 +384,7 @@ export default function QuizListPage() {
                   onChange={(e) => setForm((current) => ({ ...current, description: e.target.value }))}
                   placeholder="Brief description of this quiz..."
                   rows={3}
-                  className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none"
+                  className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none resize-none"
                 />
               </div>
 
@@ -396,7 +396,7 @@ export default function QuizListPage() {
                   <select
                     value={form.difficulty}
                     onChange={(e) => setForm((current) => ({ ...current, difficulty: e.target.value as QuizListFormState['difficulty'] }))}
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all appearance-none cursor-pointer"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none appearance-none cursor-pointer"
                   >
                     <option value="EASY" className="bg-slate-800">🟢  Easy</option>
                     <option value="MEDIUM" className="bg-slate-800">🟡  Medium</option>
@@ -412,7 +412,7 @@ export default function QuizListPage() {
                   <select
                     value={form.questionType}
                     onChange={(e) => setForm((current) => ({ ...current, questionType: e.target.value as QuizListFormState['questionType'] }))}
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all appearance-none cursor-pointer"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none appearance-none cursor-pointer"
                   >
                     <option value="MIXED" className="bg-slate-800">Mixed</option>
                     <option value="MULTIPLE_CHOICE" className="bg-slate-800">Multiple Choice</option>
@@ -432,7 +432,7 @@ export default function QuizListPage() {
                     value={form.questionCount}
                     onChange={(e) => setForm((current) => ({ ...current, questionCount: parseInt(e.target.value, 10) || 10 }))}
                     disabled={isEditMode}
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -447,7 +447,7 @@ export default function QuizListPage() {
                     value={form.timeLimitMinutes}
                     onChange={(e) => setForm((current) => ({ ...current, timeLimitMinutes: parseFloat(e.target.value) || 10 }))}
                     disabled={isEditMode}
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -464,7 +464,7 @@ export default function QuizListPage() {
                     value={form.passingScore}
                     onChange={(e) => setForm((current) => ({ ...current, passingScore: parseInt(e.target.value, 10) || 70 }))}
                     disabled={isEditMode}
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -478,7 +478,7 @@ export default function QuizListPage() {
                     max="10"
                     value={form.maxRetries}
                     onChange={(e) => setForm((current) => ({ ...current, maxRetries: parseInt(e.target.value, 10) || 0 }))}
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none"
                   />
                 </div>
               </div>
@@ -487,7 +487,7 @@ export default function QuizListPage() {
               <div className="space-y-4 pt-5 border-t border-white/5">
                 <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Options</h4>
                 <div className="grid grid-cols-2 gap-3">
-                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5 transition-all">
+                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
                     <input
                       type="checkbox"
                       checked={form.shuffleQuestions}
@@ -499,7 +499,7 @@ export default function QuizListPage() {
                       <div className="text-xs text-slate-500">Randomize order</div>
                     </div>
                   </label>
-                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5 transition-all">
+                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
                     <input
                       type="checkbox"
                       checked={form.shuffleAnswers}
@@ -511,7 +511,7 @@ export default function QuizListPage() {
                       <div className="text-xs text-slate-500">Randomize options</div>
                     </div>
                   </label>
-                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5 transition-all">
+                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
                     <input
                       type="checkbox"
                       checked={form.showCorrectAnswer}
@@ -523,7 +523,7 @@ export default function QuizListPage() {
                       <div className="text-xs text-slate-500">After submission</div>
                     </div>
                   </label>
-                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5 transition-all">
+                  <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
                     <input
                       type="checkbox"
                       checked={form.allowRetry}
@@ -542,14 +542,14 @@ export default function QuizListPage() {
             <div className="flex gap-4 mt-8 pt-6 border-t border-white/5">
               <button
                 onClick={closeQuizModal}
-                className="flex-1 px-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all"
+                className="flex-1 px-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmitQuizForm}
                 disabled={createQuizMutation.isPending || updateQuizMutation.isPending}
-                className="flex-1 px-4 py-3.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {createQuizMutation.isPending
                   ? 'Creating...'

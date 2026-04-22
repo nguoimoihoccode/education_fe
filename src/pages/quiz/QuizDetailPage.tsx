@@ -1,8 +1,18 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { List, BarChart2, Play } from 'lucide-react';
 import { getQuizById } from '@/api/quiz.api';
 import type { QuizQuestion } from '@/types/quiz.types';
+import {
+  HSK1_EASY_QUESTIONS,
+  HSK1_MEDIUM_QUESTIONS,
+  HSK1_HARD_QUESTIONS,
+  HSK2_EASY_QUESTIONS,
+  HSK2_MEDIUM_QUESTIONS,
+  HSK2_HARD_QUESTIONS,
+} from '@/mocks/quizOffline';
+import { getQuizDetailPreviewQuestions } from './quizDetailPreview';
 import '../Education.css';
 
 export default function QuizDetailPage() {
@@ -20,6 +30,31 @@ export default function QuizDetailPage() {
     const secs = seconds % 60;
     return `${mins}m ${secs}s`;
   };
+
+  const isOfflineHskQuiz =
+    (quiz?.topic === 'HSK1' && quiz.id === 'offline-quiz-hsk1') ||
+    (quiz?.topic === 'HSK2' && quiz.id === 'offline-quiz-hsk2');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<'EASY' | 'MEDIUM' | 'HARD'>('EASY');
+  const [selectedQuestionCount, setSelectedQuestionCount] = useState<10 | 20 | 30>(20);
+  const [previewSeed] = useState(() => Math.floor(Math.random() * 1000));
+  const hskPreviewPool = quiz?.id === 'offline-quiz-hsk2'
+    ? selectedDifficulty === 'EASY'
+      ? HSK2_EASY_QUESTIONS
+      : selectedDifficulty === 'MEDIUM'
+        ? HSK2_MEDIUM_QUESTIONS
+        : HSK2_HARD_QUESTIONS
+    :
+    selectedDifficulty === 'EASY'
+      ? HSK1_EASY_QUESTIONS
+      : selectedDifficulty === 'MEDIUM'
+        ? HSK1_MEDIUM_QUESTIONS
+        : HSK1_HARD_QUESTIONS;
+  const previewQuestions = getQuizDetailPreviewQuestions(
+    isOfflineHskQuiz ? hskPreviewPool : (quiz?.questions ?? []),
+    isOfflineHskQuiz,
+    previewSeed,
+    isOfflineHskQuiz ? selectedQuestionCount : 20,
+  );
 
   if (isLoading) {
     return (
@@ -58,7 +93,7 @@ export default function QuizDetailPage() {
   }
 
   return (
-    <div className="education-container">
+    <div className="education-container quiz-ui-static">
       
 
       <div className="detail-wrapper">
@@ -96,15 +131,63 @@ export default function QuizDetailPage() {
 
             <div className="flex gap-3">
               <Link
-                to={`/quiz/${quiz.id}/session`}
+                to={isOfflineHskQuiz
+                  ? `/quiz/${quiz.id}/session?difficulty=${selectedDifficulty}&count=${selectedQuestionCount}`
+                  : `/quiz/${quiz.id}/session`}
                 className="flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold hover:scale-105 transition-transform shadow-lg shadow-accent-900/30"
               >
                 <Play className="w-5 h-5" />
-                Start Quiz
+                Bat dau lam bai
               </Link>
             </div>
           </div>
         </header>
+
+        {isOfflineHskQuiz && (
+          <div className="glass-card mb-8">
+            <h3 className="font-bold text-white mb-4">Configure HSK1 Practice</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <p className="text-sm text-slate-400 mb-3">Difficulty</p>
+                <div className="flex gap-2 flex-wrap">
+                  {(['EASY', 'MEDIUM', 'HARD'] as const).map((difficulty) => (
+                    <button
+                      key={difficulty}
+                      type="button"
+                      onClick={() => setSelectedDifficulty(difficulty)}
+                      className={`px-4 py-2 rounded-full border text-sm font-semibold ${
+                        selectedDifficulty === difficulty
+                          ? 'bg-accent-600 text-white border-accent-500'
+                          : 'bg-white/5 text-slate-300 border-white/10'
+                      }`}
+                    >
+                      {difficulty === 'EASY' ? 'Dễ' : difficulty === 'MEDIUM' ? 'Vừa' : 'Khó'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-sm text-slate-400 mb-3">Question Count</p>
+                <div className="flex gap-2 flex-wrap">
+                  {([10, 20, 30] as const).map((count) => (
+                    <button
+                      key={count}
+                      type="button"
+                      onClick={() => setSelectedQuestionCount(count)}
+                      className={`px-4 py-2 rounded-full border text-sm font-semibold ${
+                        selectedQuestionCount === count
+                          ? 'bg-emerald-600 text-white border-emerald-500'
+                          : 'bg-white/5 text-slate-300 border-white/10'
+                      }`}
+                    >
+                      {count} câu
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {/* Quiz Info Card */}
@@ -116,7 +199,8 @@ export default function QuizDetailPage() {
             <dl className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <dt className="text-slate-400">Questions</dt>
-                <dd className="text-white font-medium">{quiz.questionCount}</dd>
+                <dd className="text-white font-medium">{isOfflineHskQuiz ? selectedQuestionCount : quiz.questionCount}</dd>
+                <dd className="text-white font-medium">{isOfflineHskQuiz ? selectedQuestionCount : quiz.questionCount}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-400">Time Limit</dt>
@@ -154,12 +238,18 @@ export default function QuizDetailPage() {
           <div className="md:col-span-2 glass-card">
             <h3 className="font-bold text-white mb-4 flex items-center gap-2">
               <List className="w-5 h-5 text-accent-400" />
-              Questions ({quiz.questions?.length || 0})
+              Cau hoi mau ({previewQuestions.length})
             </h3>
 
-            {quiz.questions && quiz.questions.length > 0 ? (
+            {isOfflineHskQuiz && (
+              <p className="text-sm text-slate-400 mb-4">
+                Preview {selectedQuestionCount} cau - Muc {selectedDifficulty === 'EASY' ? 'De' : selectedDifficulty === 'MEDIUM' ? 'Vua' : 'Kho'}
+              </p>
+            )}
+
+            {previewQuestions.length > 0 ? (
               <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-                {quiz.questions.map((question: QuizQuestion, idx) => (
+                {previewQuestions.map((question: QuizQuestion, idx) => (
                   <div key={question.id} className="p-4 bg-white/5 rounded-xl border border-white/5">
                     <div className="flex items-start justify-between mb-2">
                       <span className="text-sm font-bold text-accent-400">Question {idx + 1}</span>

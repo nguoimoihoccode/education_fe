@@ -24,7 +24,7 @@ export default function QuizStatsPage() {
   const totalPages = historyData?.totalPages || 1;
 
   return (
-    <div className="education-container">
+    <div className="education-container quiz-ui-static">
       
 
       <div className="dashboard-wrapper">
@@ -35,7 +35,7 @@ export default function QuizStatsPage() {
 
         {isLoadingStats ? (
           <div className="py-10 text-center">
-            <div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <div className="w-12 h-12 border-2 border-accent-500/40 rounded-full mx-auto"></div>
           </div>
         ) : stats && (
           <>
@@ -58,14 +58,12 @@ export default function QuizStatsPage() {
                       return (
                         <div key={item.id} className="flex flex-col items-center flex-1 min-w-[40px] group">
                           <div
-                            className="w-full bg-gradient-to-t from-accent-600 to-fuchsia-500 rounded-t-sm transition-all duration-700 hover:from-fuchsia-400 hover:to-accent-300"
+                            className="w-full bg-gradient-to-t from-accent-600 to-fuchsia-500 rounded-t-sm"
                             style={{
-                              height: '0%',
-                              animation: `growBar 1s ease-out forwards ${idx * 0.05}s`,
-                              '--target-height': `${score}%`,
+                              height: `${score}%`,
                             } as React.CSSProperties}
                           ></div>
-                          <span className="text-[10px] text-slate-500 mt-1 transform hover:-translate-y-1 transition-transform">
+                          <span className="text-[10px] text-slate-500 mt-1">
                             {idx + 1}
                           </span>
                         </div>
@@ -90,7 +88,7 @@ export default function QuizStatsPage() {
 
               {isLoadingHistory ? (
                 <div className="py-10 text-center">
-                  <div className="w-10 h-10 border-2 border-accent-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  <div className="w-10 h-10 border-2 border-accent-500/40 rounded-full mx-auto"></div>
                 </div>
               ) : history.length === 0 ? (
                 <div className="py-10 text-center text-slate-500">
@@ -115,7 +113,7 @@ export default function QuizStatsPage() {
                       </thead>
                       <tbody className="divide-y divide-white/5">
                         {history.map((item) => (
-                          <tr key={item.id} className="hover:bg-white/5 transition-colors">
+                          <tr key={item.id} className="hover:bg-white/5">
                             <td className="py-4">
                               <a href={`/quiz/${item.quizId}`} className="text-white font-medium hover:text-accent-400">
                                 {item.quizName}
@@ -160,12 +158,6 @@ export default function QuizStatsPage() {
         )}
       </div>
 
-      <style>{`
-        @keyframes growBar {
-          from { height: 0; opacity: 0; }
-          to { height: var(--target-height); opacity: 1; }
-        }
-      `}</style>
     </div>
   );
 }

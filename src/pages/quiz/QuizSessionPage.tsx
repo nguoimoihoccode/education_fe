@@ -1,9 +1,11 @@
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useCallback, useEffect, useEffectEvent, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Clock, CheckCircle, XCircle, ArrowRight, AlertCircle } from 'lucide-react';
+import { Clock, CheckCircle, ArrowRight, AlertCircle } from 'lucide-react';
 import {
   getQuizById,
+  getQuizSessionQuestions,
   getQuizSession,
   startQuizSession,
   submitQuizAnswer,
@@ -17,14 +19,16 @@ import '../Education.css';
 export default function QuizSessionPage() {
   const { quizId } = useParams<{ quizId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const [timeSpentOnQuestion, setTimeSpentOnQuestion] = useState<number>(0);
-  const [feedback, setFeedback] = useState<{ isCorrect: boolean; correctAnswer: string; explanation?: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const difficulty = searchParams.get('difficulty');
+  const count = searchParams.get('count');
 
   // Fetch quiz details
   const { data: quiz, isLoading: isLoadingQuiz } = useQuery({
@@ -41,9 +45,18 @@ export default function QuizSessionPage() {
     refetchInterval: false,
   });
 
+  const { data: sessionQuestions = [] } = useQuery({
+    queryKey: ['quizSessionQuestions', quizId, sessionId],
+    queryFn: () => getQuizSessionQuestions(quizId!, sessionId || undefined),
+    enabled: !!quizId && !!sessionId,
+  });
+
   // Start session mutation
   const startMutation = useMutation({
-    mutationFn: () => startQuizSession(quizId!),
+    mutationFn: () => startQuizSession(quizId!, {
+      difficulty: difficulty === 'EASY' || difficulty === 'MEDIUM' || difficulty === 'HARD' ? difficulty : undefined,
+      questionCount: count === '10' || count === '20' || count === '30' ? Number(count) as 10 | 20 | 30 : undefined,
+    }),
     onSuccess: (data) => {
       setSessionId(data.id);
     },
@@ -71,9 +84,18 @@ export default function QuizSessionPage() {
     totalQuestions,
     displayQuestionIndex,
     currentQuestion,
-    shouldFinishAfterFeedback,
     progress,
-  } = getQuizSessionView(quiz ?? {}, session ?? {}, !!feedback);
+  } = getQuizSessionView(
+    quiz
+      ? {
+          ...quiz,
+          questionCount: sessionQuestions.length || quiz.questionCount,
+          questions: sessionQuestions.length ? sessionQuestions : quiz.questions,
+        }
+      : {},
+    session ?? {},
+    false,
+  );
 
   const startCurrentSession = useEffectEvent(() => {
     if (quizId && !sessionId) {
@@ -81,11 +103,11 @@ export default function QuizSessionPage() {
     }
   });
 
-  const completeCurrentSession = useEffectEvent(() => {
+  const completeCurrentSession = useCallback(() => {
     if (session && !completeMutation.isPending) {
       completeMutation.mutate(session.id);
     }
-  });
+  }, [completeMutation, session]);
 
   // Submit answer mutation
   const submitMutation = useMutation({
@@ -106,14 +128,18 @@ export default function QuizSessionPage() {
           };
         });
       }
-
-      setFeedback({
-        isCorrect: result.isCorrect,
-        correctAnswer: result.correctAnswer,
-        explanation: result.explanation,
-      });
       setIsSubmitting(false);
       await queryClient.invalidateQueries({ queryKey: ['quizSession', sessionId] });
+
+      const nextSession = sessionId ? queryClient.getQueryData<QuizSession>(['quizSession', sessionId]) : null;
+      const totalQuestionCount = sessionQuestions.length || quiz?.questionCount || 0;
+
+      setSelectedAnswer('');
+      setTimeSpentOnQuestion(0);
+
+      if (nextSession && nextSession.currentQuestionIndex >= totalQuestionCount) {
+        completeCurrentSession();
+      }
     },
     onError: () => {
       toast.error('Failed to submit answer');
@@ -145,45 +171,20 @@ export default function QuizSessionPage() {
       const timer = setInterval(updateTimer, 1000);
       return () => clearInterval(timer);
     }
-  }, [session, quiz]);
+  }, [session, quiz, completeCurrentSession]);
 
   // Timer for current question time spent
   useEffect(() => {
-    if (session && !feedback && !isSubmitting) {
+    if (session && !isSubmitting) {
       const timer = setInterval(() => {
         setTimeSpentOnQuestion((prev) => prev + 1);
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [session, feedback, isSubmitting]);
-
-  // Auto-advance when feedback is shown
-  useEffect(() => {
-    if (feedback && shouldFinishAfterFeedback) {
-      const delay = setTimeout(() => {
-        setFeedback(null);
-        setSelectedAnswer('');
-        setTimeSpentOnQuestion(0);
-        completeCurrentSession();
-      }, 2000); // 2 second delay to show feedback
-      return () => clearTimeout(delay);
-    }
-  }, [feedback, shouldFinishAfterFeedback]);
-
-  useEffect(() => {
-    if (feedback && !shouldFinishAfterFeedback) {
-      const delay = setTimeout(() => {
-        setFeedback(null);
-        setSelectedAnswer('');
-        setTimeSpentOnQuestion(0);
-      }, 2000);
-
-      return () => clearTimeout(delay);
-    }
-  }, [feedback, shouldFinishAfterFeedback]);
+  }, [session, isSubmitting]);
 
   const handleAnswerSelect = (answer: string) => {
-    if (!feedback && !isSubmitting) {
+    if (!isSubmitting) {
       setSelectedAnswer(answer);
     }
   };
@@ -201,18 +202,6 @@ export default function QuizSessionPage() {
       answer: selectedAnswer,
       timeSpent: timeSpentOnQuestion,
     });
-    // setIsSubmitting will be reset in onError or after feedback clears
-  };
-
-  const handleNext = () => {
-    if (feedback) {
-      setFeedback(null);
-      setSelectedAnswer('');
-      setTimeSpentOnQuestion(0);
-      if (shouldFinishAfterFeedback) {
-        completeCurrentSession();
-      }
-    }
   };
 
   if (isLoadingQuiz) {
@@ -225,7 +214,7 @@ export default function QuizSessionPage() {
           <div className="noise-overlay"></div>
         </div>
         <div className="detail-wrapper flex items-center justify-center py-20">
-          <div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-2 border-accent-500/40 rounded-full"></div>
         </div>
       </div>
     );
@@ -255,7 +244,7 @@ export default function QuizSessionPage() {
   }
 
   return (
-    <div className="education-container">
+    <div className="education-container quiz-ui-static">
       
 
       <div className="detail-wrapper">
@@ -287,7 +276,7 @@ export default function QuizSessionPage() {
           {/* Progress Bar */}
           <div className="mt-4 h-2 bg-slate-700/30 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-accent-600 to-fuchsia-600 transition-all duration-500"
+              className="h-full bg-gradient-to-r from-accent-600 to-fuchsia-600"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -311,23 +300,15 @@ export default function QuizSessionPage() {
               <div className="space-y-3">
                 {currentQuestion.options.map((option, idx) => {
                   const isSelected = selectedAnswer === option;
-                  const isCorrect = feedback && option === currentQuestion.correctAnswer;
-                  const isWrong = feedback && isSelected && option !== currentQuestion.correctAnswer;
 
                   return (
                     <button
                       key={idx}
                       onClick={() => handleAnswerSelect(option)}
-                      disabled={!!feedback || isSubmitting}
-                      className={`w-full p-4 rounded-xl text-left transition-all ${
+                      disabled={isSubmitting}
+                      className={`w-full p-4 rounded-xl text-left ${
                         isSelected
                           ? 'bg-accent-600/20 border-2 border-accent-500 text-white'
-                          : feedback
-                          ? isCorrect
-                            ? 'bg-emerald-500/10 border-2 border-emerald-500 text-emerald-200'
-                            : isWrong
-                            ? 'bg-red-500/10 border-2 border-red-500 text-red-200'
-                            : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10'
                           : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:border-accent-500/30'
                       }`}
                     >
@@ -335,18 +316,12 @@ export default function QuizSessionPage() {
                         <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
                           isSelected
                             ? 'bg-accent-600 text-white'
-                            : feedback && isCorrect
-                            ? 'bg-emerald-500 text-white'
-                            : feedback && isWrong
-                            ? 'bg-red-500 text-white'
                             : 'bg-white/10 text-slate-400'
                         }`}>
                           {String.fromCharCode(65 + idx)}
                         </span>
                         <span className="flex-1 pt-1">{option}</span>
                         {isSelected && <CheckCircle className="w-5 h-5 text-accent-400 flex-shrink-0" />}
-                        {feedback && isCorrect && <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />}
-                        {feedback && isWrong && <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />}
                       </div>
                     </button>
                   );
@@ -358,65 +333,23 @@ export default function QuizSessionPage() {
                   type="text"
                   value={selectedAnswer}
                   onChange={(e) => setSelectedAnswer(e.target.value)}
-                  disabled={!!feedback || isSubmitting}
+                  disabled={isSubmitting}
                   placeholder="Type your answer..."
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-accent-500 focus:ring-2 focus:ring-accent-200 transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-accent-500"
                 />
-              </div>
-            )}
-
-            {/* Feedback */}
-            {feedback && (
-              <div className={`mt-6 p-4 rounded-xl border ${
-                feedback.isCorrect
-                  ? 'bg-emerald-500/10 border-emerald-500/30'
-                  : 'bg-red-500/10 border-red-500/30'
-              }`}>
-                <div className="flex items-start gap-3">
-                  {feedback.isCorrect ? (
-                    <CheckCircle className="w-6 h-6 text-emerald-400 flex-shrink-0" />
-                  ) : (
-                    <XCircle className="w-6 h-6 text-red-400 flex-shrink-0" />
-                  )}
-                  <div className="flex-1">
-                    <h4 className={`font-bold mb-1 ${feedback.isCorrect ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {feedback.isCorrect ? 'Correct!' : 'Incorrect'}
-                    </h4>
-                    <p className="text-sm text-slate-300 mb-2">
-                      {feedback.isCorrect
-                        ? `+${currentQuestion.points} point${currentQuestion.points > 1 ? 's' : ''}`
-                        : `The correct answer is: <span class="font-bold text-white">${feedback.correctAnswer}</span>`
-                      }
-                    </p>
-                    {feedback.explanation && (
-                      <p className="text-sm text-slate-400 italic">{feedback.explanation}</p>
-                    )}
-                  </div>
-                </div>
               </div>
             )}
 
             {/* Actions */}
             <div className="mt-8 flex justify-end gap-3">
-              {!feedback && !isSubmitting && (
-                <button
-                  onClick={handleSubmit}
-                  disabled={!selectedAnswer.trim() || isSubmitting}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Submit Answer
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              )}
-              {feedback && (
-                <button
-                  onClick={handleNext}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-all"
-                >
-                  {shouldFinishAfterFeedback ? 'Finish' : 'Next Question'}
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              )}
+              <button
+                onClick={handleSubmit}
+                disabled={!selectedAnswer.trim() || isSubmitting}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Submit Answer
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         )}

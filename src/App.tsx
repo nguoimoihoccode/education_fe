@@ -4,6 +4,9 @@ import { Toaster } from 'react-hot-toast';
 import { Layout } from '@/components/layout';
 import { ProtectedRoute } from '@/components/auth';
 import { queryClient } from '@/config';
+import type { User } from '@/api/auth.api';
+import { useAuthStore } from '@/store/auth.store';
+import { shouldEnableQuizOfflineAuth } from '@/store/quizOfflineAuth';
 import { useSettingsStore } from '@/store/settings.store';
 import { useEffect, lazy, Suspense } from 'react';
 
@@ -170,6 +173,29 @@ function SettingsEffect() {
   return null;
 }
 
+function QuizOfflineAuthBootstrap() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const setTokens = useAuthStore((state) => state.setTokens);
+
+  useEffect(() => {
+    const enabled = import.meta.env.VITE_QUIZ_OFFLINE_MODE === 'true';
+
+    if (shouldEnableQuizOfflineAuth(enabled, isAuthenticated)) {
+      const mockUser: User = {
+        id: 'offline-user',
+        email: 'offline@quiz.local',
+        displayName: 'Offline Learner',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      setTokens('offline-access-token', 'offline-refresh-token', mockUser);
+    }
+  }, [isAuthenticated, setTokens]);
+
+  return null;
+}
+
 // ============================================
 // App Component
 // ============================================
@@ -177,6 +203,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <SettingsEffect />
+      <QuizOfflineAuthBootstrap />
       <BrowserRouter>
         <Toaster
           position="top-right"

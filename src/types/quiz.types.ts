@@ -149,7 +149,7 @@ export interface CreateQuizDto {
   maxRetries?: number; // 0-10
 }
 
-export interface UpdateQuizDto extends Partial<Omit<CreateQuizDto, 'questionCount' | 'timeLimit' | 'passingScore'>> {}
+export type UpdateQuizDto = Partial<Omit<CreateQuizDto, 'questionCount' | 'timeLimit' | 'passingScore'>>;
 
 export interface CreateQuizQuestionDto {
   question: string;
@@ -165,11 +165,11 @@ export interface BulkCreateQuizQuestionDto {
   questions: CreateQuizQuestionDto[];
 }
 
-export interface UpdateQuizQuestionDto extends Partial<CreateQuizQuestionDto> {}
+export type UpdateQuizQuestionDto = Partial<CreateQuizQuestionDto>;
 
 export interface StartQuizSessionDto {
-  quizId: string;
-  questionCount?: number;
+  questionCount?: 10 | 20 | 30;
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
 }
 
 export interface SubmitQuizAnswerDto {

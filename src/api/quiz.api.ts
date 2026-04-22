@@ -4,6 +4,7 @@ import {
   normalizeQuizSessionObject,
   normalizeWrongAnswers,
 } from './normalizers';
+import { createQuizOfflineProvider } from '@/mocks/quizOffline';
 import type {
   Quiz,
   QuizQuestion,
@@ -19,8 +20,6 @@ import type {
   BulkCreateQuizQuestionDto,
   UpdateQuizQuestionDto,
   StartQuizSessionDto,
-  SubmitQuizAnswerDto,
-  CompleteQuizSessionDto,
   GenerateQuizFromFlashcardsDto,
   PaginatedQuizResponse,
   PaginatedQuizSessionResponse,
@@ -29,6 +28,9 @@ import type {
   SubmitAnswerResult,
 } from '@/types/quiz.types';
 
+const quizOfflineMode = import.meta.env.VITE_QUIZ_OFFLINE_MODE === 'true';
+const offlineQuizProvider = createQuizOfflineProvider();
+
 // ==================== QUIZ MANAGEMENT ====================
 
 export const getQuizzes = async (params?: {
@@ -36,6 +38,9 @@ export const getQuizzes = async (params?: {
   page?: number;
   limit?: number;
 }): Promise<PaginatedQuizResponse> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.getQuizzes();
+  }
   const response = await apiClient.get('/quizzes', { params, ...CACHE_PROFILES.DYNAMIC });
   return normalizeCollectionPage<Quiz>(response.data, 'quizzes');
 };
@@ -44,11 +49,17 @@ export const getPublicQuizzes = async (params?: {
   page?: number;
   limit?: number;
 }): Promise<PaginatedQuizResponse> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.getQuizzes();
+  }
   const response = await apiClient.get('/quizzes/public', { params, ...CACHE_PROFILES.DYNAMIC });
   return normalizeCollectionPage<Quiz>(response.data, 'quizzes');
 };
 
 export const getQuizById = async (id: string): Promise<Quiz> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.getQuizById(id);
+  }
   const [quizResponse, questions] = await Promise.all([
     apiClient.get(`/quizzes/${id}`, CACHE_PROFILES.DYNAMIC),
     getQuizQuestions(id),
@@ -61,28 +72,53 @@ export const getQuizById = async (id: string): Promise<Quiz> => {
 };
 
 export const createQuiz = async (dto: CreateQuizDto): Promise<Quiz> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.createQuiz(dto);
+  }
   const response = await apiClient.post('/quizzes', dto);
   return response.data;
 };
 
 export const updateQuiz = async (id: string, dto: UpdateQuizDto): Promise<Quiz> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.updateQuiz(id, dto);
+  }
   const response = await apiClient.patch(`/quizzes/${id}`, dto);
   return response.data;
 };
 
 export const deleteQuiz = async (id: string): Promise<void> => {
+  if (quizOfflineMode) {
+    await offlineQuizProvider.deleteQuiz(id);
+    return;
+  }
   await apiClient.delete(`/quizzes/${id}`);
 };
 
 // ==================== QUESTION MANAGEMENT ====================
 
 export const getQuizQuestions = async (quizId: string): Promise<QuizQuestion[]> => {
+  if (quizOfflineMode) {
+    const quiz = await offlineQuizProvider.getQuizById(quizId);
+    return quiz.questions ?? [];
+  }
   const response = await apiClient.get(`/quizzes/${quizId}/questions`, CACHE_PROFILES.DYNAMIC);
   return Array.isArray(response.data?.questions)
     ? response.data.questions
     : Array.isArray(response.data)
       ? response.data
       : [];
+};
+
+export const getQuizSessionQuestions = async (
+  quizId: string,
+  sessionId?: string,
+): Promise<QuizQuestion[]> => {
+  if (quizOfflineMode && sessionId) {
+    return offlineQuizProvider.getSessionQuestions(sessionId);
+  }
+
+  return getQuizQuestions(quizId);
 };
 
 export const createQuizQuestion = async (
@@ -128,6 +164,12 @@ export const startQuizSession = async (
   quizId: string,
   dto?: StartQuizSessionDto
 ): Promise<QuizSession> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.startQuizSession(quizId, dto as {
+      difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
+      questionCount?: 10 | 20 | 30;
+    });
+  }
   const response = await apiClient.post(`/quizzes/${quizId}/start`, dto);
   return normalizeQuizSessionObject(response.data as QuizSession);
 };
@@ -140,16 +182,25 @@ export const submitQuizAnswer = async (
     timeSpent?: number;
   }
 ): Promise<SubmitAnswerResult> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.submitQuizAnswer(sessionId, answerData);
+  }
   const response = await apiClient.post(`/quizzes/sessions/${sessionId}/answer`, answerData);
   return response.data;
 };
 
 export const completeQuizSession = async (sessionId: string): Promise<QuizSession> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.completeQuizSession(sessionId);
+  }
   const response = await apiClient.post(`/quizzes/sessions/${sessionId}/complete`);
   return normalizeQuizSessionObject(response.data as QuizSession);
 };
 
 export const getQuizSession = async (sessionId: string): Promise<QuizSession> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.getQuizSession(sessionId);
+  }
   const response = await apiClient.get(`/quizzes/sessions/${sessionId}`, CACHE_PROFILES.NO_CACHE);
   return normalizeQuizSessionObject(response.data as QuizSession);
 };
@@ -178,6 +229,9 @@ export const getAllQuizSessions = async (params?: { page?: number; limit?: numbe
 // ==================== STATISTICS & HISTORY ====================
 
 export const getQuizStats = async (): Promise<QuizStats> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.getQuizStats();
+  }
   const response = await apiClient.get('/quizzes/stats', CACHE_PROFILES.USER);
   const data = response.data;
 
@@ -214,6 +268,9 @@ export const getQuizStatsByTopic = async (topic: string): Promise<TopicStats> =>
 };
 
 export const getQuizHistory = async (params?: { page?: number; limit?: number }): Promise<PaginatedQuizHistoryResponse> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.getQuizHistory();
+  }
   const response = await apiClient.get('/quizzes/history', { params, ...CACHE_PROFILES.DYNAMIC });
   const normalized = normalizeCollectionPage<QuizHistoryItem>(response.data, 'sessions');
 
@@ -235,6 +292,9 @@ export const getQuizHistory = async (params?: { page?: number; limit?: number })
 export const getWrongAnswers = async (
   sessionId?: string
 ): Promise<WrongAnswer[]> => {
+  if (quizOfflineMode) {
+    return offlineQuizProvider.getWrongAnswers(sessionId || '');
+  }
   if (sessionId) {
     const response = await apiClient.get(`/quizzes/sessions/${sessionId}/wrong`, CACHE_PROFILES.NO_CACHE);
     return normalizeWrongAnswers(response.data);

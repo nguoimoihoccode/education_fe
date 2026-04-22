@@ -7,7 +7,6 @@ import {
   MoreVertical,
   Edit,
   Trash2,
-  Play,
   Zap,
 } from 'lucide-react';
 import type { Quiz } from '@/types/quiz.types';
@@ -91,17 +90,14 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
 
   return (
     <div
-      className="group relative bg-slate-800/80 backdrop-blur-md rounded-3xl hover:shadow-[0_0_40px_rgba(139,92,246,0.08)] transition-all duration-300 overflow-hidden border border-white/10 hover:border-accent-500/30 cursor-pointer hover:-translate-y-1"
+      className="group relative bg-slate-800/80 backdrop-blur-md rounded-3xl overflow-hidden border border-white/10 hover:border-accent-500/30 cursor-pointer"
       onClick={handleViewDetails}
     >
-      {/* Ambient glow */}
-      <div className={`absolute -top-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br ${diffConfig.glow} blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`}></div>
-
       {/* Header */}
       <div className="p-6 relative">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-black font-headline text-white group-hover:text-accent-300 transition-colors line-clamp-2 leading-tight">
+            <h3 className="text-lg font-black font-headline text-white group-hover:text-accent-300 line-clamp-2 leading-tight">
               {quiz.name}
             </h3>
             {quiz.description && (
@@ -113,7 +109,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
           <div className="relative ml-3">
             <button
               onClick={handleMenuClick}
-              className="p-2.5 rounded-xl hover:bg-white/5 transition-colors text-slate-500 hover:text-white border border-transparent hover:border-white/10"
+              className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white border border-transparent hover:border-white/10"
               aria-label="More options"
             >
               <MoreVertical className="w-4 h-4" />
@@ -127,14 +123,14 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
               >
                 <button
                   onClick={handleEdit}
-                  className="w-full px-4 py-2.5 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white flex items-center gap-3 transition-colors"
+                  className="w-full px-4 py-2.5 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white flex items-center gap-3"
                 >
                   <Edit className="w-4 h-4 text-accent-400" />
                   Edit Quiz
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="w-full px-4 py-2.5 text-left text-sm text-rose-400 hover:bg-rose-500/10 flex items-center gap-3 transition-colors"
+                  className="w-full px-4 py-2.5 text-left text-sm text-rose-400 hover:bg-rose-500/10 flex items-center gap-3"
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete Quiz
@@ -222,7 +218,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
 
           <button
             onClick={handleStartQuiz}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_0_15px_rgba(139,92,246,0.3)]"
           >
             <Zap className="w-4 h-4" />
             Start
