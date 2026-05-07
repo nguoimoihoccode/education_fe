@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/auth.store';
+import '@/styles/education-shell.css';
 import { DesktopSidebar, MobileSidebar } from './Sidebar';
 import { Header } from './Header';
-import '../../styles/stock-redesign.css';
-import '../../pages/Education.css';
 
 /* ============================================
  * Layout — orchestrates Sidebar + Header + Content
@@ -28,8 +27,8 @@ export const Layout = ({ children }: LayoutProps) => {
 
   // Skip layout for auth pages and standalone pages
   const authPaths = ['/login', '/register', '/auth/callback'];
-  const noLayoutPaths = ['/dashboard-landing'];
-  if (!isAuthenticated && authPaths.includes(location.pathname)) {
+  const noLayoutPaths = ['/', '/dashboard-landing'];
+  if (authPaths.includes(location.pathname)) {
     return <>{children}</>;
   }
   if (noLayoutPaths.includes(location.pathname)) {
@@ -75,7 +74,6 @@ export const Layout = ({ children }: LayoutProps) => {
       }`}>
         {/* Header */}
         <Header
-          isAuthenticated={isAuthenticated}
           displayName={displayName}
           email={email}
           isNotificationsOpen={isNotificationsOpen}
@@ -97,7 +95,7 @@ export const Layout = ({ children }: LayoutProps) => {
           style={{ borderTop: '1px solid var(--stock-glass-border)' }}>
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
             <p className="text-sm" style={{ color: 'var(--stock-text-tertiary)' }}>
-              © 2026 <span className="font-semibold stock-gradient-text">EduPro</span>. All rights reserved.
+              © 2026 <span className="font-semibold stock-gradient-text">EduPro</span>. Nền tảng học tập tập trung cho người học.
             </p>
             <div className="flex gap-4">
               <a href="#" className="text-sm font-medium transition-colors hover:text-green-400" style={{ color: 'var(--stock-text-tertiary)' }}>Điều khoản</a>

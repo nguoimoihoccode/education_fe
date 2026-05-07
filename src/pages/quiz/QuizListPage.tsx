@@ -97,7 +97,7 @@ export default function QuizListPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       queryClient.invalidateQueries({ queryKey: ['quizStats'] });
-      toast.success('Quiz created successfully!');
+      toast.success('Đã tạo quiz');
       closeQuizModal();
     },
     onError: (error) => {
@@ -110,7 +110,7 @@ export default function QuizListPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       queryClient.invalidateQueries({ queryKey: ['quizStats'] });
-      toast.success('Quiz updated successfully!');
+      toast.success('Đã cập nhật quiz');
       closeQuizModal();
     },
     onError: (error) => {
@@ -123,7 +123,7 @@ export default function QuizListPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       queryClient.invalidateQueries({ queryKey: ['quizStats'] });
-      toast.success('Quiz deleted successfully!');
+      toast.success('Đã xóa quiz');
     },
     onError: (error) => {
       toast.error(getQuizDeleteErrorMessage(error));
@@ -132,7 +132,7 @@ export default function QuizListPage() {
 
   const handleSubmitQuizForm = () => {
     if (!form.name.trim()) {
-      toast.error('Please enter a quiz name');
+      toast.error('Nhập tên quiz trước khi lưu');
       return;
     }
 
@@ -161,19 +161,19 @@ export default function QuizListPage() {
           <div>
             <h1 className="text-3xl md:text-4xl font-black font-headline text-white mb-2 flex items-center gap-3">
               <Target className="w-8 h-8 text-accent-400" />
-              Quiz Center
+              Trung tâm luyện tập
             </h1>
             <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">
-              Test your knowledge with interactive quizzes
+              Luyện kiến thức, xem điểm yếu và theo dõi kết quả
             </p>
           </div>
 
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold shadow-lg shadow-accent-900/30"
+            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
-            Create Quiz
+            Tạo quiz
           </button>
         </header>
 
@@ -188,55 +188,55 @@ export default function QuizListPage() {
         <div className="grid md:grid-cols-3 gap-4 mb-10">
           <Link
             to="/quiz/history"
-            className="glass-card p-6 group border-white/10 hover:border-accent-500/30 cursor-pointer"
+            className="learning-card group"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500/20 to-fuchsia-500/20 flex items-center justify-center">
                 <TrendingUp className="w-6 h-6 text-accent-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-1">Quiz History</h3>
-                <p className="text-sm text-slate-400">Review past attempts</p>
+                <h3 className="text-lg font-bold text-white mb-1">Lịch sử làm bài</h3>
+                <p className="text-sm text-slate-400">Xem lại các lần luyện tập</p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-accent-400 text-sm font-medium group-hover:text-accent-300">
-              View History <ArrowRight className="w-4 h-4 ml-1" />
+              Xem lịch sử <ArrowRight className="w-4 h-4 ml-1" />
             </div>
           </Link>
 
           <Link
             to="/quiz/stats"
-            className="glass-card p-6 group border-white/10 hover:border-emerald-500/30 cursor-pointer"
+            className="learning-card group"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
                 <Target className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-1">Detailed Stats</h3>
-                <p className="text-sm text-slate-400">Track your progress</p>
+                <h3 className="text-lg font-bold text-white mb-1">Thống kê chi tiết</h3>
+                <p className="text-sm text-slate-400">Theo dõi tiến bộ</p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-emerald-400 text-sm font-medium group-hover:text-emerald-300">
-              View Details <ArrowRight className="w-4 h-4 ml-1" />
+              Xem thống kê <ArrowRight className="w-4 h-4 ml-1" />
             </div>
           </Link>
 
           <Link
             to="/quiz"
-            className="glass-card p-6 group border-white/10 hover:border-amber-500/30 cursor-pointer"
+            className="learning-card group"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
                 <Play className="w-6 h-6 text-amber-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-1">All Quizzes</h3>
-                <p className="text-sm text-slate-400">Browse available quizzes</p>
+                <h3 className="text-lg font-bold text-white mb-1">Danh sách quiz</h3>
+                <p className="text-sm text-slate-400">Chọn bài luyện phù hợp</p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-amber-400 text-sm font-medium group-hover:text-amber-300">
-              Browse <ArrowRight className="w-4 h-4 ml-1" />
+              Xem danh sách <ArrowRight className="w-4 h-4 ml-1" />
             </div>
           </Link>
         </div>
@@ -249,7 +249,7 @@ export default function QuizListPage() {
               <Search className="w-5 h-5 text-slate-500 mr-3" />
               <input
                 type="text"
-                placeholder="Search quizzes..."
+                placeholder="Tìm quiz..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-transparent border-none outline-none text-white placeholder-slate-600 text-sm w-full"
@@ -261,7 +261,7 @@ export default function QuizListPage() {
             onChange={(e) => setTopicFilter(e.target.value)}
             className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-500"
           >
-            <option value="">All Topics</option>
+            <option value="">Tất cả chủ đề</option>
             {availableTopics.map((topic) => (
               <option key={topic} value={topic}>
                 {topic}
@@ -287,7 +287,7 @@ export default function QuizListPage() {
                     openEditModal(quiz);
                   }}
                   onDelete={(quiz: Quiz) => {
-                    if (window.confirm(`Delete quiz "${quiz.name}"?`)) {
+                    if (window.confirm(`Xóa quiz "${quiz.name}"?`)) {
                       deleteQuizMutation.mutate(quiz.id);
                     }
                   }}
@@ -300,11 +300,11 @@ export default function QuizListPage() {
                 <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
                   <BookOpen className="w-7 h-7 text-slate-600" />
                 </div>
-                <p className="text-slate-500 text-sm font-medium">No quizzes found.</p>
+                <p className="text-slate-500 text-sm font-medium">Không tìm thấy quiz.</p>
                 <p className="text-slate-600 text-xs mt-1">
                   {searchQuery || topicFilter
-                    ? 'Try adjusting your search or filters.'
-                    : 'Create your first quiz to get started!'}
+                    ? 'Thử đổi từ khóa hoặc bộ lọc.'
+                    : 'Tạo quiz đầu tiên để bắt đầu luyện tập.'}
                 </p>
               </div>
             )}
@@ -323,7 +323,7 @@ export default function QuizListPage() {
         )}
       </div>
 
-      {/* Create Quiz Modal */}
+      {/* Quiz modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-[0_0_60px_rgba(0,0,0,0.5)] border border-white/10 max-w-2xl w-full my-8 p-8">
@@ -331,10 +331,10 @@ export default function QuizListPage() {
               <div>
                 <h2 className="text-2xl font-black font-headline text-white flex items-center gap-3">
                   <Plus className="w-6 h-6 text-accent-400" />
-                  {isEditMode ? 'Edit Quiz' : 'Create New Quiz'}
+                  {isEditMode ? 'Sửa quiz' : 'Tạo quiz mới'}
                 </h2>
                 <p className="text-sm text-slate-500 mt-1">
-                  {isEditMode ? 'Update quiz settings' : 'Configure your quiz settings'}
+                  {isEditMode ? 'Cập nhật cấu hình quiz' : 'Thiết lập bài luyện mới'}
                 </p>
               </div>
                 <button
@@ -350,26 +350,26 @@ export default function QuizListPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-                    Quiz Name *
+                    Tên quiz *
                   </label>
                   <input
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm((current) => ({ ...current, name: e.target.value }))}
-                    placeholder="e.g., JavaScript Basics"
+                    placeholder="Ví dụ: HSK 1 cơ bản"
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-                    Topic
+                    Chủ đề
                   </label>
                   <input
                     type="text"
                     value={form.topic}
                     onChange={(e) => setForm((current) => ({ ...current, topic: e.target.value }))}
-                    placeholder="e.g., JavaScript"
+                    placeholder="Ví dụ: Chào hỏi"
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none"
                   />
                 </div>
@@ -377,12 +377,12 @@ export default function QuizListPage() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-                  Description
+                  Mô tả
                 </label>
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm((current) => ({ ...current, description: e.target.value }))}
-                  placeholder="Brief description of this quiz..."
+                  placeholder="Mô tả ngắn về nội dung luyện tập..."
                   rows={3}
                   className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none resize-none"
                 />
@@ -391,7 +391,7 @@ export default function QuizListPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-                    Difficulty
+                    Độ khó
                   </label>
                   <select
                     value={form.difficulty}
@@ -407,7 +407,7 @@ export default function QuizListPage() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
-                    Question Type
+                    Loại câu hỏi
                   </label>
                   <select
                     value={form.questionType}
@@ -544,20 +544,20 @@ export default function QuizListPage() {
                 onClick={closeQuizModal}
                 className="flex-1 px-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10"
               >
-                Cancel
+                Hủy
               </button>
               <button
                 onClick={handleSubmitQuizForm}
                 disabled={createQuizMutation.isPending || updateQuizMutation.isPending}
-                className="flex-1 px-4 py-3.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3.5 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {createQuizMutation.isPending
-                  ? 'Creating...'
+                  ? 'Đang tạo...'
                   : updateQuizMutation.isPending
-                    ? 'Saving...'
+                    ? 'Đang lưu...'
                     : isEditMode
-                      ? 'Save Changes'
-                      : 'Create Quiz'}
+                      ? 'Lưu thay đổi'
+                      : 'Tạo quiz'}
               </button>
             </div>
           </div>

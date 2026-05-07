@@ -61,28 +61,28 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
   const getDifficultyConfig = (difficulty?: string) => {
     switch (difficulty) {
       case 'EASY':
-        return { label: 'Easy', bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20', glow: 'from-emerald-500/20 to-teal-500/20' };
+        return { label: 'Dễ', bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/20', glow: 'from-emerald-500/20 to-teal-500/20' };
       case 'MEDIUM':
-        return { label: 'Medium', bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20', glow: 'from-amber-500/20 to-orange-500/20' };
+        return { label: 'Trung bình', bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20', glow: 'from-amber-500/20 to-orange-500/20' };
       case 'HARD':
-        return { label: 'Hard', bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/20', glow: 'from-rose-500/20 to-red-500/20' };
+        return { label: 'Khó', bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/20', glow: 'from-rose-500/20 to-red-500/20' };
       default:
-        return { label: 'Mixed', bg: 'bg-accent-500/10', text: 'text-accent-400', border: 'border-accent-500/20', glow: 'from-accent-500/20 to-fuchsia-500/20' };
+        return { label: 'Tổng hợp', bg: 'bg-accent-500/10', text: 'text-accent-400', border: 'border-accent-500/20', glow: 'from-accent-500/20 to-fuchsia-500/20' };
     }
   };
 
   const getQuestionTypeLabel = (type?: string) => {
     switch (type) {
       case 'MULTIPLE_CHOICE':
-        return 'Multiple Choice';
+        return 'Trắc nghiệm';
       case 'TRUE_FALSE':
-        return 'True/False';
+        return 'Đúng/Sai';
       case 'FILL_BLANK':
-        return 'Fill Blank';
+        return 'Điền vào chỗ trống';
       case 'MIXED':
-        return 'Mixed';
+        return 'Tổng hợp';
       default:
-        return 'Unknown';
+        return 'Chưa rõ';
     }
   };
 
@@ -110,7 +110,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
             <button
               onClick={handleMenuClick}
               className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white border border-transparent hover:border-white/10"
-              aria-label="More options"
+              aria-label="Thêm tùy chọn"
             >
               <MoreVertical className="w-4 h-4" />
             </button>
@@ -126,14 +126,14 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
                   className="w-full px-4 py-2.5 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white flex items-center gap-3"
                 >
                   <Edit className="w-4 h-4 text-accent-400" />
-                  Edit Quiz
+                  Sửa quiz
                 </button>
                 <button
                   onClick={handleDelete}
                   className="w-full px-4 py-2.5 text-left text-sm text-rose-400 hover:bg-rose-500/10 flex items-center gap-3"
                 >
                   <Trash2 className="w-4 h-4" />
-                  Delete Quiz
+                  Xóa quiz
                 </button>
               </div>
             )}
@@ -171,7 +171,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
               <List className="w-3.5 h-3.5 text-accent-400" />
             </div>
             <div className="text-xl font-black font-mono text-white">{quiz.questionCount}</div>
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Questions</div>
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Câu hỏi</div>
           </div>
 
           <div className="text-center p-3 bg-black/20 rounded-xl border border-white/5">
@@ -179,7 +179,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
               <Clock className="w-3.5 h-3.5 text-amber-400" />
             </div>
             <div className="text-xl font-black font-mono text-white">{formatTimeLimit(quiz.timeLimit)}</div>
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Time</div>
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Thời gian</div>
           </div>
 
           <div className="text-center p-3 bg-black/20 rounded-xl border border-white/5">
@@ -187,7 +187,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
               <Target className="w-3.5 h-3.5 text-emerald-400" />
             </div>
             <div className="text-xl font-black font-mono text-white">{quiz.passingScore}%</div>
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pass</div>
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Đạt</div>
           </div>
         </div>
       </div>
@@ -202,11 +202,11 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                 : 'bg-white/5 text-slate-500 border-white/5'
             )}>
-              {quiz.isPublic ? 'Public' : 'Private'}
+              {quiz.isPublic ? 'Công khai' : 'Riêng tư'}
             </span>
             {quiz.shuffleQuestions && (
               <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                Shuffle
+                Trộn câu hỏi
               </span>
             )}
             {quiz.allowRetry && (
@@ -221,7 +221,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_0_15px_rgba(139,92,246,0.3)]"
           >
             <Zap className="w-4 h-4" />
-            Start
+            Bắt đầu
           </button>
         </div>
       </div>

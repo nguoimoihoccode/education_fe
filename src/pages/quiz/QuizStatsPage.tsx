@@ -29,8 +29,8 @@ export default function QuizStatsPage() {
 
       <div className="dashboard-wrapper">
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Quiz Statistics</h1>
-          <p className="text-slate-400">Track your performance and progress</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Thống kê quiz</h1>
+          <p className="text-slate-400">Theo dõi kết quả và tiến độ của bạn</p>
         </header>
 
         {isLoadingStats ? (
@@ -47,7 +47,7 @@ export default function QuizStatsPage() {
             <div className="glass-card mb-8">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-accent-400" />
-                Score History
+                Lịch sử điểm số
               </h3>
 
               {history.length > 0 ? (
@@ -71,20 +71,20 @@ export default function QuizStatsPage() {
                     })}
                   </div>
                   <div className="flex justify-between text-xs text-slate-400 mt-2">
-                    <span>Earlier</span>
-                    <span>Recent</span>
+                    <span>Cũ hơn</span>
+                    <span>Gần đây</span>
                   </div>
                 </div>
               ) : (
                 <div className="py-10 text-center text-slate-500">
-                  <p>No attempt history yet.</p>
+                  <p>Chưa có lịch sử làm bài.</p>
                 </div>
               )}
             </div>
 
             {/* History Table */}
             <div className="glass-card">
-              <h2 className="text-xl font-bold text-white mb-6">Recent Attempts</h2>
+              <h2 className="text-xl font-bold text-white mb-6">Lần làm bài gần đây</h2>
 
               {isLoadingHistory ? (
                 <div className="py-10 text-center">
@@ -92,9 +92,9 @@ export default function QuizStatsPage() {
                 </div>
               ) : history.length === 0 ? (
                 <div className="py-10 text-center text-slate-500">
-                  <p>No quiz attempts yet.</p>
+                  <p>Bạn chưa làm quiz nào.</p>
                   <a href="/quiz" className="text-accent-400 hover:underline mt-2 inline-block">
-                    Start your first quiz
+                    Bắt đầu quiz đầu tiên
                   </a>
                 </div>
               ) : (
@@ -104,11 +104,11 @@ export default function QuizStatsPage() {
                       <thead>
                         <tr className="text-left text-slate-400 border-b border-white/10">
                           <th className="pb-3 font-medium">Quiz</th>
-                          <th className="pb-3 font-medium">Topic</th>
-                          <th className="pb-3 font-medium">Date</th>
-                          <th className="pb-3 font-medium">Score</th>
-                          <th className="pb-3 font-medium">Result</th>
-                          <th className="pb-3 font-medium">Time Spent</th>
+                          <th className="pb-3 font-medium">Chủ đề</th>
+                          <th className="pb-3 font-medium">Ngày</th>
+                          <th className="pb-3 font-medium">Điểm</th>
+                          <th className="pb-3 font-medium">Kết quả</th>
+                          <th className="pb-3 font-medium">Thời gian</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/5">
@@ -124,13 +124,13 @@ export default function QuizStatsPage() {
                               {new Date(item.startTime).toLocaleDateString()}
                             </td>
                             <td className="py-4">
-                              <span className={`font-bold ${item.score >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                              <span className={`font-bold ${item.passed ? 'text-emerald-400' : 'text-amber-400'}`}>
                                 {Math.round(item.score)}%
                               </span>
                             </td>
                             <td className="py-4">
                               <span className={`px-2 py-1 rounded text-xs font-medium ${item.passed ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-                                {item.passed ? 'Passed' : 'Failed'}
+                                {item.passed ? 'Đạt' : 'Chưa đạt'}
                               </span>
                             </td>
                             <td className="py-4 text-slate-400">

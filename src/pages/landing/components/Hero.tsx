@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import BlurText from './BlurText';
+import heroFallbackImage from '@/assets/landing/feature-1.gif';
 
 const partners = ['AI Tutor', 'Flashcards', 'Quiz', 'Community', 'Leaderboard'];
 
@@ -10,8 +11,13 @@ const HERO_VIDEO_URL =
 
 const Hero = () => {
   return (
-    <section className="relative overflow-visible" style={{ height: 1000 }} id="home">
-      {/* Background Video */}
+    <section className="relative overflow-visible min-h-screen" style={{ height: 1000 }} id="home">
+      <img
+        src={heroFallbackImage}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
+      />
       <video
         autoPlay
         loop
@@ -19,7 +25,7 @@ const Hero = () => {
         playsInline
         className="absolute left-0 w-full h-auto object-contain z-0"
         style={{ top: '20%' }}
-        poster="/images/hero_bg.jpeg"
+        poster={heroFallbackImage}
       >
         <source src={HERO_VIDEO_URL} type="video/mp4" />
       </video>
@@ -51,7 +57,7 @@ const Hero = () => {
         {/* Heading */}
         <BlurText
           text="Chinh Phục Ngôn Ngữ Cùng AI"
-          className="text-6xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.8] max-w-3xl tracking-[-4px]"
+          className="text-6xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.8] max-w-3xl tracking-normal"
           delay={100}
           direction="bottom"
           as="h1"

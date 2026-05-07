@@ -1,7 +1,6 @@
 /* ============================================
-   STOCK REDESIGN - Dark Premium Glass
-   Inspired by Angular DPU (sidebar/header layout)
-   Colors matched to existing dark system
+   EDUPRO APP SHELL - Dark Premium Learning Dashboard
+   Sidebar/header layout and compatibility classes for the current app shell
    ============================================ */
 
 /* ---- Design Tokens ---- */
@@ -43,7 +42,7 @@
     --stock-accent-amber: #fbbf24;
     --stock-accent-rose: #fb7185;
 
-    /* Financial colors */
+    /* Progress state colors */
     --stock-up: #10b981;
     --stock-up-light: #34d399;
     --stock-up-bg: rgba(16, 185, 129, 0.1);

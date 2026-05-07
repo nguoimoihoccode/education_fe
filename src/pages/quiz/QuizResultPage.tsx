@@ -15,7 +15,7 @@ export default function QuizResultPage() {
     enabled: !!sessionId_,
   });
 
-  const { data: quiz } = useQuery({
+  const { data: quiz, isLoading: isLoadingQuiz } = useQuery({
     queryKey: ['quiz', session?.quizId],
     queryFn: () => getQuizById(session!.quizId),
     enabled: !!session?.quizId,
@@ -27,7 +27,7 @@ export default function QuizResultPage() {
     enabled: !!sessionId_ && session?.status === 'COMPLETED',
   });
 
-  if (isLoadingSession) {
+  if (isLoadingSession || (session?.quizId && isLoadingQuiz)) {
     return (
       <div className="education-container">
         <div className="ambient-background">
@@ -53,10 +53,10 @@ export default function QuizResultPage() {
           <div className="noise-overlay"></div>
         </div>
         <div className="detail-wrapper py-20 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Result Not Found</h2>
-          <p className="text-slate-400 mb-6">Unable to load quiz results.</p>
+          <h2 className="text-2xl font-bold text-white mb-4">Không tìm thấy kết quả</h2>
+          <p className="text-slate-400 mb-6">Không thể tải kết quả quiz.</p>
           <Link to="/quiz" className="px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all">
-            Back to Quizzes
+            Quay lại danh sách quiz
           </Link>
         </div>
       </div>
@@ -65,7 +65,6 @@ export default function QuizResultPage() {
 
   const {
     isPassed,
-    totalQuestions,
     correctCount,
     incorrectCount,
     passThreshold,
@@ -82,11 +81,11 @@ export default function QuizResultPage() {
 
       <div className="detail-wrapper">
         <Link to="/quiz" className="btn-back mb-6 inline-flex items-center">
-          ← Back to Quizzes
+          ← Quay lại danh sách quiz
         </Link>
 
         {/* Hero Card */}
-        <div className={`glass-card p-8 text-center mb-8 ${isPassed ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-amberber-500/5 border-amber-500/20'}`}>
+        <div className={`glass-card p-8 text-center mb-8 ${isPassed ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-amber-500/5 border-amber-500/20'}`}>
           <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${isPassed ? 'bg-emerald-500/20' : 'bg-amber-500/20'}`}>
             {isPassed ? (
               <Trophy className="w-10 h-10 text-emerald-400" />
@@ -96,26 +95,26 @@ export default function QuizResultPage() {
           </div>
 
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            {isPassed ? 'Congratulations!' : 'Keep Practicing!'}
+            {isPassed ? 'Chúc mừng bạn!' : 'Tiếp tục luyện tập!'}
           </h1>
           <p className="text-slate-300 mb-6">
             {isPassed
-              ? `You passed the quiz with a score of ${Math.round(session.score)}%`
-              : `You scored ${Math.round(session.score)}%. You need ${passThreshold}% to pass.`}
+              ? `Bạn đã vượt qua bài quiz với ${Math.round(session.score)}%`
+              : `Bạn đạt ${Math.round(session.score)}%. Cần ${passThreshold}% để vượt qua.`}
           </p>
 
           <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto">
             <div className="p-4 bg-white/5 rounded-xl">
               <div className="text-3xl font-bold text-white mb-1">{correctCount}</div>
-              <div className="text-sm text-emerald-400">Correct</div>
+              <div className="text-sm text-emerald-400">Đúng</div>
             </div>
             <div className="p-4 bg-white/5 rounded-xl">
               <div className="text-3xl font-bold text-white mb-1">{incorrectCount}</div>
-              <div className="text-sm text-red-400">Incorrect</div>
+              <div className="text-sm text-red-400">Sai</div>
             </div>
             <div className="p-4 bg-white/5 rounded-xl">
               <div className="text-3xl font-bold text-white mb-1">{session.timeSpent ? formatTime(session.timeSpent) : '--'}</div>
-              <div className="text-sm text-slate-400">Time Spent</div>
+              <div className="text-sm text-slate-400">Thời gian</div>
             </div>
           </div>
 
@@ -128,7 +127,7 @@ export default function QuizResultPage() {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium hover:scale-105 transition-transform"
               >
                 <Trophy className="w-5 h-5" />
-                Download Certificate
+                Tải chứng chỉ
               </a>
             </div>
           )}
@@ -142,7 +141,7 @@ export default function QuizResultPage() {
               className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all"
             >
               <RotateCw className="w-5 h-5" />
-              Try Again
+              Thử lại
             </Link>
           )}
           <Link
@@ -150,14 +149,14 @@ export default function QuizResultPage() {
             className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white font-medium hover:bg-white/20 transition-all"
           >
             <BarChart2 className="w-5 h-5" />
-            Review Quiz
+            Xem lại quiz
           </Link>
           <Link
             to="/quiz"
             className="flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-all"
           >
             <Home className="w-5 h-5" />
-            All Quizzes
+            Tất cả quiz
           </Link>
         </div>
 
@@ -166,7 +165,7 @@ export default function QuizResultPage() {
           <div className="glass-card mb-8">
             <h3 className="font-bold text-white mb-4 flex items-center gap-2">
               <XCircle className="w-5 h-5 text-red-400" />
-              Questions You Missed ({wrongAnswers.length})
+              Câu hỏi cần xem lại ({wrongAnswers.length})
             </h3>
             <div className="space-y-4">
               {wrongAnswers.map((item, idx) => (
@@ -174,11 +173,11 @@ export default function QuizResultPage() {
                   <p className="text-white mb-3 font-medium">{item.question}</p>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div className="bg-red-500/10 border border-red-500/20 p-3 rounded-lg">
-                      <p className="text-xs text-red-400 mb-1">Your Answer</p>
+                      <p className="text-xs text-red-400 mb-1">Câu trả lời của bạn</p>
                       <p className="text-red-200">{item.userAnswer}</p>
                     </div>
                     <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg">
-                      <p className="text-xs text-emerald-400 mb-1">Correct Answer</p>
+                      <p className="text-xs text-emerald-400 mb-1">Đáp án đúng</p>
                       <p className="text-emerald-200">{item.correctAnswer}</p>
                     </div>
                   </div>
@@ -193,22 +192,22 @@ export default function QuizResultPage() {
 
         {/* Session Info */}
         <div className="glass-card">
-          <h3 className="font-bold text-white mb-4">Session Details</h3>
+          <h3 className="font-bold text-white mb-4">Chi tiết phiên làm bài</h3>
           <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <dt className="text-slate-400">Quiz</dt>
               <dd className="text-white font-medium truncate">{quiz.name}</dd>
             </div>
             <div>
-              <dt className="text-slate-400">Status</dt>
-              <dd className="text-white font-medium capitalize">{session.status.toLowerCase()}</dd>
+              <dt className="text-slate-400">Trạng thái</dt>
+              <dd className="text-white font-medium capitalize">{getStatusLabel(session.status)}</dd>
             </div>
             <div>
-              <dt className="text-slate-400">Started</dt>
+              <dt className="text-slate-400">Bắt đầu</dt>
               <dd className="text-white font-medium">{new Date(session.startTime).toLocaleString()}</dd>
             </div>
             <div>
-              <dt className="text-slate-400">Completed</dt>
+              <dt className="text-slate-400">Hoàn thành</dt>
               <dd className="text-white font-medium">
                 {session.endTime ? new Date(session.endTime).toLocaleString() : '-'}
               </dd>
@@ -226,4 +225,17 @@ function formatTime(seconds: number): string {
   const secs = seconds % 60;
   if (mins > 0) return `${mins}m ${secs}s`;
   return `${secs}s`;
+}
+
+function getStatusLabel(status?: string): string {
+  switch (status) {
+    case 'COMPLETED':
+      return 'Hoàn thành';
+    case 'IN_PROGRESS':
+      return 'Đang làm';
+    case 'ABANDONED':
+      return 'Đã hủy';
+    default:
+      return 'Chưa rõ';
+  }
 }

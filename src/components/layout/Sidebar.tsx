@@ -1,6 +1,6 @@
-import { Link, NavLink } from 'react-router-dom';
-import { TrendingUp, ChevronLeft, ChevronRight, LogOut, User, X } from 'lucide-react';
-import { learningNavItems, type NavItem } from './navConfig';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { GraduationCap, ChevronLeft, ChevronRight, LogOut, User, X } from 'lucide-react';
+import { learningNavSections, type NavItem } from './navConfig';
 
 /* ============================================
  * NavSection — renders a group of nav links
@@ -10,6 +10,8 @@ function NavSection({
 }: {
   title: string; items: NavItem[]; isSidebarOpen: boolean; onLinkClick?: () => void;
 }) {
+  const location = useLocation();
+
   return (
     <>
       {isSidebarOpen && (
@@ -19,14 +21,20 @@ function NavSection({
         </p>
       )}
       {items.map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          onClick={onLinkClick}
-          className={({ isActive }) =>
-            `stock-sidebar-link group ${isActive ? 'active' : ''} ${!isSidebarOpen ? 'justify-center !px-3' : ''}`
-          }
-        >
+        (() => {
+          return (
+            <NavLink
+              key={`${item.label}-${item.to}`}
+              to={item.to}
+              onClick={onLinkClick}
+              className={({ isActive: routeIsActive }) => {
+                const isActive = item.matcher
+                  ? item.matcher({ pathname: location.pathname, search: location.search })
+                  : routeIsActive;
+
+                return `stock-sidebar-link group ${isActive ? 'active' : ''} ${!isSidebarOpen ? 'justify-center !px-3' : ''}`;
+              }}
+            >
           <span className="flex-shrink-0">{item.icon}</span>
           {isSidebarOpen && (
             <>
@@ -52,7 +60,9 @@ function NavSection({
               {item.label}
             </span>
           )}
-        </NavLink>
+            </NavLink>
+          );
+        })()
       ))}
     </>
   );
@@ -65,7 +75,7 @@ function SidebarLogo({ isSidebarOpen, onClick }: { isSidebarOpen: boolean; onCli
   const logoIcon = (
     <div className="w-9 h-9 rounded-lg flex items-center justify-center shadow-lg"
       style={{ background: 'linear-gradient(135deg, #2CB34A 0%, #0d9488 100%)' }}>
-      <TrendingUp size={18} color="white" />
+      <GraduationCap size={18} color="white" />
     </div>
   );
 
@@ -74,7 +84,7 @@ function SidebarLogo({ isSidebarOpen, onClick }: { isSidebarOpen: boolean; onCli
       <Link to="/education" onClick={onClick}
         className="w-9 h-9 rounded-lg flex items-center justify-center shadow-lg transition-transform hover:scale-105"
         style={{ background: 'linear-gradient(135deg, #2CB34A 0%, #0d9488 100%)' }}>
-        <TrendingUp size={18} color="white" />
+        <GraduationCap size={18} color="white" />
       </Link>
     );
   }
@@ -84,7 +94,7 @@ function SidebarLogo({ isSidebarOpen, onClick }: { isSidebarOpen: boolean; onCli
       {logoIcon}
       <div>
         <h1 className="font-bold text-base leading-tight" style={{ color: 'var(--stock-text-primary)' }}>EduPro</h1>
-        <p className="text-xs font-medium" style={{ color: 'var(--stock-primary-400)' }}>Learning Platform</p>
+        <p className="text-xs font-medium" style={{ color: 'var(--stock-primary-400)' }}>Lộ trình học tập</p>
       </div>
     </Link>
   );
@@ -135,7 +145,7 @@ function SidebarUserFooter({
         </Link>
         <Link to="/profile" className="flex-1 min-w-0">
           <p className="text-sm font-semibold truncate" style={{ color: 'var(--stock-text-primary)' }}>{displayName}</p>
-          <p className="text-xs truncate" style={{ color: 'var(--stock-text-tertiary)' }}>Pro Learner</p>
+          <p className="text-xs truncate" style={{ color: 'var(--stock-text-tertiary)' }}>Đang học hôm nay</p>
         </Link>
         <button onClick={onLogout} className="p-1.5 rounded-lg transition-all hover:bg-white/5"
           style={{ color: 'var(--stock-text-tertiary)' }}>
@@ -167,8 +177,15 @@ export function DesktopSidebar({
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto overflow-x-hidden">
-        <NavSection title="Học tập" items={learningNavItems} isSidebarOpen={isSidebarOpen} />
+      <nav className="flex-1 p-3 space-y-5 overflow-y-auto overflow-x-hidden">
+        {learningNavSections.map((section) => (
+          <NavSection
+            key={section.title}
+            title={section.title}
+            items={section.items}
+            isSidebarOpen={isSidebarOpen}
+          />
+        ))}
       </nav>
 
       {/* Collapse toggle */}
@@ -208,8 +225,16 @@ export function MobileSidebar({
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        <NavSection title="Học tập" items={learningNavItems} isSidebarOpen onLinkClick={onClose} />
+      <nav className="flex-1 p-3 space-y-5 overflow-y-auto">
+        {learningNavSections.map((section) => (
+          <NavSection
+            key={section.title}
+            title={section.title}
+            items={section.items}
+            isSidebarOpen
+            onLinkClick={onClose}
+          />
+        ))}
       </nav>
 
       {/* Footer */}

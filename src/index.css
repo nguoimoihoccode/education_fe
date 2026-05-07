@@ -1,4 +1,4 @@
-/* Import Cyberpunk Animations first */
+/* Import shared animations first */
 @import './styles/animations.css';
 
 @tailwind base;
@@ -6,12 +6,12 @@
 @tailwind utilities;
 
 /* ============================================
-   DESIGN SYSTEM - Modern Fintech Stock App
+   DESIGN SYSTEM - EduPro Learning App
    ============================================ */
 
 /* CSS Variables */
 :root {
-  /* Fintech Palette */
+  /* Learning Palette */
   --color-primary: #F59E0B;   /* Amber 500 */
   --color-primary-dark: #D97706; /* Amber 600 */
   --color-secondary: #8B5CF6; /* Violet 500 */
@@ -40,7 +40,7 @@
   line-height: 1.6;
   font-weight: 400;
 
-  /* Legacy Cyberpunk (Maintained for compatibility) */
+  /* Legacy high-contrast accents maintained for compatibility */
   --neon-pink: #FF10F0;
   --neon-cyan: #00F5FF;
   --neon-purple: #B026FF;

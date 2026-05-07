@@ -32,8 +32,7 @@ export default function QuizDetailPage() {
   };
 
   const isOfflineHskQuiz =
-    (quiz?.topic === 'HSK1' && quiz.id === 'offline-quiz-hsk1') ||
-    (quiz?.topic === 'HSK2' && quiz.id === 'offline-quiz-hsk2');
+    quiz?.id === 'offline-quiz-hsk1' || quiz?.id === 'offline-quiz-hsk2';
   const [selectedDifficulty, setSelectedDifficulty] = useState<'EASY' | 'MEDIUM' | 'HARD'>('EASY');
   const [selectedQuestionCount, setSelectedQuestionCount] = useState<10 | 20 | 30>(20);
   const [previewSeed] = useState(() => Math.floor(Math.random() * 1000));
@@ -82,10 +81,10 @@ export default function QuizDetailPage() {
           <div className="noise-overlay"></div>
         </div>
         <div className="detail-wrapper py-20 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Quiz Not Found</h2>
-          <p className="text-slate-400 mb-6">The quiz you're looking for doesn't exist or has been removed.</p>
+          <h2 className="text-2xl font-bold text-white mb-4">Không tìm thấy bài quiz</h2>
+          <p className="text-slate-400 mb-6">Bài quiz bạn đang tìm không tồn tại hoặc đã bị gỡ bỏ.</p>
           <Link to="/quiz" className="px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all">
-            Back to Quizzes
+            Quay lại danh sách quiz
           </Link>
         </div>
       </div>
@@ -98,7 +97,7 @@ export default function QuizDetailPage() {
 
       <div className="detail-wrapper">
         <Link to="/quiz" className="btn-back mb-6 inline-flex items-center">
-          ← Back to Quizzes
+          ← Quay lại danh sách quiz
         </Link>
 
         {/* Header */}
@@ -137,7 +136,7 @@ export default function QuizDetailPage() {
                 className="flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold hover:scale-105 transition-transform shadow-lg shadow-accent-900/30"
               >
                 <Play className="w-5 h-5" />
-                Bat dau lam bai
+                Bắt đầu làm bài
               </Link>
             </div>
           </div>
@@ -145,10 +144,10 @@ export default function QuizDetailPage() {
 
         {isOfflineHskQuiz && (
           <div className="glass-card mb-8">
-            <h3 className="font-bold text-white mb-4">Configure HSK1 Practice</h3>
+            <h3 className="font-bold text-white mb-4">Cấu hình luyện HSK</h3>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-slate-400 mb-3">Difficulty</p>
+                <p className="text-sm text-slate-400 mb-3">Độ khó</p>
                 <div className="flex gap-2 flex-wrap">
                   {(['EASY', 'MEDIUM', 'HARD'] as const).map((difficulty) => (
                     <button
@@ -167,7 +166,7 @@ export default function QuizDetailPage() {
                 </div>
               </div>
               <div>
-                <p className="text-sm text-slate-400 mb-3">Question Count</p>
+                <p className="text-sm text-slate-400 mb-3">Số câu hỏi</p>
                 <div className="flex gap-2 flex-wrap">
                   {([10, 20, 30] as const).map((count) => (
                     <button
@@ -194,42 +193,41 @@ export default function QuizDetailPage() {
           <div className="glass-card">
             <h3 className="font-bold text-white mb-4 flex items-center gap-2">
               <BarChart2 className="w-5 h-5 text-accent-400" />
-              Quiz Details
+              Chi tiết bài quiz
             </h3>
             <dl className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <dt className="text-slate-400">Questions</dt>
                 <dd className="text-white font-medium">{isOfflineHskQuiz ? selectedQuestionCount : quiz.questionCount}</dd>
-                <dd className="text-white font-medium">{isOfflineHskQuiz ? selectedQuestionCount : quiz.questionCount}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Time Limit</dt>
+                <dt className="text-slate-400">Thời gian làm bài</dt>
                 <dd className="text-white font-medium">{formatTime(quiz.timeLimit)}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Passing Score</dt>
+                <dt className="text-slate-400">Điểm đạt</dt>
                 <dd className="text-white font-medium">{quiz.passingScore}%</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Retries</dt>
+                <dt className="text-slate-400">Số lần làm lại</dt>
                 <dd className="text-white font-medium">
-                  {quiz.allowRetry ? `${quiz.maxRetries} allowed` : 'Not allowed'}
+                  {quiz.allowRetry ? `${quiz.maxRetries} lần` : 'Không cho phép'}
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Shuffle</dt>
+                <dt className="text-slate-400">Trộn câu hỏi</dt>
                 <dd className="text-white font-medium">
-                  {quiz.shuffleQuestions ? 'Questions' : 'None'}
-                  {quiz.shuffleAnswers && ' + Answers'}
+                  {quiz.shuffleQuestions ? 'Câu hỏi' : 'Không'}
+                  {quiz.shuffleAnswers && ' + Đáp án'}
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Show Answers</dt>
-                <dd className="text-white font-medium">{quiz.showCorrectAnswer ? 'After submit' : 'Hidden'}</dd>
+                <dt className="text-slate-400">Hiển thị đáp án</dt>
+                <dd className="text-white font-medium">{quiz.showCorrectAnswer ? 'Sau khi nộp bài' : 'Ẩn'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Visibility</dt>
-                <dd className="text-white font-medium">{quiz.isPublic ? 'Public' : 'Private'}</dd>
+                <dt className="text-slate-400">Hiển thị</dt>
+                <dd className="text-white font-medium">{quiz.isPublic ? 'Công khai' : 'Riêng tư'}</dd>
               </div>
             </dl>
           </div>
@@ -238,27 +236,27 @@ export default function QuizDetailPage() {
           <div className="md:col-span-2 glass-card">
             <h3 className="font-bold text-white mb-4 flex items-center gap-2">
               <List className="w-5 h-5 text-accent-400" />
-              Cau hoi mau ({previewQuestions.length})
+              Câu hỏi mẫu ({previewQuestions.length})
             </h3>
 
             {isOfflineHskQuiz && (
               <p className="text-sm text-slate-400 mb-4">
-                Preview {selectedQuestionCount} cau - Muc {selectedDifficulty === 'EASY' ? 'De' : selectedDifficulty === 'MEDIUM' ? 'Vua' : 'Kho'}
+                Xem trước {selectedQuestionCount} câu - Mức {selectedDifficulty === 'EASY' ? 'Dễ' : selectedDifficulty === 'MEDIUM' ? 'Vừa' : 'Khó'}
               </p>
             )}
 
             {previewQuestions.length > 0 ? (
               <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-                {previewQuestions.map((question: QuizQuestion, idx) => (
-                  <div key={question.id} className="p-4 bg-white/5 rounded-xl border border-white/5">
-                    <div className="flex items-start justify-between mb-2">
-                      <span className="text-sm font-bold text-accent-400">Question {idx + 1}</span>
-                      <div className="flex items-center gap-2 text-xs text-slate-400">
-                        <span className="capitalize">{question.type.replace('_', ' ')}</span>
-                        <span>•</span>
-                        <span>{question.points} point{question.points > 1 ? 's' : ''}</span>
-                      </div>
-                    </div>
+                    {previewQuestions.map((question: QuizQuestion, idx) => (
+                      <div key={question.id} className="p-4 bg-white/5 rounded-xl border border-white/5">
+                        <div className="flex items-start justify-between mb-2">
+                        <span className="text-sm font-bold text-accent-400">Câu hỏi {idx + 1}</span>
+                          <div className="flex items-center gap-2 text-xs text-slate-400">
+                            <span className="capitalize">{question.type.replace('_', ' ')}</span>
+                            <span>•</span>
+                            <span>{question.points} điểm</span>
+                          </div>
+                        </div>
                     <p className="text-white mb-3 leading-relaxed">{question.question}</p>
                     {question.options && question.options.length > 0 && (
                       <ul className="space-y-2 mb-3">
@@ -272,19 +270,12 @@ export default function QuizDetailPage() {
                         ))}
                       </ul>
                     )}
-                    <div className="mt-3 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-                      <p className="text-xs text-emerald-400 font-semibold mb-1">Correct Answer:</p>
-                      <p className="text-sm text-emerald-300">{question.correctAnswer}</p>
-                      {question.explanation && (
-                        <p className="text-xs text-slate-400 mt-2 italic">{question.explanation}</p>
-                      )}
-                    </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="py-10 text-center text-slate-500">
-                <p>This quiz has no questions yet.</p>
+                <p>Bài quiz này chưa có câu hỏi.</p>
               </div>
             )}
           </div>

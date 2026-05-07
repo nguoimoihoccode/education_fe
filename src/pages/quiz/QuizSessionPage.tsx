@@ -16,6 +16,21 @@ import type { QuizSession } from '@/types/quiz.types';
 import toast from 'react-hot-toast';
 import '../Education.css';
 
+function getQuestionTypeLabel(type?: string) {
+  switch (type) {
+    case 'MULTIPLE_CHOICE':
+      return 'Trắc nghiệm';
+    case 'TRUE_FALSE':
+      return 'Đúng/Sai';
+    case 'FILL_BLANK':
+      return 'Điền vào chỗ trống';
+    case 'MIXED':
+      return 'Tổng hợp';
+    default:
+      return 'Câu hỏi';
+  }
+}
+
 export default function QuizSessionPage() {
   const { quizId } = useParams<{ quizId: string }>();
   const navigate = useNavigate();
@@ -61,7 +76,7 @@ export default function QuizSessionPage() {
       setSessionId(data.id);
     },
     onError: () => {
-      toast.error('Failed to start quiz session');
+      toast.error('Không thể bắt đầu phiên quiz');
       navigate('/quiz');
     },
   });
@@ -76,7 +91,7 @@ export default function QuizSessionPage() {
       navigate(`/quiz/session/${sessionId}/result`);
     },
     onError: () => {
-      toast.error('Failed to complete quiz');
+      toast.error('Không thể hoàn thành quiz');
     },
   });
 
@@ -142,7 +157,7 @@ export default function QuizSessionPage() {
       }
     },
     onError: () => {
-      toast.error('Failed to submit answer');
+      toast.error('Không thể nộp câu trả lời');
       setIsSubmitting(false);
     },
   });
@@ -230,13 +245,13 @@ export default function QuizSessionPage() {
           <div className="noise-overlay"></div>
         </div>
         <div className="detail-wrapper py-20 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Session Error</h2>
-          <p className="text-slate-400 mb-6">Unable to load quiz session.</p>
+          <h2 className="text-2xl font-bold text-white mb-4">Lỗi phiên làm bài</h2>
+          <p className="text-slate-400 mb-6">Không thể tải phiên quiz.</p>
           <button
             onClick={() => navigate('/quiz')}
             className="px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all"
           >
-            Back to Quizzes
+            Quay lại danh sách quiz
           </button>
         </div>
       </div>
@@ -254,7 +269,7 @@ export default function QuizSessionPage() {
             <div className="flex-1">
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 truncate">{quiz.name}</h1>
               <div className="flex items-center gap-4 text-sm text-slate-400">
-                <span>Question {displayQuestionIndex + 1} of {totalQuestions}</span>
+                <span>Câu hỏi {displayQuestionIndex + 1} / {totalQuestions}</span>
                 <span className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
                   {timeRemaining !== null ? formatTime(timeRemaining) : '--:--'}
@@ -264,11 +279,11 @@ export default function QuizSessionPage() {
             <div className="flex items-center gap-2">
               <div className="glass-card px-4 py-2 text-center">
                 <div className="text-lg font-bold text-accent-400">{session.correctAnswers}</div>
-                <div className="text-xs text-slate-400">Correct</div>
+                <div className="text-xs text-slate-400">Đúng</div>
               </div>
               <div className="glass-card px-4 py-2 text-center">
                 <div className="text-lg font-bold text-white">{session.score}%</div>
-                <div className="text-xs text-slate-400">Score</div>
+                <div className="text-xs text-slate-400">Điểm</div>
               </div>
             </div>
           </div>
@@ -288,9 +303,9 @@ export default function QuizSessionPage() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-bold text-accent-400">
-                  {currentQuestion.type.replace('_', ' ')}
+                  {getQuestionTypeLabel(currentQuestion.type)}
                 </span>
-                <span className="text-sm text-slate-400">{currentQuestion.points} point{currentQuestion.points > 1 ? 's' : ''}</span>
+                <span className="text-sm text-slate-400">{currentQuestion.points} điểm</span>
               </div>
               <h2 className="text-xl md:text-2xl font-bold text-white">{currentQuestion.question}</h2>
             </div>
@@ -334,7 +349,7 @@ export default function QuizSessionPage() {
                   value={selectedAnswer}
                   onChange={(e) => setSelectedAnswer(e.target.value)}
                   disabled={isSubmitting}
-                  placeholder="Type your answer..."
+                  placeholder="Nhập câu trả lời"
                   className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-accent-500"
                 />
               </div>
@@ -347,7 +362,7 @@ export default function QuizSessionPage() {
                 disabled={!selectedAnswer.trim() || isSubmitting}
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Submit Answer
+                Nộp câu trả lời
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -358,7 +373,7 @@ export default function QuizSessionPage() {
         <div className="glass-card p-4">
           <div className="flex items-center gap-2 text-sm text-slate-400">
             <AlertCircle className="w-4 h-4" />
-            <span>Your answers are automatically recorded. You cannot go back to previous questions.</span>
+            <span>Câu trả lời được lưu tự động. Bạn không thể quay lại câu trước.</span>
           </div>
         </div>
       </div>

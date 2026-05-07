@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import feature1Gif from '@/assets/landing/feature-1.gif';
 import feature2Gif from '@/assets/landing/feature-2.gif';
 
@@ -6,6 +7,7 @@ const features = [
     title: 'AI Tutor thông minh. Học như có gia sư riêng.',
     body: 'Trò chuyện trực tiếp với AI bằng ngôn ngữ bạn đang học. Nhận phản hồi tức thì về ngữ pháp, phát âm và ngữ cảnh văn hóa — mọi lúc, mọi nơi.',
     button: 'Trải nghiệm AI Tutor',
+    to: '/ai-tutor',
     gif: feature1Gif,
     reverse: false,
   },
@@ -13,6 +15,7 @@ const features = [
     title: 'Flashcards thích ứng. Nhớ mãi không quên.',
     body: 'Hệ thống Spaced Repetition tự động điều chỉnh theo tốc độ học của bạn. Mỗi thẻ xuất hiện đúng lúc bạn sắp quên — giúp ghi nhớ sâu với ít thời gian nhất.',
     button: 'Khám phá Flashcards',
+    to: '/flashcards',
     gif: feature2Gif,
     reverse: true,
   },
@@ -50,9 +53,12 @@ const FeaturesChess = () => {
               <p className="text-white/60 font-body font-light text-sm md:text-base leading-relaxed">
                 {feature.body}
               </p>
-              <button className="liquid-glass-strong rounded-full px-5 py-2.5 text-white font-body font-medium text-sm lp-btn-glass">
+              <Link
+                to={feature.to}
+                className="liquid-glass-strong rounded-full px-5 py-2.5 text-white font-body font-medium text-sm inline-flex lp-btn-glass"
+              >
                 {feature.button}
-              </button>
+              </Link>
             </div>
 
             {/* GIF */}

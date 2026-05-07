@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes } from 'react';
 import { cn } from '../../lib/utils';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'neon-pink' | 'neon-cyan' | 'neon-purple';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
@@ -11,16 +11,16 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /**
- * Cyberpunk-themed Button component with neon variants
+ * EduPro button component for learning workflows.
  * 
  * @example
  * ```tsx
- * <Button variant="neon-pink" size="lg">
- *   Trade Now
+ * <Button variant="primary" size="lg">
+ *   Bắt đầu học
  * </Button>
  * 
- * <Button variant="neon-cyan" isLoading>
- *   Loading...
+ * <Button variant="secondary" isLoading>
+ *   Đang tải...
  * </Button>
  * ```
  */
@@ -57,67 +57,41 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary: cn(
-        'bg-gradient-to-br from-neon-purple to-neon-pink',
+        'bg-gradient-to-br from-accent-600 to-emerald-600',
         'text-white',
-        'shadow-neon-purple',
-        'hover:shadow-neon-purple-lg hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
+        'shadow-lg shadow-accent-900/25',
+        'hover:from-accent-500 hover:to-emerald-500 hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
         'active:translate-y-0',
-        'focus-visible:ring-neon-purple'
+        'focus-visible:ring-accent-400'
       ),
       secondary: cn(
-        'bg-cyber-700/50 backdrop-blur-md',
-        'border border-neon-cyan/30',
-        'text-white',
-        'hover:bg-cyber-600/50 hover:border-neon-cyan/50',
-        'hover:shadow-neon-cyan-sm',
-        'focus-visible:ring-neon-cyan'
+        'bg-slate-800/70 backdrop-blur-md',
+        'border border-white/10',
+        'text-slate-100',
+        'hover:bg-slate-700/70 hover:border-accent-400/40',
+        'focus-visible:ring-accent-400'
       ),
       ghost: cn(
         'bg-transparent',
-        'text-gray-300',
+        'text-slate-300',
         'hover:bg-white/5 hover:text-white',
-        'focus-visible:ring-gray-500'
+        'focus-visible:ring-slate-500'
       ),
       danger: cn(
-        'bg-gradient-to-br from-neon-red to-red-600',
+        'bg-gradient-to-br from-red-500 to-rose-600',
         'text-white',
-        'shadow-neon-red',
-        'hover:shadow-lg hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
+        'shadow-lg shadow-red-950/25',
+        'hover:from-red-400 hover:to-rose-500 hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
         'active:translate-y-0',
-        'focus-visible:ring-neon-red'
+        'focus-visible:ring-red-400'
       ),
-      'neon-pink': cn(
-        'bg-cyber-800/50 backdrop-blur-md',
-        'border-2 border-neon-pink/50',
-        'text-neon-pink',
-        'shadow-neon-pink',
-        'hover:bg-neon-pink/10 hover:border-neon-pink hover:shadow-neon-pink-lg',
-        'hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
+      success: cn(
+        'bg-gradient-to-br from-emerald-500 to-teal-600',
+        'text-white',
+        'shadow-lg shadow-emerald-950/25',
+        'hover:from-emerald-400 hover:to-teal-500 hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
         'active:translate-y-0',
-        'focus-visible:ring-neon-pink',
-        'glow-pulse motion-reduce:animate-none'
-      ),
-      'neon-cyan': cn(
-        'bg-cyber-800/50 backdrop-blur-md',
-        'border-2 border-neon-cyan/50',
-        'text-neon-cyan',
-        'shadow-neon-cyan',
-        'hover:bg-neon-cyan/10 hover:border-neon-cyan hover:shadow-neon-cyan-lg',
-        'hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
-        'active:translate-y-0',
-        'focus-visible:ring-neon-cyan',
-        'glow-pulse motion-reduce:animate-none'
-      ),
-      'neon-purple': cn(
-        'bg-cyber-800/50 backdrop-blur-md',
-        'border-2 border-neon-purple/50',
-        'text-neon-purple',
-        'shadow-neon-purple',
-        'hover:bg-neon-purple/10 hover:border-neon-purple hover:shadow-neon-purple-lg',
-        'hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
-        'active:translate-y-0',
-        'focus-visible:ring-neon-purple',
-        'glow-pulse motion-reduce:animate-none'
+        'focus-visible:ring-emerald-400'
       ),
     };
 

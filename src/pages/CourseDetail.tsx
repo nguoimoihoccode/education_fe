@@ -3,21 +3,20 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     BookOpen,
-    Clock,
     ChevronLeft,
     Play,
     Lock,
     Users,
     Sparkles,
     Star,
-    Award
+    Award,
+    type LucideIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCourseById, enrollCourse, getMyCourses, getLessonsByCourse } from '@/api/education.api';
 import { useAuth } from '@/hooks/useAuth';
 import { Pagination } from '@/components/ui';
-import type { Lesson, CourseLevel, LessonType } from '@/types/education.types';
-import clsx from 'clsx';
+import type { CourseLevel, LessonType } from '@/types/education.types';
 import './Education.css';
 
 const levelLabels: Record<CourseLevel, string> = {
@@ -28,7 +27,7 @@ const levelLabels: Record<CourseLevel, string> = {
     advanced: 'Advanced',
 };
 
-const typeConfig: Record<LessonType, { icon: any; label: string; color: string }> = {
+const typeConfig: Record<LessonType, { icon: LucideIcon; label: string; color: string }> = {
     vocabulary: { icon: BookOpen, label: 'Vocabulary', color: 'text-blue-400' },
     grammar: { icon: Star, label: 'Grammar', color: 'text-purple-400' },
     reading: { icon: BookOpen, label: 'Reading', color: 'text-emerald-400' },
@@ -113,7 +112,7 @@ export default function CourseDetail() {
             <div className="detail-wrapper fade-in-entry">
                 <Link to="/education" className="btn-back mb-8 group pl-2">
                     <div className="bg-white/10 rounded-full p-1 group-hover:bg-white/20 transition-colors mr-2"><ChevronLeft className="w-4 h-4" /></div>
-                    Back to Courses
+                    Quay lại khóa học
                 </Link>
 
                 {/* Hero Section */}
@@ -145,11 +144,11 @@ export default function CourseDetail() {
                             <div className="flex flex-wrap gap-4 mt-8">
                                 <button className="px-8 py-4 bg-gradient-to-r from-accent-600 to-indigo-600 text-white rounded-xl font-bold flex items-center gap-3 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all">
                                     <Play className="w-5 h-5 fill-current" />
-                                    Resume Learning
+                                    Tiếp tục học
                                 </button>
                                 <button className="px-8 py-4 bg-slate-800/80 backdrop-blur-md border border-white/10 text-white rounded-xl font-bold flex items-center gap-3 hover:bg-white/10 transition-all">
                                     <BookOpen className="w-5 h-5" />
-                                    Course Info
+                                    Thông tin khóa học
                                 </button>
                             </div>
                         </div>
@@ -158,7 +157,7 @@ export default function CourseDetail() {
                         <div className="bg-slate-800/80 backdrop-blur-md border border-white/10 p-8 rounded-xl relative group overflow-hidden shadow-2xl">
                             <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="font-headline font-bold text-lg text-white">Overall Progress</h3>
+                                <h3 className="font-headline font-bold text-lg text-white">Tổng tiến độ</h3>
                                 <span className="text-emerald-400 font-bold text-xl">{Math.round(userCourse?.progress || 0)}%</span>
                             </div>
                             
@@ -169,12 +168,12 @@ export default function CourseDetail() {
                             
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-[10px] uppercase text-slate-400 font-bold mb-1 tracking-wider">Completed</p>
-                                    <p className="text-xl font-black text-white">0/{totalLessons} <span className="text-xs text-slate-400 font-medium">Lessons</span></p>
+                                    <p className="text-[10px] uppercase text-slate-400 font-bold mb-1 tracking-wider">Đã học</p>
+                                    <p className="text-xl font-black text-white">{userCourse?.completedLessons || 0}/{totalLessons} <span className="text-xs text-slate-400 font-medium">bài học</span></p>
                                 </div>
                                 <div>
-                                    <p className="text-[10px] uppercase text-slate-400 font-bold mb-1 tracking-wider">XP Earned</p>
-                                    <p className="text-xl font-black text-white">1,450 <span className="text-xs text-emerald-400 font-medium">pts</span></p>
+                                    <p className="text-[10px] uppercase text-slate-400 font-bold mb-1 tracking-wider">Thời gian học</p>
+                                    <p className="text-xl font-black text-white">{Math.round((userCourse?.totalTimeSpent || 0) / 60)} <span className="text-xs text-slate-400 font-medium">phút</span></p>
                                 </div>
                             </div>
                             
@@ -192,8 +191,8 @@ export default function CourseDetail() {
                 {/* Syllabus Content */}
                 <section className="mt-12">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-                        <div>
-                            <h2 className="text-3xl font-black font-headline mb-3 text-white">Course Syllabus</h2>
+                            <div>
+                            <h2 className="text-3xl font-black font-headline mb-3 text-white">Giáo trình khóa học</h2>
                             <p className="text-slate-400 max-w-xl leading-relaxed">Master the nuances of the language through structured lessons and comprehensive exercises.</p>
                         </div>
                     </div>
@@ -219,7 +218,7 @@ export default function CourseDetail() {
                                         const locked = !isEnrolled;
                                         
                                         // Status logic mimicking Stitch design
-                                        let statusClass = locked ? "opacity-50 hover:opacity-75" : "hover:bg-white/5";
+                                        const statusClass = locked ? "opacity-50 hover:opacity-75" : "hover:bg-white/5";
                                         let outerClass = locked ? "bg-slate-800/60" : "bg-slate-800/80 hover:bg-slate-800";
                                         if (!locked && idx === 0) {
                                             outerClass = "bg-accent-900/20 border-accent-500/30 hover:bg-accent-900/30";
@@ -231,24 +230,24 @@ export default function CourseDetail() {
                                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg ${locked ? 'bg-white/5 text-slate-500' : 'bg-white/10 ' + config.color}`}>
                                                         {locked ? <Lock className="w-5 h-5" /> : <Icon className="w-6 h-6" />}
                                                     </div>
-                                                    <div>
-                                                        <h4 className="font-bold text-white mb-1 group-hover:text-accent-300 transition-colors">{lesson.title}</h4>
-                                                        <p className={`text-xs font-bold tracking-wide ${!locked && idx === 0 ? 'text-accent-400' : 'text-slate-400'}`}>
-                                                            {!locked && idx === 0 ? 'Current Activity' : config.label.toUpperCase()} • {lesson.estimatedMinutes}m
-                                                        </p>
+                                                        <div>
+                                                            <h4 className="font-bold text-white mb-1 group-hover:text-accent-300 transition-colors">{lesson.title}</h4>
+                                                            <p className={`text-xs font-bold tracking-wide ${!locked && idx === 0 ? 'text-accent-400' : 'text-slate-400'}`}>
+                                                                {!locked && idx === 0 ? 'Hoạt động hiện tại' : config.label.toUpperCase()} • {lesson.estimatedMinutes}m
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <Link to={locked ? '#' : `/education/lessons/${lesson.id}`} className="shrink-0 flex items-center justify-center">
                                                     {locked ? (
                                                         <span className="text-slate-600"><Lock className="w-5 h-5" /></span>
                                                     ) : idx === 0 ? (
-                                                        <button className="w-10 h-10 rounded-full bg-accent-600 text-white flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-110 transition-transform">
+                                                        <span className="w-10 h-10 rounded-full bg-accent-600 text-white flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-110 transition-transform">
                                                             <Play className="w-5 h-5 fill-current ml-0.5" />
-                                                        </button>
+                                                        </span>
                                                     ) : (
-                                                        <button className="text-slate-500 group-hover:text-accent-400 transition-colors">
+                                                        <span className="text-slate-500 group-hover:text-accent-400 transition-colors">
                                                             <Play className="w-8 h-8" />
-                                                        </button>
+                                                        </span>
                                                     )}
                                                 </Link>
                                             </div>

@@ -1,4 +1,5 @@
 import { apiClient, CACHE_PROFILES } from './client';
+import { getQuizSessionQuestionsPath } from './quizSessionQuestionsPath';
 import {
   normalizeCollectionPage,
   normalizeQuizSessionObject,
@@ -118,7 +119,16 @@ export const getQuizSessionQuestions = async (
     return offlineQuizProvider.getSessionQuestions(sessionId);
   }
 
-  return getQuizQuestions(quizId);
+  const response = await apiClient.get(
+    getQuizSessionQuestionsPath(quizId, sessionId),
+    sessionId ? CACHE_PROFILES.NO_CACHE : CACHE_PROFILES.DYNAMIC,
+  );
+
+  return Array.isArray(response.data?.questions)
+    ? response.data.questions
+    : Array.isArray(response.data)
+      ? response.data
+      : [];
 };
 
 export const createQuizQuestion = async (

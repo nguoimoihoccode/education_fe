@@ -22,7 +22,6 @@ const Register = lazy(() => import('@/pages/Register').then(m => ({ default: m.R
 const GoogleCallback = lazy(() => import('@/pages/GoogleCallback').then(m => ({ default: m.GoogleCallback })));
 
 // Landing pages
-const LandingPage = lazy(() => import('@/pages/LandingPage'));
 const LandingPageNew = lazy(() => import('@/pages/landing/LandingPageNew'));
 
 // Education core
@@ -33,6 +32,7 @@ const LessonView = lazy(() => import('@/pages/LessonView'));
 // Flashcards
 const FlashcardDecks = lazy(() => import('@/pages/FlashcardDecks'));
 const FlashcardReview = lazy(() => import('@/pages/FlashcardReview'));
+const FlashcardStatsPage = lazy(() => import('@/pages/FlashcardStatsPage'));
 const DocumentImportPage = lazy(() => import('@/pages/DocumentImport'));
 
 // Quiz
@@ -234,6 +234,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ComingSoon />} />
               <Route path="/auth/callback" element={<GoogleCallback />} />
               <Route path="/education" element={<Education />} />
               <Route path="/education/courses/:id" element={<CourseDetail />} />
@@ -266,6 +267,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <FlashcardReview />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/flashcards/stats"
+                element={
+                  <ProtectedRoute>
+                    <FlashcardStatsPage />
                   </ProtectedRoute>
                 }
               />
@@ -406,7 +415,7 @@ function App() {
                 element={<ComingSoon />}
               />
               <Route path="/dashboard-landing" element={<LandingPageNew />} />
-              <Route path="/" element={<LandingPage />} />
+              <Route path="/" element={<LandingPageNew />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>

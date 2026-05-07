@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
-import { Search, Menu, Bell, User, ChevronDown, LogOut, Settings } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Search, Menu, Bell, User, ChevronDown, LogOut, Settings, X } from 'lucide-react';
+import { getGlobalSearchDestination } from './globalSearch';
 
 interface HeaderProps {
-  isAuthenticated: boolean;
   displayName: string;
   email: string;
   isNotificationsOpen: boolean;
@@ -15,14 +16,30 @@ interface HeaderProps {
 }
 
 export function Header({
-  isAuthenticated, displayName, email,
+  displayName, email,
   isNotificationsOpen, isProfileOpen,
   onToggleSidebar, onToggleMobileSidebar,
   onToggleNotifications, onToggleProfile, onLogout,
 }: HeaderProps) {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const destination = getGlobalSearchDestination(searchQuery);
+    if (!destination) {
+      return;
+    }
+
+    navigate(destination.path);
+    setSearchQuery('');
+    setMobileSearchOpen(false);
+  };
+
   return (
-    <header className="stock-header-glass sticky top-0 z-30 h-16">
-      <div className="h-full px-4 flex items-center justify-between gap-4">
+    <header className="stock-header-glass sticky top-0 z-30">
+      <div className="h-16 px-4 flex items-center justify-between gap-4">
         {/* Left */}
         <div className="flex items-center gap-3">
           {/* Mobile menu */}
@@ -40,18 +57,27 @@ export function Header({
           </button>
 
           {/* Search */}
-          <div className="hidden md:block stock-search-modern w-80">
+          <form onSubmit={handleSearchSubmit} className="hidden md:block stock-search-modern w-80">
             <Search size={16} className="search-icon" />
-            <input type="text" placeholder="Tìm kiếm khóa học, bài viết..." />
-          </div>
+            <input
+              type="search"
+              placeholder="Tìm khóa học, flashcard, quiz..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              aria-label="Tìm kiếm trong EduPro"
+            />
+          </form>
         </div>
 
         {/* Right */}
         <div className="flex items-center gap-2">
           {/* Mobile search */}
-          <button className="md:hidden p-2 rounded-xl transition-all duration-200"
+          <button
+            type="button"
+            onClick={() => setMobileSearchOpen((value) => !value)}
+            className="md:hidden p-2 rounded-xl transition-all duration-200"
             style={{ color: 'var(--stock-text-tertiary)' }}>
-            <Search size={20} />
+            {mobileSearchOpen ? <X size={20} /> : <Search size={20} />}
           </button>
 
           {/* Notifications */}
@@ -95,7 +121,7 @@ export function Header({
               </div>
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-semibold" style={{ color: 'var(--stock-text-primary)' }}>{displayName}</p>
-                <p className="text-xs" style={{ color: 'var(--stock-text-tertiary)' }}>Pro Learner</p>
+                <p className="text-xs" style={{ color: 'var(--stock-text-tertiary)' }}>Hành trình học tập</p>
               </div>
               <ChevronDown size={14} className="hidden sm:block transition-colors" style={{ color: 'var(--stock-text-tertiary)' }} />
             </button>
@@ -131,6 +157,25 @@ export function Header({
           </div>
         </div>
       </div>
+      {mobileSearchOpen && (
+        <form
+          onSubmit={handleSearchSubmit}
+          className="md:hidden px-4 pb-3 stock-header-glass"
+          style={{ borderTop: '1px solid var(--stock-glass-border)' }}
+        >
+          <div className="stock-search-modern w-full">
+            <Search size={16} className="search-icon" />
+            <input
+              type="search"
+              placeholder="Tìm trong EduPro..."
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              aria-label="Tìm kiếm trong EduPro"
+              autoFocus
+            />
+          </div>
+        </form>
+      )}
     </header>
   );
 }

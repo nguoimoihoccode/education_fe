@@ -89,7 +89,7 @@ export default function FlashcardDecks() {
     mutationFn: createFlashcardDeck,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flashcardDecks'] });
-      toast.success('Deck created successfully!');
+      toast.success('Đã tạo bộ thẻ');
       closeDeckModal();
     },
     onError: (error) => toast.error(getDeckCreateErrorMessage(error)),
@@ -101,7 +101,7 @@ export default function FlashcardDecks() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flashcardDecks'] });
       queryClient.invalidateQueries({ queryKey: ['flashcardStats'] });
-      toast.success('Deck updated successfully!');
+      toast.success('Đã cập nhật bộ thẻ');
       closeDeckModal();
     },
     onError: (error) => toast.error(getDeckUpdateErrorMessage(error)),
@@ -112,14 +112,14 @@ export default function FlashcardDecks() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flashcardDecks'] });
       queryClient.invalidateQueries({ queryKey: ['flashcardStats'] });
-      toast.success('Deck deleted successfully!');
+      toast.success('Đã xóa bộ thẻ');
     },
     onError: (error) => toast.error(getDeckDeleteErrorMessage(error)),
   });
 
   const handleSubmitDeckForm = () => {
     if (!deckForm.name.trim()) {
-      toast.error('Please enter a deck name');
+      toast.error('Nhập tên bộ thẻ trước khi lưu');
       return;
     }
 
@@ -135,7 +135,7 @@ export default function FlashcardDecks() {
   };
 
   const handleDeleteDeck = (deck: FlashcardDeck) => {
-    if (window.confirm(`Are you sure you want to delete "${deck.name}"?`)) {
+    if (window.confirm(`Xóa bộ thẻ "${deck.name}"?`)) {
       deleteDeckMutation.mutate(deck.id);
     }
   };
@@ -160,18 +160,18 @@ export default function FlashcardDecks() {
         {/* Header */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Flashcard Decks</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Bộ flashcard</h1>
             <p className="text-slate-400 text-sm md:text-base">
-              Master your vocabulary with spaced repetition
+              Ôn từ vựng theo lịch lặp lại ngắt quãng.
             </p>
           </div>
 
           <button
             onClick={openCreateDeckModal}
-            className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold hover:scale-105 transition-transform shadow-[0_0_20px_rgba(139,92,246,0.3)]"
+            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
-            Create Deck
+            Tạo bộ thẻ
           </button>
         </header>
 
@@ -186,57 +186,57 @@ export default function FlashcardDecks() {
         <div className="grid md:grid-cols-3 gap-4 mb-10">
           <Link
             to="/flashcards/review"
-            className="bg-slate-800/80 backdrop-blur-md rounded-3xl p-6 group hover:-translate-y-1 transition-all border border-white/10 hover:border-accent-500/30 cursor-pointer shadow-xl"
+            className="learning-card group"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-indigo-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-1">Daily Review</h3>
+                <h3 className="text-lg font-bold text-white mb-1">Ôn tập hôm nay</h3>
                 <p className="text-sm text-slate-400">
-                  {stats?.dueFlashcards || 0} cards due today
+                  {stats?.dueFlashcards || 0} thẻ đến hạn
                 </p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-indigo-400 text-sm font-medium group-hover:text-indigo-300">
-              Start Review <ArrowRight className="w-4 h-4 ml-1" />
+              Bắt đầu ôn <ArrowRight className="w-4 h-4 ml-1" />
             </div>
           </Link>
 
           <Link
             to="/flashcards/document-import"
-            className="bg-slate-800/80 backdrop-blur-md rounded-3xl p-6 group hover:-translate-y-1 transition-all border border-white/10 hover:border-emerald-500/30 cursor-pointer shadow-xl"
+            className="learning-card group"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-green-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-1">Import Documents</h3>
+                <h3 className="text-lg font-bold text-white mb-1">Nhập tài liệu</h3>
                 <p className="text-sm text-slate-400">PDF, DOC, TXT, JSON, CSV</p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-green-400 text-sm font-medium group-hover:text-green-300">
-              Import <ArrowRight className="w-4 h-4 ml-1" />
+              Nhập ngay <ArrowRight className="w-4 h-4 ml-1" />
             </div>
           </Link>
 
           <Link
             to="/flashcards/stats"
-            className="bg-slate-800/80 backdrop-blur-md rounded-3xl p-6 group hover:-translate-y-1 transition-all border border-white/10 hover:border-fuchsia-500/30 cursor-pointer shadow-xl"
+            className="learning-card group"
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
                 <TrendingUp className="w-6 h-6 text-purple-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-1">View Stats</h3>
-                <p className="text-sm text-slate-400">Track your progress</p>
+                <h3 className="text-lg font-bold text-white mb-1">Theo dõi tiến độ</h3>
+                <p className="text-sm text-slate-400">Xem lịch sử ghi nhớ</p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-purple-400 text-sm font-medium group-hover:text-purple-300">
-              View Details <ArrowRight className="w-4 h-4 ml-1" />
+              Xem thống kê <ArrowRight className="w-4 h-4 ml-1" />
             </div>
           </Link>
         </div>
@@ -249,7 +249,7 @@ export default function FlashcardDecks() {
               <Search className="w-5 h-5 text-slate-500 mr-3" />
               <input
                 type="text"
-                placeholder="Search decks..."
+                placeholder="Tìm bộ thẻ..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-transparent border-none outline-none text-white placeholder-slate-600 text-sm w-full"
@@ -258,7 +258,7 @@ export default function FlashcardDecks() {
           </div>
           <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all">
             <Filter className="w-5 h-5" />
-            Filter
+            Lọc
           </button>
         </div>
 
@@ -286,8 +286,8 @@ export default function FlashcardDecks() {
                 <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
                   <BookOpen className="w-7 h-7 text-slate-600" />
                 </div>
-                <p className="text-slate-500 text-sm font-medium">No decks found.</p>
-                <p className="text-slate-600 text-xs mt-1">Create your first deck to get started!</p>
+                <p className="text-slate-500 text-sm font-medium">Không tìm thấy bộ thẻ.</p>
+                <p className="text-slate-600 text-xs mt-1">Tạo bộ thẻ đầu tiên để bắt đầu ôn tập.</p>
               </div>
             )}
 
@@ -305,36 +305,36 @@ export default function FlashcardDecks() {
         )}
       </div>
 
-      {/* Create Deck Modal */}
+      {/* Deck modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 border border-white/10 rounded-3xl shadow-2xl max-w-md w-full p-8">
             <h2 className="text-2xl font-black font-headline text-white mb-6">
-              {isEditMode ? 'Edit Deck' : 'Create New Deck'}
+              {isEditMode ? 'Sửa bộ thẻ' : 'Tạo bộ thẻ mới'}
             </h2>
 
             <div className="space-y-5">
               <div>
                 <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">
-                  Deck Name *
+                  Tên bộ thẻ *
                 </label>
                 <input
                   type="text"
                   value={deckForm.name}
                   onChange={(e) => setDeckForm((current) => ({ ...current, name: e.target.value }))}
-                  placeholder="e.g., Japanese Basics"
+                  placeholder="Ví dụ: Tiếng Nhật cơ bản"
                   className="w-full px-4 py-3 bg-black/40 rounded-xl border border-white/5 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all text-white placeholder-slate-600"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">
-                  Description
+                  Mô tả
                 </label>
                 <textarea
                   value={deckForm.description}
                   onChange={(e) => setDeckForm((current) => ({ ...current, description: e.target.value }))}
-                  placeholder="Optional description..."
+                  placeholder="Mô tả ngắn..."
                   rows={3}
                   className="w-full px-4 py-3 bg-black/40 rounded-xl border border-white/5 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none text-white placeholder-slate-600"
                 />
@@ -343,7 +343,7 @@ export default function FlashcardDecks() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">
-                    Icon
+                    Biểu tượng
                   </label>
                   <input
                     type="text"
@@ -356,7 +356,7 @@ export default function FlashcardDecks() {
 
                 <div>
                   <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">
-                    Color Focus
+                    Màu nhấn
                   </label>
                   <input
                     type="color"
@@ -373,20 +373,20 @@ export default function FlashcardDecks() {
                 onClick={closeDeckModal}
                 className="flex-1 px-4 py-3 rounded-xl bg-white/5 text-white font-bold hover:bg-white/10 transition-all border border-white/5"
               >
-                Cancel
+                Hủy
               </button>
               <button
                 onClick={handleSubmitDeckForm}
                 disabled={createDeckMutation.isPending || updateDeckMutation.isPending}
-                className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold hover:from-accent-500 hover:to-indigo-500 transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(139,92,246,0.3)]"
+                className="flex-1 px-4 py-3 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-700 transition-colors disabled:opacity-50"
               >
                 {createDeckMutation.isPending
-                  ? 'Creating...'
+                  ? 'Đang tạo...'
                   : updateDeckMutation.isPending
-                    ? 'Saving...'
+                    ? 'Đang lưu...'
                     : isEditMode
-                      ? 'Save Changes'
-                      : 'Create Deck'}
+                      ? 'Lưu thay đổi'
+                      : 'Tạo bộ thẻ'}
               </button>
             </div>
           </div>

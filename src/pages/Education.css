@@ -1,7 +1,7 @@
-/* Education.css - Unified Stock Theme (Violet Variant) */
+/* Education.css - EduPro learning theme */
 
 :root {
-    /* Base Colors from Stock.css */
+    /* Base Colors from the app shell */
     --edu-bg: #020405;
     /* Black/Blue Dark */
     --edu-card: #0A0C10;
@@ -35,7 +35,7 @@
     /* Slate 400 */
 }
 
-/* --- Base Layout (Matched Stock.css) --- */
+/* --- Base Layout --- */
 .education-container {
     color: var(--text-primary);
     padding-bottom: 8rem;
@@ -62,6 +62,458 @@
     margin: 0 auto;
     padding: 2rem 1.5rem;
     width: 100%;
+}
+
+.learning-panel,
+.learning-card {
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(16px);
+}
+
+.learning-card {
+    display: block;
+    padding: 1.25rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.learning-card:hover {
+    background: rgba(30, 41, 59, 0.74);
+    border-color: rgba(167, 139, 250, 0.24);
+    transform: translateY(-2px);
+}
+
+.education-path-page {
+    background:
+        radial-gradient(circle at 15% 0%, rgba(16, 185, 129, 0.14), transparent 28rem),
+        radial-gradient(circle at 85% 10%, rgba(139, 92, 246, 0.12), transparent 30rem),
+        linear-gradient(180deg, #eefaf4 0%, #f8fafc 32%, #eef2ff 100%);
+    color: #0f172a;
+}
+
+.education-path-page .dashboard-wrapper {
+    max-width: 1320px;
+    padding-top: 2rem;
+}
+
+.edu-path-hero,
+.edu-learning-grid,
+.edu-path-toolbar,
+.edu-course-library {
+    color: #0f172a;
+}
+
+.edu-path-hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.edu-kicker {
+    color: #047857;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.edu-path-hero h1 {
+    color: #0f172a;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: 1.05;
+    font-weight: 900;
+    margin-top: 0.75rem;
+}
+
+.edu-path-hero p {
+    color: #475569;
+    max-width: 44rem;
+    margin-top: 0.8rem;
+    line-height: 1.7;
+}
+
+.edu-search {
+    min-width: min(100%, 360px);
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 1rem;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+.edu-search input {
+    flex: 1;
+    color: #0f172a;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    font-size: 0.9rem;
+}
+
+.edu-learning-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.75fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.edu-next-lesson,
+.edu-study-today,
+.education-learning-path,
+.edu-course-library {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.09);
+}
+
+.edu-next-lesson {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(236, 253, 245, 0.9)),
+        radial-gradient(circle at right top, rgba(16, 185, 129, 0.18), transparent 18rem);
+}
+
+.edu-card-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    color: #047857;
+    background: #d1fae5;
+    border-radius: 999px;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.edu-next-lesson h2 {
+    color: #0f172a;
+    font-size: clamp(1.7rem, 3vw, 2.7rem);
+    line-height: 1.12;
+    font-weight: 900;
+    margin-top: 1.2rem;
+    max-width: 42rem;
+}
+
+.edu-next-lesson p {
+    color: #475569;
+    margin-top: 0.9rem;
+    line-height: 1.7;
+    max-width: 38rem;
+}
+
+.edu-lesson-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.35rem;
+}
+
+.edu-lesson-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #334155;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 999px;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.edu-primary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    width: fit-content;
+    margin-top: 1.5rem;
+    background: #047857;
+    color: white;
+    border-radius: 0.95rem;
+    padding: 0.85rem 1.15rem;
+    font-weight: 800;
+    box-shadow: 0 16px 34px rgba(4, 120, 87, 0.22);
+}
+
+.edu-study-today {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1rem;
+}
+
+.edu-study-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.85rem;
+    background: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 1.1rem;
+    padding: 1rem;
+    color: #0f172a;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.edu-study-card:hover {
+    background: #eef2ff;
+    transform: translateY(-2px);
+}
+
+.edu-study-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6d28d9;
+    background: #ede9fe;
+}
+
+.edu-study-card h3 {
+    color: #0f172a;
+    font-weight: 850;
+    font-size: 0.95rem;
+}
+
+.edu-study-card p {
+    color: #64748b;
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+}
+
+.edu-study-card > span {
+    color: #334155;
+    font-weight: 900;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.edu-path-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin: 2rem 0 1rem;
+}
+
+.edu-path-toolbar h2,
+.edu-course-library h2 {
+    color: #0f172a;
+    font-size: 1.6rem;
+    font-weight: 900;
+}
+
+.edu-path-toolbar p,
+.edu-course-library p {
+    color: #64748b;
+    margin-top: 0.35rem;
+    font-size: 0.9rem;
+}
+
+.education-learning-path {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem;
+}
+
+.education-learning-path::before {
+    content: '';
+    position: absolute;
+    left: 2.85rem;
+    top: 2.5rem;
+    bottom: 2.5rem;
+    width: 2px;
+    background: linear-gradient(180deg, #10b981, #a78bfa);
+    opacity: 0.28;
+}
+
+.path-node {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 1.2rem;
+    padding: 1rem;
+    z-index: 1;
+}
+
+.path-node.active {
+    background: #ecfdf5;
+    border-color: rgba(16, 185, 129, 0.28);
+}
+
+.path-node-index {
+    width: 3.1rem;
+    height: 3.1rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background: #64748b;
+}
+
+.path-node.active .path-node-index {
+    background: #059669;
+}
+
+.path-node-step {
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.72rem;
+    font-weight: 900;
+}
+
+.path-node h3 {
+    color: #0f172a;
+    font-weight: 850;
+    margin-top: 0.2rem;
+}
+
+.path-node p:not(.path-node-step) {
+    color: #64748b;
+    font-size: 0.86rem;
+    margin-top: 0.25rem;
+}
+
+.path-node > span {
+    color: #047857;
+    font-weight: 900;
+    font-size: 0.85rem;
+}
+
+.edu-loading-path,
+.edu-empty-path {
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    text-align: center;
+}
+
+.edu-empty-path p {
+    color: #334155;
+    font-weight: 800;
+}
+
+.edu-empty-path span {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+}
+
+.edu-course-library {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+}
+
+.edu-library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.edu-mini-stats {
+    display: flex;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+}
+
+.edu-mini-stats span {
+    background: #f1f5f9;
+    color: #475569;
+    border-radius: 999px;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.edu-course-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+}
+
+.edu-course-card {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 1rem;
+    padding: 0.9rem;
+}
+
+.edu-course-flag {
+    width: 2.8rem;
+    height: 2.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.9rem;
+    background: white;
+    font-size: 1.5rem;
+}
+
+.edu-course-card p {
+    color: #64748b;
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.edu-course-card h3 {
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 850;
+    margin-top: 0.15rem;
+}
+
+.edu-course-card span {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 1024px) {
+    .edu-path-hero,
+    .edu-path-toolbar,
+    .edu-library-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .edu-learning-grid,
+    .edu-course-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (min-width: 768px) {

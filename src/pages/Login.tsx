@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
-import { Lock, Mail, ArrowRight, TrendingUp, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, ArrowRight, GraduationCap, Eye, EyeOff } from 'lucide-react';
 import '../styles/stock-redesign.css';
 import './Login.css';
 
@@ -66,13 +66,13 @@ export const Login = () => {
           {/* Logo */}
           <div className="login-logo-wrap">
             <div className="login-logo">
-              <TrendingUp size={28} strokeWidth={2.5} />
+              <GraduationCap size={28} strokeWidth={2.5} />
             </div>
             <div className="login-logo-ring" />
           </div>
 
           <h1 className="login-title">Chào mừng trở lại</h1>
-          <p className="login-subtitle">Đăng nhập để quản lý danh mục đầu tư</p>
+          <p className="login-subtitle">Đăng nhập để tiếp tục hành trình học tập</p>
 
           {/* Error */}
           {(localError || error) && (
