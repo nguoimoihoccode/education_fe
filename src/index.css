@@ -11,45 +11,81 @@
 
 /* CSS Variables */
 :root {
+  /* Canonical app tokens */
+  --app-bg: #020617;
+  --app-bg-elevated: #0f172a;
+  --app-surface: #1e293b;
+  --app-surface-hover: #334155;
+  --app-border: rgba(255, 255, 255, 0.1);
+  --app-border-strong: rgba(255, 255, 255, 0.18);
+  --app-text: #f8fafc;
+  --app-text-muted: #94a3b8;
+  --app-text-subtle: #64748b;
+  --app-primary: #10b981;
+  --app-primary-hover: #059669;
+  --app-accent: #8b5cf6;
+  --app-warning: #f59e0b;
+  --app-danger: #ef4444;
+  --app-focus: #22d3ee;
+  --app-glass-bg: rgba(15, 23, 42, 0.72);
+  --app-glass-border: var(--app-border);
+  --app-glass-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+  --app-motion-fast: 150ms;
+  --app-motion-base: 200ms;
+  --app-motion-slow: 300ms;
+
   /* Learning Palette */
-  --color-primary: #F59E0B;   /* Amber 500 */
-  --color-primary-dark: #D97706; /* Amber 600 */
-  --color-secondary: #8B5CF6; /* Violet 500 */
-  --color-success: #10B981;   /* Emerald 500 */
-  --color-success-light: #34D399; /* Emerald 400 */
-  --color-danger: #EF4444;    /* Red 500 */
-  --color-danger-light: #F87171; /* Red 400 */
-  --color-warning: #F59E0B;   /* Amber 500 */
-  --color-warning-light: #FBBF24; /* Amber 400 */
+  --color-primary: var(--app-warning);
+  --color-primary-dark: #d97706;
+  --color-secondary: var(--app-accent);
+  --color-success: var(--app-primary);
+  --color-success-light: #34d399;
+  --color-danger: var(--app-danger);
+  --color-danger-light: #f87171;
+  --color-warning: var(--app-warning);
+  --color-warning-light: #fbbf24;
 
   /* Dark theme colors */
-  --bg-primary: #0F172A;      /* Slate 900 */
-  --bg-secondary: #1E293B;    /* Slate 800 */
-  --bg-tertiary: #334155;     /* Slate 700 */
-  --text-primary: #F8FAFC;    /* Slate 50 */
-  --text-secondary: #94A3B8;  /* Slate 400 */
-  --text-muted: #64748b;      /* Slate 500 */
+  --bg-primary: var(--app-bg-elevated);
+  --bg-secondary: var(--app-surface);
+  --bg-tertiary: var(--app-surface-hover);
+  --text-primary: var(--app-text);
+  --text-secondary: var(--app-text-muted);
+  --text-muted: var(--app-text-subtle);
 
-  /* Glass effect - Sophisticated/Frosted */
-  --glass-bg: rgba(30, 41, 59, 0.7); /* Slate 800 @ 70% */
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  /* Glass effect */
+  --glass-bg: var(--app-glass-bg);
+  --glass-border: var(--app-glass-border);
+  --glass-shadow: var(--app-glass-shadow);
+
+  /* Legacy shell aliases maintained for compatibility */
+  --stock-bg-primary: var(--app-bg);
+  --stock-bg-secondary: var(--app-bg-elevated);
+  --stock-card-bg: var(--app-glass-bg);
+  --stock-glass-border: var(--app-glass-border);
+  --stock-text-primary: var(--app-text);
+  --stock-text-secondary: var(--app-text-muted);
+  --stock-text-tertiary: var(--app-text-subtle);
+  --stock-primary-400: #34d399;
+  --stock-primary-500: var(--app-primary);
+  --stock-primary-600: var(--app-primary-hover);
+  --stock-accent-rose: #fb7185;
+
+  /* Legacy high-contrast accents maintained for compatibility */
+  --neon-pink: #ff10f0;
+  --neon-cyan: #00f5ff;
+  --neon-purple: #b026ff;
+  --neon-blue: #0080ff;
+  --neon-green: #00ff9f;
+  --neon-yellow: #ffd700;
+  --neon-red: #ff0055;
+  --neon-orange: #ff6b35;
+  --cyber-900: var(--app-bg-elevated);
 
   /* Typography */
   font-family: 'IBM Plex Sans', 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.6;
   font-weight: 400;
-
-  /* Legacy high-contrast accents maintained for compatibility */
-  --neon-pink: #FF10F0;
-  --neon-cyan: #00F5FF;
-  --neon-purple: #B026FF;
-  --neon-blue: #0080FF;
-  --neon-green: #00FF9F;
-  --neon-yellow: #FFD700;
-  --neon-red: #FF0055;
-  --neon-orange: #FF6B35;
-  --cyber-900: #0F172A; /* Updated to match new background */
 
   /* Rendering */
   text-rendering: optimizeLegibility;

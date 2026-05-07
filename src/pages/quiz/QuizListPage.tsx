@@ -252,6 +252,7 @@ export default function QuizListPage() {
                 placeholder="Tìm quiz..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Tìm quiz"
                 className="bg-transparent border-none outline-none text-white placeholder-slate-600 text-sm w-full"
               />
             </div>
@@ -259,6 +260,7 @@ export default function QuizListPage() {
           <select
             value={topicFilter}
             onChange={(e) => setTopicFilter(e.target.value)}
+            aria-label="Lọc quiz theo chủ đề"
             className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-500"
           >
             <option value="">Tất cả chủ đề</option>
@@ -326,10 +328,15 @@ export default function QuizListPage() {
       {/* Quiz modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-[0_0_60px_rgba(0,0,0,0.5)] border border-white/10 max-w-2xl w-full my-8 p-8">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="quiz-form-title"
+            className="bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-[0_0_60px_rgba(0,0,0,0.5)] border border-white/10 max-w-2xl w-full my-8 p-8"
+          >
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h2 className="text-2xl font-black font-headline text-white flex items-center gap-3">
+                <h2 id="quiz-form-title" className="text-2xl font-black font-headline text-white flex items-center gap-3">
                   <Plus className="w-6 h-6 text-accent-400" />
                   {isEditMode ? 'Sửa quiz' : 'Tạo quiz mới'}
                 </h2>
@@ -338,7 +345,9 @@ export default function QuizListPage() {
                 </p>
               </div>
                 <button
+                  type="button"
                   onClick={closeQuizModal}
+                  aria-label="Đóng form quiz"
                   className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white border border-transparent hover:border-white/10 text-xl"
                 >
                 &times;
@@ -349,10 +358,11 @@ export default function QuizListPage() {
               {/* Basic Info */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label htmlFor="quiz-name" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
                     Tên quiz *
                   </label>
                   <input
+                    id="quiz-name"
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm((current) => ({ ...current, name: e.target.value }))}
@@ -362,10 +372,11 @@ export default function QuizListPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label htmlFor="quiz-topic" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
                     Chủ đề
                   </label>
                   <input
+                    id="quiz-topic"
                     type="text"
                     value={form.topic}
                     onChange={(e) => setForm((current) => ({ ...current, topic: e.target.value }))}
@@ -398,10 +409,10 @@ export default function QuizListPage() {
                     onChange={(e) => setForm((current) => ({ ...current, difficulty: e.target.value as QuizListFormState['difficulty'] }))}
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none appearance-none cursor-pointer"
                   >
-                    <option value="EASY" className="bg-slate-800">🟢  Easy</option>
-                    <option value="MEDIUM" className="bg-slate-800">🟡  Medium</option>
-                    <option value="HARD" className="bg-slate-800">🔴  Hard</option>
-                    <option value="MIXED" className="bg-slate-800">🔀  Mixed</option>
+                    <option value="EASY" className="bg-slate-800">Easy</option>
+                    <option value="MEDIUM" className="bg-slate-800">Medium</option>
+                    <option value="HARD" className="bg-slate-800">Hard</option>
+                    <option value="MIXED" className="bg-slate-800">Mixed</option>
                   </select>
                 </div>
 

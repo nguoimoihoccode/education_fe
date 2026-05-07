@@ -82,6 +82,7 @@ export default function Education() {
               placeholder="Tìm khóa học, ngôn ngữ..."
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
+              aria-label="Tìm khóa học hoặc ngôn ngữ"
             />
           </div>
         </header>
@@ -152,15 +153,19 @@ export default function Education() {
 
           <div className="category-scroll">
             <button
+              type="button"
               onClick={() => setSelectedLanguage(null)}
+              aria-pressed={selectedLanguage === null}
               className={clsx('chip', selectedLanguage === null && 'active')}
             >
               Tất cả
             </button>
             {languages.map((language) => (
               <button
+                type="button"
                 key={language.id}
                 onClick={() => setSelectedLanguage(language.id)}
+                aria-pressed={selectedLanguage === language.id}
                 className={clsx('chip', selectedLanguage === language.id && 'active')}
               >
                 {language.name}

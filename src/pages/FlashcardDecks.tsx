@@ -252,11 +252,12 @@ export default function FlashcardDecks() {
                 placeholder="Tìm bộ thẻ..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Tìm bộ thẻ flashcard"
                 className="bg-transparent border-none outline-none text-white placeholder-slate-600 text-sm w-full"
               />
             </div>
           </div>
-          <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all">
+          <button type="button" aria-label="Mở bộ lọc flashcard" className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all">
             <Filter className="w-5 h-5" />
             Lọc
           </button>
@@ -308,17 +309,23 @@ export default function FlashcardDecks() {
       {/* Deck modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 border border-white/10 rounded-3xl shadow-2xl max-w-md w-full p-8">
-            <h2 className="text-2xl font-black font-headline text-white mb-6">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="flashcard-deck-form-title"
+            className="bg-slate-800 border border-white/10 rounded-3xl shadow-2xl max-w-md w-full p-8"
+          >
+            <h2 id="flashcard-deck-form-title" className="text-2xl font-black font-headline text-white mb-6">
               {isEditMode ? 'Sửa bộ thẻ' : 'Tạo bộ thẻ mới'}
             </h2>
 
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">
+                <label htmlFor="deck-name" className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">
                   Tên bộ thẻ *
                 </label>
                 <input
+                  id="deck-name"
                   type="text"
                   value={deckForm.name}
                   onChange={(e) => setDeckForm((current) => ({ ...current, name: e.target.value }))}
@@ -342,14 +349,15 @@ export default function FlashcardDecks() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">
+                  <label htmlFor="deck-icon" className="block text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">
                     Biểu tượng
                   </label>
                   <input
+                    id="deck-icon"
                     type="text"
                     value={deckForm.icon}
                     onChange={(e) => setDeckForm((current) => ({ ...current, icon: e.target.value }))}
-                    placeholder="📚"
+                    placeholder="Icon ngắn"
                     className="w-full px-4 py-3 bg-black/40 rounded-xl border border-white/5 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all text-center text-2xl text-white"
                   />
                 </div>

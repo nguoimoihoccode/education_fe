@@ -43,6 +43,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const [showPassword, setShowPassword] = useState(false);
     const generatedId = useId();
     const inputId = props.id || generatedId;
+    const messageId = `${inputId}-message`;
 
     const neonColors = {
       pink: {
@@ -92,6 +93,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             type={currentInputType}
+            aria-invalid={!!error || undefined}
+            aria-describedby={(error || helperText) ? messageId : props['aria-describedby']}
             className={cn(
               // Base styles
               'w-full rounded-xl',
@@ -208,6 +211,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               </svg>
             )}
             <p
+              id={messageId}
               className={cn(
                 'text-sm',
                 error ? 'text-neon-red' : 'text-gray-400'

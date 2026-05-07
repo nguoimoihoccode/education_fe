@@ -43,14 +43,14 @@ export function Header({
         {/* Left */}
         <div className="flex items-center gap-3">
           {/* Mobile menu */}
-          <button onClick={onToggleMobileSidebar}
+          <button type="button" onClick={onToggleMobileSidebar} aria-label="Mở menu điều hướng"
             className="lg:hidden p-2 rounded-xl transition-all duration-200"
             style={{ color: 'var(--stock-text-tertiary)' }}>
             <Menu size={22} />
           </button>
 
           {/* Desktop sidebar toggle */}
-          <button onClick={onToggleSidebar}
+          <button type="button" onClick={onToggleSidebar} aria-label="Thu gọn hoặc mở rộng thanh điều hướng"
             className="hidden lg:flex p-2 rounded-xl transition-all duration-200 hover:bg-white/5"
             style={{ color: 'var(--stock-text-tertiary)' }}>
             <Menu size={22} />
@@ -75,6 +75,8 @@ export function Header({
           <button
             type="button"
             onClick={() => setMobileSearchOpen((value) => !value)}
+            aria-label={mobileSearchOpen ? 'Đóng tìm kiếm' : 'Mở tìm kiếm'}
+            aria-expanded={mobileSearchOpen}
             className="md:hidden p-2 rounded-xl transition-all duration-200"
             style={{ color: 'var(--stock-text-tertiary)' }}>
             {mobileSearchOpen ? <X size={20} /> : <Search size={20} />}
@@ -82,7 +84,7 @@ export function Header({
 
           {/* Notifications */}
           <div className="relative">
-            <button onClick={onToggleNotifications}
+            <button type="button" onClick={onToggleNotifications} aria-label="Mở thông báo" aria-expanded={isNotificationsOpen}
               className="relative p-2.5 rounded-xl transition-all duration-200 group hover:bg-white/5"
               style={{ color: 'var(--stock-text-tertiary)' }}>
               <Bell size={20} className="group-hover:scale-110 transition-transform" />
@@ -113,7 +115,7 @@ export function Header({
 
           {/* Profile dropdown */}
           <div className="relative">
-            <button onClick={onToggleProfile}
+            <button type="button" onClick={onToggleProfile} aria-label="Mở menu tài khoản" aria-expanded={isProfileOpen}
               className="flex items-center gap-3 p-1.5 rounded-xl transition-all duration-200 group hover:bg-white/5">
               <div className="w-9 h-9 rounded-lg flex items-center justify-center shadow-sm"
                 style={{ background: 'linear-gradient(135deg, #2CB34A, #0d9488)' }}>

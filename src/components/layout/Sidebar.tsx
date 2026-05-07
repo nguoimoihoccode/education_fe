@@ -124,7 +124,7 @@ function SidebarUserFooter({
   if (!isSidebarOpen) {
     return (
       <div className="p-3 flex justify-center" style={{ borderTop: '1px solid var(--stock-glass-border)' }}>
-        <button onClick={onLogout} className="p-2 rounded-lg transition-all hover:bg-white/5"
+        <button type="button" onClick={onLogout} aria-label="Đăng xuất" className="p-2 rounded-lg transition-all hover:bg-white/5"
           style={{ color: 'var(--stock-text-tertiary)' }} title="Đăng xuất">
           <LogOut size={18} />
         </button>
@@ -147,7 +147,7 @@ function SidebarUserFooter({
           <p className="text-sm font-semibold truncate" style={{ color: 'var(--stock-text-primary)' }}>{displayName}</p>
           <p className="text-xs truncate" style={{ color: 'var(--stock-text-tertiary)' }}>Đang học hôm nay</p>
         </Link>
-        <button onClick={onLogout} className="p-1.5 rounded-lg transition-all hover:bg-white/5"
+        <button type="button" onClick={onLogout} aria-label="Đăng xuất" className="p-1.5 rounded-lg transition-all hover:bg-white/5"
           style={{ color: 'var(--stock-text-tertiary)' }}>
           <LogOut size={16} />
         </button>
@@ -190,7 +190,7 @@ export function DesktopSidebar({
 
       {/* Collapse toggle */}
       <div className="p-3" style={{ borderTop: '1px solid var(--stock-glass-border)' }}>
-        <button onClick={onToggle} className="stock-sidebar-link justify-center w-full">
+        <button type="button" onClick={onToggle} aria-label={isSidebarOpen ? 'Thu gọn thanh điều hướng' : 'Mở rộng thanh điều hướng'} className="stock-sidebar-link justify-center w-full">
           {isSidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
           {isSidebarOpen && <span className="font-medium text-sm">Thu gọn</span>}
         </button>
@@ -218,7 +218,7 @@ export function MobileSidebar({
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-3" style={{ borderBottom: '1px solid var(--stock-glass-border)' }}>
         <SidebarLogo isSidebarOpen onClick={onClose} />
-        <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/5 transition-all"
+        <button type="button" onClick={onClose} aria-label="Đóng menu điều hướng" className="p-1.5 rounded-lg hover:bg-white/5 transition-all"
           style={{ color: 'var(--stock-text-tertiary)' }}>
           <X size={20} />
         </button>
@@ -240,7 +240,7 @@ export function MobileSidebar({
       {/* Footer */}
       <div className="p-3" style={{ borderTop: '1px solid var(--stock-glass-border)', background: 'linear-gradient(to top, rgba(10,12,16,0.8), transparent)' }}>
         {isAuthenticated ? (
-          <button onClick={() => { onLogout(); onClose(); }}
+          <button type="button" onClick={() => { onLogout(); onClose(); }}
             className="stock-sidebar-link w-full" style={{ color: 'var(--stock-accent-rose)' }}>
             <LogOut size={18} />
             <span className="font-medium text-sm">Đăng xuất</span>
