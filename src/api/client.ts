@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { setupCache, buildWebStorage } from 'axios-cache-interceptor';
 import { useAuthStore } from '../store/auth.store';
+import { clearClientSessionStorage } from './session-cleanup';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -38,12 +39,13 @@ export const apiClient = setupCache(axiosInstance, {
 });
 
 let refreshPromise: Promise<string> | null = null;
+let sessionGeneration = 0;
 
 export const clearApiSessionState = () => {
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('auth-storage');
+  sessionGeneration += 1;
+  refreshPromise = null;
   apiClient.storage.clear?.();
+  clearClientSessionStorage();
 };
 
 // ============================================
@@ -109,9 +111,15 @@ apiClient.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
+        const refreshGeneration = sessionGeneration;
+
         refreshPromise ??= apiClient
           .post('/auth/refresh', { refreshToken }, { cache: false })
           .then((response) => {
+            if (refreshGeneration !== sessionGeneration) {
+              throw new Error('Session changed during refresh');
+            }
+
             const { accessToken, refreshToken: newRefreshToken, user } = response.data;
 
             useAuthStore.getState().setTokens(

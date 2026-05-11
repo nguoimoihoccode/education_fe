@@ -9,16 +9,18 @@ import {
   Flame,
   GraduationCap,
   Play,
+  RefreshCw,
   Search,
   Sparkles,
   Target,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
-import { getCourses, getLanguages, getUserProgress } from '@/api/education.api';
+import { getCourses, getLanguages, getTodayPlan } from '@/api/education.api';
+import { QUERY_KEYS } from '@/config/query';
 import { useAuth } from '@/hooks/useAuth';
 import { Pagination } from '@/components/ui';
-import type { Course } from '@/types/education.types';
+import type { Course, TodayPlanTask } from '@/types/education.types';
 import './Education.css';
 
 export default function Education() {
@@ -43,9 +45,14 @@ export default function Education() {
         limit: itemsPerPage,
       }),
   });
-  const { data: userProgress } = useQuery({
-    queryKey: ['userProgress'],
-    queryFn: getUserProgress,
+  const {
+    data: todayPlan,
+    isLoading: isLoadingTodayPlan,
+    isError: isTodayPlanError,
+    refetch: refetchTodayPlan,
+  } = useQuery({
+    queryKey: QUERY_KEYS.TODAY_PLAN,
+    queryFn: getTodayPlan,
     enabled: isAuthenticated,
   });
 
@@ -54,7 +61,6 @@ export default function Education() {
   const filteredCourses = courses.filter((course) =>
     course.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-  const nextCourse = filteredCourses[0];
   const pathCourses = filteredCourses.slice(0, 6);
 
   const handlePageChange = (page: number) => {
@@ -87,62 +93,76 @@ export default function Education() {
           </div>
         </header>
 
-        <main className="edu-learning-grid">
-          <section className="edu-next-lesson">
-            <div className="edu-card-label">
-              <Play className="h-4 w-4" />
-              Bài tiếp theo
-            </div>
-            <h2>{nextCourse?.title || 'Chọn khóa học để bắt đầu'}</h2>
-            <p>
-              {nextCourse
-                ? `${nextCourse.language?.name || 'Ngôn ngữ'} • ${nextCourse.totalLessons || 0} bài học`
-                : 'Khi có khóa học, bài học tiếp theo sẽ xuất hiện tại đây.'}
-            </p>
+        <main className="today-plan-shell">
+          {!isAuthenticated ? (
+            <section className="today-plan-empty">
+              <Sparkles className="h-10 w-10 text-emerald-600" />
+              <h2>Đăng nhập để nhận kế hoạch học mỗi ngày</h2>
+              <p>EduPro sẽ gom bài học, flashcards và quiz thành một checklist ngắn gọn cho hôm nay.</p>
+              <Link to="/login" className="edu-primary-action">Đăng nhập</Link>
+            </section>
+          ) : isLoadingTodayPlan ? (
+            <section className="today-plan-hero today-plan-loading" role="status" aria-live="polite">
+              <div className="h-12 w-12 rounded-full border-2 border-emerald-400/30 border-t-emerald-500 animate-spin" />
+              <p>Đang chuẩn bị kế hoạch hôm nay...</p>
+            </section>
+          ) : isTodayPlanError ? (
+            <section className="today-plan-error">
+              <h2>Không tải được kế hoạch hôm nay</h2>
+              <p>Thử lại để EduPro tạo checklist học tập mới nhất cho bạn.</p>
+              <button type="button" onClick={() => refetchTodayPlan()}>
+                <RefreshCw className="h-4 w-4" />
+                Thử lại
+              </button>
+            </section>
+          ) : todayPlan && todayPlan.tasks.length === 0 ? (
+            <section className="today-plan-empty">
+              <BookOpen className="h-10 w-10 text-emerald-600" />
+              <h2>Hôm nay chưa có nhiệm vụ</h2>
+              <p>Khám phá khóa học hoặc làm một quiz ngắn để EduPro tạo kế hoạch phù hợp hơn.</p>
+              <Link to="/quiz" className="edu-primary-action">Làm quiz ngắn</Link>
+            </section>
+          ) : todayPlan ? (
+            <>
+              <section className="today-plan-hero">
+                <div>
+                  <div className="edu-card-label">
+                    <Flame className="h-4 w-4" />
+                    Kế hoạch hôm nay
+                  </div>
+                  <h2>{todayPlan.completedTasks}/{todayPlan.totalTasks} nhiệm vụ hoàn thành</h2>
+                  <p>
+                    Hoàn thành checklist ngắn này để giữ nhịp học và duy trì chuỗi ngày của bạn.
+                  </p>
+                  <div className="edu-lesson-meta">
+                    <span><Clock className="h-4 w-4" />{todayPlan.estimatedMinutes} phút</span>
+                    <span><Flame className="h-4 w-4" />{todayPlan.streak.current} ngày liên tiếp</span>
+                    <span><Target className="h-4 w-4" />Kỷ lục {todayPlan.streak.longest} ngày</span>
+                  </div>
+                  {todayPlan.tasks[0] && (
+                    <Link to={todayPlan.tasks[0].targetUrl} className="edu-primary-action">
+                      Bắt đầu học
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  )}
+                </div>
+                <div
+                  className="today-plan-progress"
+                  style={{ '--today-progress': `${Math.round((todayPlan.completedTasks / Math.max(todayPlan.totalTasks, 1)) * 100)}%` } as React.CSSProperties}
+                  aria-label={`Tiến độ hôm nay: ${Math.round((todayPlan.completedTasks / Math.max(todayPlan.totalTasks, 1)) * 100)}%`}
+                >
+                  <strong>{Math.round((todayPlan.completedTasks / Math.max(todayPlan.totalTasks, 1)) * 100)}%</strong>
+                  <span>Daily plan</span>
+                </div>
+              </section>
 
-            <div className="edu-lesson-meta">
-              <span>
-                <Clock className="h-4 w-4" />
-                {nextCourse ? `${nextCourse.estimatedHours || 0} giờ nội dung` : 'Theo khóa học bạn chọn'}
-              </span>
-              <span>
-                <Target className="h-4 w-4" />
-                {nextCourse ? `${nextCourse.totalLessons || 0} bài học trong khóa` : 'Mở khóa học để xem chi tiết'}
-              </span>
-            </div>
-
-            <Link
-              to={nextCourse ? `/education/courses/${nextCourse.id}` : '/education'}
-              className="edu-primary-action"
-            >
-              Vào học ngay
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </section>
-
-          <aside className="edu-study-today">
-            <StudyCard
-              icon={<BookOpen className="h-5 w-5" />}
-              title="Ôn tập hôm nay"
-              detail="Flashcards đến hạn"
-              value={isAuthenticated ? 'Mở ôn tập' : 'Xem flashcards'}
-              to="/flashcards/review"
-            />
-            <StudyCard
-              icon={<Sparkles className="h-5 w-5" />}
-              title="Điểm yếu cần luyện"
-              detail="Quiz sai gần đây"
-              value={isAuthenticated ? 'Xem quiz' : 'Khám phá quiz'}
-              to="/quiz"
-            />
-            <StudyCard
-              icon={<Flame className="h-5 w-5" />}
-              title="Chuỗi học"
-              detail="Duy trì thói quen"
-              value={`${userProgress?.streak?.currentStreak || 0} ngày`}
-              to="/quiz/stats"
-            />
-          </aside>
+              <section className="today-plan-task-grid">
+                {todayPlan.tasks.map((task) => (
+                  <TodayPlanTaskCard key={task.id} task={task} />
+                ))}
+              </section>
+            </>
+          ) : null}
         </main>
 
         <section className="edu-path-toolbar">
@@ -264,27 +284,26 @@ export default function Education() {
   );
 }
 
-function StudyCard({
-  icon,
-  title,
-  detail,
-  value,
-  to,
-}: {
-  icon: ReactNode;
-  title: string;
-  detail: string;
-  value: string;
-  to: string;
-}) {
+function TodayPlanTaskCard({ task }: { task: TodayPlanTask }) {
+  const iconByType: Record<TodayPlanTask['type'], ReactNode> = {
+    continue_lesson: <Play className="h-5 w-5" />,
+    review_flashcards: <BookOpen className="h-5 w-5" />,
+    quick_quiz: <Sparkles className="h-5 w-5" />,
+    fix_mistakes: <Target className="h-5 w-5" />,
+  };
+
   return (
-    <Link to={to} className="edu-study-card">
-      <div className="edu-study-icon">{icon}</div>
+    <Link
+      to={task.targetUrl}
+      className={clsx('today-plan-task', task.completed && 'completed')}
+      aria-label={`${task.title}. ${task.completed ? 'Đã hoàn thành' : 'Chưa hoàn thành'}. ${task.estimatedMinutes} phút`}
+    >
+      <div className="edu-study-icon">{iconByType[task.type]}</div>
       <div>
-        <h3>{title}</h3>
-        <p>{detail}</p>
+        <h3>{task.title}</h3>
+        <p>{task.description}</p>
       </div>
-      <span>{value}</span>
+      <span>{task.estimatedMinutes} phút</span>
     </Link>
   );
 }

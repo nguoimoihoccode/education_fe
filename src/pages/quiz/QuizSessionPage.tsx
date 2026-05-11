@@ -13,6 +13,7 @@ import {
 } from '@/api/quiz.api';
 import { getQuizSessionView } from './sessionView';
 import type { QuizSession } from '@/types/quiz.types';
+import { QUERY_KEYS } from '@/config/query';
 import toast from 'react-hot-toast';
 import '../Education.css';
 
@@ -88,6 +89,7 @@ export default function QuizSessionPage() {
       queryClient.invalidateQueries({ queryKey: ['quizSession', sessionId] });
       queryClient.invalidateQueries({ queryKey: ['quizStats'] });
       queryClient.invalidateQueries({ queryKey: ['quizHistory'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_PLAN });
       navigate(`/quiz/session/${sessionId}/result`);
     },
     onError: () => {

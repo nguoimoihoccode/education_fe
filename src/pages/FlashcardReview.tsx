@@ -7,6 +7,7 @@ import {
   reviewFlashcard,
   completeReviewSession,
 } from '@/api/flashcard.api';
+import { QUERY_KEYS } from '@/config/query';
 import { FlashcardReview } from '@/components/flashcard';
 import type { ReviewSession } from '@/types/flashcard.types';
 import toast from 'react-hot-toast';
@@ -37,6 +38,7 @@ export default function FlashcardReviewPage() {
       reviewFlashcard(flashcardId, { flashcardId, quality }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flashcardStats'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_PLAN });
     },
     onError: () => toast.error('Failed to review flashcard'),
   });
@@ -46,6 +48,7 @@ export default function FlashcardReviewPage() {
     mutationFn: (sessionId: string) => completeReviewSession({ sessionId }),
     onSuccess: (completedSession) => {
       queryClient.invalidateQueries({ queryKey: ['flashcardStats'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_PLAN });
       setIsComplete(true);
       toast.success(`Review complete! +${completedSession.xpEarned} XP`);
     },

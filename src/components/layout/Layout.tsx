@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/auth.store';
-import { clearApiSessionState } from '@/api/client';
-import { queryClient } from '@/config/query';
 import '@/styles/education-shell.css';
 import { DesktopSidebar, MobileSidebar } from './Sidebar';
 import { Header } from './Header';
@@ -39,8 +37,6 @@ export const Layout = ({ children }: LayoutProps) => {
 
   const handleLogout = () => {
     logout();
-    clearApiSessionState();
-    queryClient.clear();
     navigate('/login');
   };
 

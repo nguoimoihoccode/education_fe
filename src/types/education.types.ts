@@ -42,6 +42,36 @@ export interface Course {
     updatedAt: string;
 }
 
+export type TodayPlanTaskType =
+    | 'continue_lesson'
+    | 'review_flashcards'
+    | 'quick_quiz'
+    | 'fix_mistakes';
+
+export interface TodayPlanTask {
+    id: string;
+    type: TodayPlanTaskType;
+    title: string;
+    description: string;
+    ctaLabel: string;
+    targetUrl: string;
+    estimatedMinutes: number;
+    completed: boolean;
+    priority: number;
+}
+
+export interface TodayPlan {
+    date: string;
+    completedTasks: number;
+    totalTasks: number;
+    estimatedMinutes: number;
+    streak: {
+        current: number;
+        longest: number;
+    };
+    tasks: TodayPlanTask[];
+}
+
 export enum LessonType {
     VOCABULARY = 'vocabulary',
     GRAMMAR = 'grammar',

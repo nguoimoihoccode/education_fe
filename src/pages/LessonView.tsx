@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     ChevronLeft, BookOpen, CheckCircle2, XCircle, Lightbulb, Clock, Zap, Award, Volume2, RotateCcw,
     Sparkles
@@ -14,6 +14,7 @@ import {
     submitExercises,
 } from '@/api/education.api';
 import type { Vocabulary, Exercise, SubmitExercisesResult } from '@/types/education.types';
+import { QUERY_KEYS } from '@/config/query';
 import ReactMarkdown from 'react-markdown';
 import './Education.css';
 
@@ -35,6 +36,7 @@ const lessonTabs: LessonTab[] = [
 
 export default function LessonView() {
     const { id } = useParams<{ id: string }>();
+    const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState<TabId>('content');
     const [exerciseAnswers, setExerciseAnswers] = useState<CauTraLoiMap>({});
     const [exerciseResults, setExerciseResults] = useState<KetQuaNopBai | null>(null);
@@ -61,7 +63,10 @@ export default function LessonView() {
             const timeSpent = Math.round((Date.now() - startedAt) / 1000);
             return completeLesson(id!, { timeSpent });
         },
-        onSuccess: () => toast.success('Lesson completed! 🎉'),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_PLAN });
+            toast.success('Lesson completed! 🎉');
+        },
     });
 
     const submitMutation = useMutation({

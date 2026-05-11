@@ -29,7 +29,8 @@ export const Login = () => {
   }, [googleError]);
 
   const handleGoogleLogin = () => {
-    const state = crypto.randomUUID();
+    const state = globalThis.crypto?.randomUUID?.() ??
+      `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
     sessionStorage.setItem('google-oauth-state', state);
     window.location.href = `${API_BASE_URL}/auth/google?state=${encodeURIComponent(state)}`;
   };

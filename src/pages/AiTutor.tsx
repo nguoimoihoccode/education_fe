@@ -121,7 +121,11 @@ export default function AiTutor() {
     // Try real API first, fallback to simulated
     try {
       const response = await apiClient.post('/ai/chat', { message: userMsg });
-      return response.data.reply || response.data.message || response.data.content;
+      const reply = response.data.reply || response.data.message || response.data.content;
+      if (typeof reply !== 'string' || !reply.trim()) {
+        throw new Error('AI tutor returned an invalid response');
+      }
+      return reply;
     } catch {
       if (!import.meta.env.DEV) {
         throw new Error('AI tutor service unavailable');

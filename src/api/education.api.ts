@@ -10,6 +10,7 @@ import type {
     UserStreak,
     UserProgress,
     LearningPlan,
+    TodayPlan,
     CoursesResponse,
     LessonsResponse,
     SubmitExercisesResult,
@@ -116,6 +117,11 @@ export const submitExercises = async (
 
 export const getUserProgress = async (): Promise<UserProgress> => {
     const response = await apiClient.get('/education/progress', CACHE_PROFILES.USER);
+    return response.data;
+};
+
+export const getTodayPlan = async (): Promise<TodayPlan> => {
+    const response = await apiClient.get('/education/today-plan', CACHE_PROFILES.NO_CACHE);
     return response.data;
 };
 

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authApi, type User } from '../api/auth.api';
+import { clearClientSessionStorage } from '../api/session-cleanup';
 
 
 interface AuthState {
@@ -73,9 +74,7 @@ export const useAuthStore = create<AuthState>()(
           error: null,
         });
 
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('auth-storage');
+        clearClientSessionStorage();
       },
 
       setTokens: (accessToken: string, refreshToken: string, user?: User | null) => {
