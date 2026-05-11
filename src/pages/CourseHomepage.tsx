@@ -1,20 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, BookOpen, Clock, Users, Star, TrendingUp, Award, Play, ChevronRight, Sparkles, Zap } from 'lucide-react';
+import { Search, BookOpen, Clock, Users, Star, Award, Play, ChevronRight, Sparkles, Zap } from 'lucide-react';
 import { getCourses } from '@/api/education.api';
-import { useAuth } from '@/hooks/useAuth';
 import { Pagination } from '@/components/ui';
 import './Education.css';
 
 export default function CourseHomepage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedLevel, setSelectedLevel] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const animatedBg = document.querySelector('.animated-bg') as HTMLElement;
@@ -46,19 +42,11 @@ export default function CourseHomepage() {
     { id: 'analysis', name: 'Analysis', color: 'bg-pink-500/10 text-pink-400' },
   ];
 
-  const levels = [
-    { id: 'all', name: 'All Levels' },
-    { id: 'beginner', name: 'Beginner' },
-    { id: 'intermediate', name: 'Intermediate' },
-    { id: 'advanced', name: 'Advanced' },
-  ];
-
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          course.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
-    const matchesLevel = selectedLevel === 'all' || course.level === selectedLevel;
-    return matchesSearch && matchesCategory && matchesLevel;
+    return matchesSearch && matchesCategory;
   });
 
   const featuredCourses = courses.filter(c => c.featured).slice(0, 3);

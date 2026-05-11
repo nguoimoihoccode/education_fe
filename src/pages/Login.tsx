@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
@@ -13,29 +13,30 @@ export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [localError, setLocalError] = useState('');
+  const [submitError, setSubmitError] = useState('');
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+  const googleError = searchParams.get('error') === 'google_auth_failed'
+    ? 'Đăng nhập Google thất bại. Vui lòng thử lại.'
+    : '';
+  const displayError = submitError || error || googleError;
+
   useEffect(() => {
-    if (searchParams.get('error') === 'google_auth_failed') {
-      setLocalError('Đăng nhập Google thất bại. Vui lòng thử lại.');
+    if (googleError) {
       toast.error('Google Login Failed');
     }
-  }, [searchParams]);
+  }, [googleError]);
 
-  // Sync store error to local state
-  useEffect(() => {
-    if (error) {
-      setLocalError(error);
-    }
-  }, [error]);
-
-  const handleGoogleLogin = () => window.location.href = `${API_BASE_URL}/auth/google`;
+  const handleGoogleLogin = () => {
+    const state = crypto.randomUUID();
+    sessionStorage.setItem('google-oauth-state', state);
+    window.location.href = `${API_BASE_URL}/auth/google?state=${encodeURIComponent(state)}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLocalError('');
+    setSubmitError('');
     clearError();
 
     try {
@@ -46,7 +47,7 @@ export const Login = () => {
       const msg = err && typeof err === 'object' && 'response' in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
         : 'Đăng nhập thất bại';
-      setLocalError(msg || 'Đăng nhập thất bại');
+      setSubmitError(msg || 'Đăng nhập thất bại');
       toast.error(msg || 'Đăng nhập thất bại');
     }
   };
@@ -75,10 +76,10 @@ export const Login = () => {
           <p className="login-subtitle">Đăng nhập để tiếp tục hành trình học tập</p>
 
           {/* Error */}
-          {(localError || error) && (
+          {displayError && (
             <div className="login-error">
               <span className="login-error-dot" />
-              {localError || error}
+              {displayError}
             </div>
           )}
 

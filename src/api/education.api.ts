@@ -9,6 +9,7 @@ import type {
     UserCourse,
     UserStreak,
     UserProgress,
+    LearningPlan,
     CoursesResponse,
     LessonsResponse,
     SubmitExercisesResult,
@@ -104,7 +105,7 @@ export const getExercisesByLesson = async (lessonId: string): Promise<Exercise[]
 
 export const submitExercises = async (
     lessonId: string,
-    answers: { exerciseId: string; answer: any }[]
+    answers: { exerciseId: string; answer: unknown }[]
 ): Promise<SubmitExercisesResult> => {
     const response = await apiClient.post(
         `/education/lessons/${lessonId}/exercises/submit`,
@@ -120,5 +121,10 @@ export const getUserProgress = async (): Promise<UserProgress> => {
 
 export const getUserStreak = async (): Promise<UserStreak> => {
     const response = await apiClient.get('/education/streak', CACHE_PROFILES.DYNAMIC);
+    return response.data;
+};
+
+export const getLearningPlan = async (): Promise<LearningPlan> => {
+    const response = await apiClient.get('/education/learning-plan', CACHE_PROFILES.USER);
     return response.data;
 };

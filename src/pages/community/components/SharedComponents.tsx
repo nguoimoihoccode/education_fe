@@ -1,4 +1,5 @@
 import { MessageSquare, Clock, Lock } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import type { StudyGroup } from '@/api/community.api';
 
 export function GroupCard({ group, onToggle }: { group: StudyGroup; onToggle: () => void }) {
@@ -38,7 +39,7 @@ export function GroupCard({ group, onToggle }: { group: StudyGroup; onToggle: ()
   );
 }
 
-export function QuickStat({ icon: Icon, value, label, color }: { icon: any; value: string; label: string; color: 'emerald' | 'violet' | 'amber' | 'fuchsia' }) {
+export function QuickStat({ icon: Icon, value, label, color }: { icon: LucideIcon; value: string; label: string; color: 'emerald' | 'violet' | 'amber' | 'fuchsia' }) {
   const colorMap = {
     emerald: { gradient: 'from-emerald-500 to-teal-500', text: 'text-emerald-400' },
     violet: { gradient: 'from-accent-500 to-indigo-500', text: 'text-accent-400' },
@@ -57,7 +58,7 @@ export function QuickStat({ icon: Icon, value, label, color }: { icon: any; valu
   );
 }
 
-export function EmptyState({ icon: Icon, message, sub }: { icon: any; message: string; sub: string }) {
+export function EmptyState({ icon: Icon, message, sub }: { icon: LucideIcon; message: string; sub: string }) {
   return (
     <div className="text-center py-12">
       <Icon className="w-12 h-12 text-slate-600 mx-auto mb-3" />

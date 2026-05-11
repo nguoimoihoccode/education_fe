@@ -1,16 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Download,
   FileJson,
   FileSpreadsheet,
   Database,
-  Calendar,
   Filter,
   Search,
-  CheckCircle2,
   Clock,
-  ArrowRight,
   Brain,
   BookOpen,
   Target,
@@ -19,7 +16,7 @@ import {
   AlertCircle,
   Loader2,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import type { LucideIcon } from 'lucide-react';
 import { apiClient } from '@/api/client';
 import toast from 'react-hot-toast';
 import './Education.css';
@@ -34,7 +31,7 @@ interface LogEntry {
   action: string;
   detail: string;
   xp: number;
-  icon: any;
+  icon: LucideIcon;
   color: string;
   bg: string;
 }
@@ -49,6 +46,17 @@ interface ExportEntry {
   downloadUrl?: string;
 }
 
+interface LearningLogEntry {
+  id: string;
+  date?: string;
+  createdAt?: string;
+  type: LogEntry['type'];
+  action: string;
+  detail?: string;
+  description?: string;
+  xp?: number;
+}
+
 /* ==================== API CALLS ==================== */
 
 const getLearningLogs = async (params?: {
@@ -56,7 +64,7 @@ const getLearningLogs = async (params?: {
   page?: number;
   limit?: number;
   search?: string;
-}): Promise<{ data: any[]; meta: { total: number; page: number; totalPages: number } }> => {
+}): Promise<{ data: LearningLogEntry[]; meta: { total: number; page: number; totalPages: number } }> => {
   try {
     const response = await apiClient.get('/education/logs', { params });
     return response.data;
@@ -100,7 +108,7 @@ const downloadExport = async (exportId: string): Promise<void> => {
 
 /* ==================== ICON MAPPING ==================== */
 
-function getLogIcon(type: string, action: string): { icon: any; color: string; bg: string } {
+function getLogIcon(type: string, action: string): { icon: LucideIcon; color: string; bg: string } {
   switch (type) {
     case 'learning':
       if (action.toLowerCase().includes('quiz')) return { icon: Target, color: 'text-emerald-400', bg: 'bg-emerald-500/10' };
@@ -165,7 +173,7 @@ export default function DataExportLogs() {
   const logsMeta = logsData?.meta || { total: 0, page: 1, totalPages: 0 };
 
   // Map API log data to display format
-  const displayLogs: LogEntry[] = logs.map((log: any) => {
+  const displayLogs: LogEntry[] = logs.map((log) => {
     const iconInfo = getLogIcon(log.type, log.action);
     return {
       id: log.id,

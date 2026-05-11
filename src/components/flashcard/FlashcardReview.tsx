@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Check, RotateCw, SkipForward, Volume2 } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Check, RotateCw, SkipForward, X } from 'lucide-react';
 import { FlashcardCard } from './FlashcardCard';
 import type { Flashcard, ReviewSession } from '@/types/flashcard.types';
 import clsx from 'clsx';
@@ -13,15 +13,6 @@ interface FlashcardReviewProps {
 }
 
 type ReviewQuality = 0 | 1 | 2 | 3 | 4 | 5;
-
-const qualityLabels: Record<ReviewQuality, { label: string; color: string; icon: any }> = {
-  0: { label: 'Blackout', color: 'bg-red-500', icon: X },
-  1: { label: 'Forgot', color: 'bg-orange-500', icon: X },
-  2: { label: 'Hard', color: 'bg-yellow-500', icon: RotateCw },
-  3: { label: 'Good', color: 'bg-blue-500', icon: Check },
-  4: { label: 'Easy', color: 'bg-green-500', icon: Check },
-  5: { label: 'Perfect', color: 'bg-emerald-500', icon: Check },
-};
 
 export function FlashcardReview({
   flashcards,
@@ -40,27 +31,6 @@ export function FlashcardReview({
 
   const currentFlashcard = flashcards[currentIndex];
   const progress = ((currentIndex + 1) / flashcards.length) * 100;
-
-  // Handle keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === ' ' || e.key === 'Enter') {
-        e.preventDefault();
-        setShowAnswer(!showAnswer);
-      } else if (showAnswer) {
-        if (e.key >= '0' && e.key <= '5') {
-          handleReview(parseInt(e.key) as ReviewQuality);
-        } else if (e.key === 'ArrowLeft') {
-          handleReview(0);
-        } else if (e.key === 'ArrowRight') {
-          handleReview(5);
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showAnswer, currentIndex]);
 
   // Touch handlers for swipe gestures
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -86,7 +56,7 @@ export function FlashcardReview({
     }
   };
 
-  const handleReview = (quality: ReviewQuality) => {
+  const handleReview = useCallback((quality: ReviewQuality) => {
     if (!currentFlashcard || isAnimating) return;
 
     setIsAnimating(true);
@@ -114,7 +84,28 @@ export function FlashcardReview({
         onComplete();
       }
     }, 300);
-  };
+  }, [currentFlashcard, currentIndex, flashcards.length, isAnimating, onComplete, onReview]);
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        setShowAnswer((value) => !value);
+      } else if (showAnswer) {
+        if (e.key >= '0' && e.key <= '5') {
+          handleReview(parseInt(e.key) as ReviewQuality);
+        } else if (e.key === 'ArrowLeft') {
+          handleReview(0);
+        } else if (e.key === 'ArrowRight') {
+          handleReview(5);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleReview, showAnswer]);
 
   const handleSkip = () => {
     if (!currentFlashcard || isAnimating) return;

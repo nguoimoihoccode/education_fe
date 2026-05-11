@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Users,
@@ -8,8 +8,6 @@ import {
   Bookmark,
   Send,
   TrendingUp,
-  Search,
-  Plus,
   Image as ImageIcon,
   Smile,
   MoreHorizontal,
@@ -17,13 +15,9 @@ import {
   Flame,
   BookOpen,
   Star,
-  Award,
-  Target,
   Calendar,
   ThumbsUp,
-  X,
   Globe,
-  Loader2,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import {
@@ -33,7 +27,7 @@ import {
   bookmarkPost,
   getTrendingTopics,
 } from '@/api/social.api';
-import type { SocialPost as ApiSocialPost, SocialComment as ApiComment } from '@/api/social.api';
+import type { SocialPost as ApiSocialPost } from '@/api/social.api';
 import toast from 'react-hot-toast';
 import { useThrottle } from '@/hooks/useRateLimit';
 import './Education.css';
@@ -114,7 +108,7 @@ export default function Social() {
   const [localPosts, setLocalPosts] = useState<SocialPost[]>([]);
 
   // Fetch posts from API
-  const { data: feedData, isLoading: isLoadingFeed } = useQuery({
+  const { data: feedData } = useQuery({
     queryKey: ['socialFeed', feedFilter],
     queryFn: () => getSocialFeed({
       type: feedFilter === 'all' ? undefined : feedFilter,
@@ -130,13 +124,6 @@ export default function Social() {
     staleTime: 1000 * 60 * 5,
   });
 
-  // Sync API data with local state
-  useEffect(() => {
-    if (feedData?.data && feedData.data.length > 0) {
-      setLocalPosts(feedData.data.map(mapApiPost));
-    }
-  }, [feedData]);
-
   // Create post mutation
   const createPostMutation = useMutation({
     mutationFn: createPost,
@@ -149,7 +136,7 @@ export default function Social() {
     },
   });
 
-  const posts = localPosts;
+  const posts = localPosts.length > 0 ? localPosts : feedData?.data.map(mapApiPost) ?? [];
   const filteredPosts = feedFilter === 'all'
     ? posts
     : posts.filter((p) => p.type === feedFilter);

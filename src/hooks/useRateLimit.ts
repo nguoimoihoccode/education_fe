@@ -28,12 +28,12 @@ export function useDebounce<T>(value: T, delayMs = 300): T {
  * const throttledLike = useThrottle((id: string) => likePost(id), 500);
  * <button onClick={() => throttledLike(postId)}>Like</button>
  */
-export function useThrottle<T extends (...args: any[]) => any>(
+export function useThrottle<T extends (...args: never[]) => unknown>(
   callback: T,
   delayMs = 500,
 ): T {
   const lastCall = useRef(0);
-  const lastArgs = useRef<any[]>([]);
+  const lastArgs = useRef<Parameters<T>>([] as unknown as Parameters<T>);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export function useThrottle<T extends (...args: any[]) => any>(
   }, []);
 
   return useCallback(
-    (...args: any[]) => {
+    (...args: Parameters<T>) => {
       const now = Date.now();
       const remaining = delayMs - (now - lastCall.current);
 
@@ -72,13 +72,13 @@ export function useThrottle<T extends (...args: any[]) => any>(
  * const [save, isSaving] = useAsyncGuard(handleSaveProfile);
  * <button onClick={save} disabled={isSaving}>Save</button>
  */
-export function useAsyncGuard<T extends (...args: any[]) => Promise<any>>(
+export function useAsyncGuard<T extends (...args: never[]) => Promise<unknown>>(
   asyncFn: T,
 ): [T, boolean] {
   const [isPending, setIsPending] = useState(false);
 
   const guarded = useCallback(
-    async (...args: any[]) => {
+    async (...args: Parameters<T>) => {
       if (isPending) return;
       setIsPending(true);
       try {

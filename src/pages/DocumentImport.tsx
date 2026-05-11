@@ -12,7 +12,6 @@ import {
   executeImport,
 } from '@/api/document.api';
 import type {
-  UploadedFile,
   ImportPreview as ImportPreviewType,
   ImportOptions,
   ImportResult,
@@ -33,6 +32,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 import './Education.css';
@@ -42,7 +42,6 @@ export default function DocumentImportPage() {
   const queryClient = useQueryClient();
 
   const [step, setStep] = useState<'upload' | 'preview' | 'complete'>('upload');
-  const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
   const [preview, setPreview] = useState<ImportPreviewType | null>(null);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -59,8 +58,7 @@ export default function DocumentImportPage() {
   // Mutations
   const uploadMutation = useMutation({
     mutationFn: uploadDocument,
-    onSuccess: (file) => {
-      setUploadedFile(file);
+    onSuccess: () => {
       toast.success('File uploaded successfully!');
     },
     onError: () => toast.error('Failed to upload file'),
@@ -105,7 +103,6 @@ export default function DocumentImportPage() {
     try {
       // Upload file
       const uploadedFile = await uploadMutation.mutateAsync(file);
-      setUploadedFile(uploadedFile);
 
       // Parse document
       await parseMutation.mutateAsync(uploadedFile.id);
@@ -130,7 +127,6 @@ export default function DocumentImportPage() {
 
   const handleCancel = () => {
     setStep('upload');
-    setUploadedFile(null);
     setPreview(null);
     setImportResult(null);
   };
@@ -141,7 +137,6 @@ export default function DocumentImportPage() {
 
   const handleImportMore = () => {
     setStep('upload');
-    setUploadedFile(null);
     setPreview(null);
     setImportResult(null);
   };
@@ -262,7 +257,10 @@ export default function DocumentImportPage() {
                 <select
                   value={importOptions.difficulty}
                   onChange={(e) =>
-                    setImportOptions({ ...importOptions, difficulty: e.target.value as any })
+                    setImportOptions({
+                      ...importOptions,
+                      difficulty: e.target.value as ImportOptions['difficulty'],
+                    })
                   }
                   className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-bold focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all appearance-none cursor-pointer"
                 >
@@ -471,7 +469,7 @@ function InfoCard({
   color,
   accent,
 }: {
-  icon: any;
+  icon: LucideIcon;
   title: string;
   description: string;
   color: string;

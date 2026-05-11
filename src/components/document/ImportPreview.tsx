@@ -13,6 +13,7 @@ import {
   Brain,
   Zap,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import type {
   ImportPreview,
   SuggestedFlashcard,
@@ -367,7 +368,7 @@ function StatCard({
   label,
   color,
 }: {
-  icon: any;
+  icon: LucideIcon;
   value: number | string;
   label: string;
   color: 'violet' | 'emerald' | 'amber' | 'fuchsia';

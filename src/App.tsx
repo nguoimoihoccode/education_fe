@@ -26,6 +26,7 @@ const LandingPageNew = lazy(() => import('@/pages/landing/LandingPageNew'));
 
 // Education core
 const Education = lazy(() => import('@/pages/Education'));
+const Today = lazy(() => import('@/pages/Today'));
 const CourseDetail = lazy(() => import('@/pages/CourseDetail'));
 const LessonView = lazy(() => import('@/pages/LessonView'));
 
@@ -236,6 +237,14 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ComingSoon />} />
               <Route path="/auth/callback" element={<GoogleCallback />} />
+              <Route
+                path="/today"
+                element={
+                  <ProtectedRoute>
+                    <Today />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/education" element={<Education />} />
               <Route path="/education/courses/:id" element={<CourseDetail />} />
               <Route
@@ -295,10 +304,18 @@ function App() {
                 }
               />
               <Route
-                path="/quiz/:id"
+                path="/quiz/stats"
                 element={
                   <ProtectedRoute>
-                    <QuizDetailPage />
+                    <QuizStatsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/quiz/history"
+                element={
+                  <ProtectedRoute>
+                    <QuizStatsPage />
                   </ProtectedRoute>
                 }
               />
@@ -319,18 +336,10 @@ function App() {
                 }
               />
               <Route
-                path="/quiz/stats"
+                path="/quiz/:id"
                 element={
                   <ProtectedRoute>
-                    <QuizStatsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/quiz/history"
-                element={
-                  <ProtectedRoute>
-                    <QuizStatsPage />
+                    <QuizDetailPage />
                   </ProtectedRoute>
                 }
               />

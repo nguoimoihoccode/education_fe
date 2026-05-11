@@ -15,7 +15,30 @@ const tabs = [
 ];
 
 export default function UserProfile() {
-  const p = useProfileData();
+  const {
+    user,
+    isEditing,
+    setIsEditing,
+    activeTab,
+    setActiveTab,
+    editForm,
+    setEditForm,
+    showPassword,
+    setShowPassword,
+    passwordForm,
+    setPasswordForm,
+    avatarInputRef,
+    progress,
+    streak,
+    quizStats,
+    memberSince,
+    isSavingProfile,
+    isChangingPassword,
+    handleSaveProfile,
+    handleChangePassword,
+    handleAvatarUpload,
+    handleLogout,
+  } = useProfileData();
 
   return (
     <div className="education-container">
@@ -36,58 +59,58 @@ export default function UserProfile() {
                 <div className="relative group">
                   <div className="w-28 h-28 md:w-36 md:h-36 rounded-3xl bg-gradient-to-br from-accent-600 to-fuchsia-600 p-1 shadow-[0_0_30px_rgba(139,92,246,0.3)]">
                     <div className="w-full h-full rounded-[22px] bg-slate-800 flex items-center justify-center overflow-hidden">
-                      {p.user?.avatar ? (
-                        <img src={p.user.avatar} alt={p.user.displayName} className="w-full h-full object-cover" />
+                      {user?.avatar ? (
+                        <img src={user.avatar} alt={user.displayName} className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-5xl md:text-6xl font-black text-accent-400">
-                          {p.user?.displayName?.charAt(0)?.toUpperCase() || p.user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                          {user?.displayName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                         </span>
                       )}
                     </div>
                   </div>
-                  <button onClick={() => p.avatarInputRef.current?.click()}
+                  <button onClick={() => avatarInputRef.current?.click()}
                     className="absolute bottom-1 right-1 w-10 h-10 rounded-xl bg-accent-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg">
                     <Camera className="w-4 h-4" />
                   </button>
-                  <input ref={p.avatarInputRef} type="file" accept="image/*" onChange={p.handleAvatarUpload} className="hidden" />
+                  <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
                 </div>
 
                 {/* Name & Info */}
                 <div className="flex-1 mb-2">
-                  <h1 className="text-3xl md:text-4xl font-black font-headline text-white mb-1">{p.user?.displayName || 'User'}</h1>
+                  <h1 className="text-3xl md:text-4xl font-black font-headline text-white mb-1">{user?.displayName || 'User'}</h1>
                   <p className="text-slate-400 text-sm font-medium flex items-center gap-2">
-                    <Mail className="w-4 h-4" /> {p.user?.email || 'email@example.com'}
+                    <Mail className="w-4 h-4" /> {user?.email || 'email@example.com'}
                   </p>
                   <div className="flex items-center gap-4 mt-3">
                     <span className="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase bg-accent-500/10 text-accent-400 border border-accent-500/20 flex items-center gap-1.5">
                       <Sparkles className="w-3 h-3" /> Pro Learner
                     </span>
                     <span className="text-xs text-slate-500 font-bold tracking-wider flex items-center gap-1.5">
-                      <Calendar className="w-3 h-3" /> Member since {p.memberSince}
+                      <Calendar className="w-3 h-3" /> Member since {memberSince}
                     </span>
                   </div>
                 </div>
 
                 {/* Actions */}
                 <div className="flex gap-3 mb-2">
-                  {!p.isEditing ? (
-                    <button onClick={() => p.setIsEditing(true)}
+                  {!isEditing ? (
+                    <button onClick={() => setIsEditing(true)}
                       className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition-all">
                       <Edit3 className="w-4 h-4 text-accent-400" /> Edit Profile
                     </button>
                   ) : (
                     <>
-                      <button onClick={p.handleSaveProfile} disabled={p.isSavingProfile}
+                      <button onClick={handleSaveProfile} disabled={isSavingProfile}
                         className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
-                        <Save className="w-4 h-4" /> {p.isSavingProfile ? 'Saving...' : 'Save'}
+                        <Save className="w-4 h-4" /> {isSavingProfile ? 'Saving...' : 'Save'}
                       </button>
-                      <button onClick={() => { p.setIsEditing(false); p.setEditForm({ displayName: p.user?.displayName || '', phone: p.user?.phone || '' }); }}
+                      <button onClick={() => { setIsEditing(false); setEditForm({ displayName: user?.displayName || '', phone: user?.phone || '' }); }}
                         className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition-all">
                         <X className="w-4 h-4" /> Cancel
                       </button>
                     </>
                   )}
-                  <button onClick={p.handleLogout}
+                  <button onClick={handleLogout}
                     className="flex items-center gap-2 px-5 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold text-sm hover:bg-rose-500/20 transition-all">
                     <LogOut className="w-4 h-4" /> Logout
                   </button>
@@ -100,9 +123,9 @@ export default function UserProfile() {
         {/* Tab Navigation */}
         <div className="flex gap-2 mb-8 p-1.5 bg-slate-800/60 backdrop-blur-md rounded-2xl border border-white/5 w-fit">
           {tabs.map((tab) => (
-            <button key={tab.id} onClick={() => p.setActiveTab(tab.id)}
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all ${
-                p.activeTab === tab.id
+                activeTab === tab.id
                   ? 'bg-accent-600 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)]'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}>
@@ -112,16 +135,16 @@ export default function UserProfile() {
         </div>
 
         {/* Tab Content */}
-        {p.activeTab === 'overview' && (
-          <OverviewTab isEditing={p.isEditing} editForm={p.editForm} setEditForm={p.setEditForm}
-            progress={p.progress} streak={p.streak} quizStats={p.quizStats} user={p.user} memberSince={p.memberSince} />
+        {activeTab === 'overview' && (
+          <OverviewTab isEditing={isEditing} editForm={editForm} setEditForm={setEditForm}
+            progress={progress} streak={streak} quizStats={quizStats} user={user} memberSince={memberSince} />
         )}
-        {p.activeTab === 'security' && (
-          <SecurityTab showPassword={p.showPassword} setShowPassword={p.setShowPassword}
-            passwordForm={p.passwordForm} setPasswordForm={p.setPasswordForm}
-            handleChangePassword={p.handleChangePassword} isChangingPassword={p.isChangingPassword} />
+        {activeTab === 'security' && (
+          <SecurityTab showPassword={showPassword} setShowPassword={setShowPassword}
+            passwordForm={passwordForm} setPasswordForm={setPasswordForm}
+            handleChangePassword={handleChangePassword} isChangingPassword={isChangingPassword} />
         )}
-        {p.activeTab === 'preferences' && <PreferencesTab />}
+        {activeTab === 'preferences' && <PreferencesTab />}
       </div>
     </div>
   );

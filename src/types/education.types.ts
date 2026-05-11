@@ -104,7 +104,7 @@ export interface Exercise {
     type: ExerciseType;
     question: string;
     options: string[] | null;
-    answer: any;
+    answer: unknown;
     explanation: string | null;
     audioUrl: string | null;
     imageUrl: string | null;
@@ -160,11 +160,54 @@ export interface UserProgress {
     masteredVocabularies: number;
 }
 
+export interface LearningPlanAction {
+    type: 'lesson' | 'flashcard_review' | 'quiz_retry';
+    title: string;
+    reason: string;
+    priority: number;
+    route: string;
+}
+
+export interface LearningPlan {
+    dailyGoal: {
+        targetMinutes: number;
+        completedMinutes: number;
+        targetReviews: number;
+        completedReviews: number;
+    };
+    nextLesson: {
+        id: string;
+        title: string;
+        courseTitle: string;
+        estimatedMinutes: number;
+        route: string;
+    } | null;
+    dueReviews: {
+        count: number;
+        recommendedLimit: number;
+    };
+    weakQuizzes: Array<{
+        quizId: string;
+        title: string;
+        topic: string;
+        score: number;
+        recommendation: string;
+        route: string;
+    }>;
+    streak: {
+        current: number;
+        longest: number;
+        xp: number;
+        level: number;
+    };
+    recommendedActions: LearningPlanAction[];
+}
+
 export interface ExerciseResult {
     exerciseId: string;
     correct: boolean;
-    userAnswer: any;
-    correctAnswer: any;
+    userAnswer: unknown;
+    correctAnswer: unknown;
     explanation: string | null;
     pointsEarned: number;
 }

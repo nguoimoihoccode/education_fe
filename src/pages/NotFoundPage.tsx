@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Home, Search, ArrowLeft, RefreshCcw } from 'lucide-react';
+import { Home, ArrowLeft, RefreshCcw } from 'lucide-react';
 import './Education.css';
 
 export default function NotFoundPage() {

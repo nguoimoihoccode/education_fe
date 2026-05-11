@@ -12,17 +12,14 @@ import {
   Award,
   Clock,
   Users,
-  MessageSquare,
   Share2,
-  ExternalLink,
   MapPin,
   Briefcase,
-  GraduationCap,
   Heart,
-  ChevronRight,
   Zap,
   Loader2,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { apiClient } from '@/api/client';
 import './Education.css';
 
@@ -275,7 +272,7 @@ export default function ScholarProfile() {
 
 /* ============ Sub-components ============ */
 
-function MiniStat({ value, label, color, icon: Icon }: { value: string; label: string; color: string; icon: any }) {
+function MiniStat({ value, label, color, icon: Icon }: { value: string; label: string; color: string; icon: LucideIcon }) {
   const colorMap: Record<string, string> = {
     violet: 'text-accent-400',
     emerald: 'text-emerald-400',
@@ -286,6 +283,7 @@ function MiniStat({ value, label, color, icon: Icon }: { value: string; label: s
   };
   return (
     <div className="p-3 rounded-xl bg-black/20 border border-white/[0.03] text-center">
+      <Icon className="mx-auto mb-1 h-4 w-4 text-slate-500" />
       <div className={`text-lg font-black font-mono ${colorMap[color] || 'text-white'}`}>{value}</div>
       <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">{label}</div>
     </div>

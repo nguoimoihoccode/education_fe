@@ -1,15 +1,16 @@
 import {
   Flame, Lightbulb, Video, Trophy, BookOpen, FileText,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-export const eventTypeConfig: Record<string, { color: string; bg: string; icon: any; label: string }> = {
+export const eventTypeConfig: Record<string, { color: string; bg: string; icon: LucideIcon; label: string }> = {
   challenge: { color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20', icon: Flame, label: 'Challenge' },
   workshop: { color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', icon: Lightbulb, label: 'Workshop' },
   live: { color: 'text-accent-400', bg: 'bg-accent-500/10 border-accent-500/20', icon: Video, label: 'Live' },
   contest: { color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/20', icon: Trophy, label: 'Contest' },
 };
 
-export const resourceTypeConfig: Record<string, { icon: any; color: string }> = {
+export const resourceTypeConfig: Record<string, { icon: LucideIcon; color: string }> = {
   deck: { icon: BookOpen, color: 'from-accent-500 to-indigo-500' },
   guide: { icon: FileText, color: 'from-emerald-500 to-teal-500' },
   notes: { icon: Lightbulb, color: 'from-amber-500 to-orange-500' },

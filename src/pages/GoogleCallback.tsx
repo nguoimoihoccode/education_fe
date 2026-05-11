@@ -15,9 +15,18 @@ export const GoogleCallback = () => {
     const refreshToken =
       hashParams.get('refreshToken') || searchParams.get('refreshToken');
     const error = hashParams.get('error') || searchParams.get('error');
+    const returnedState = hashParams.get('state') || searchParams.get('state');
+    const expectedState = sessionStorage.getItem('google-oauth-state');
+    sessionStorage.removeItem('google-oauth-state');
 
     if (error) {
       toast.error('Đăng nhập Google thất bại. Vui lòng thử lại.');
+      navigate('/login');
+      return;
+    }
+
+    if (!expectedState || returnedState !== expectedState) {
+      toast.error('Phiên đăng nhập Google không hợp lệ. Vui lòng thử lại.');
       navigate('/login');
       return;
     }

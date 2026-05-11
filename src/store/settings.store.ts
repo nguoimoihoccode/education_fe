@@ -37,9 +37,12 @@ export interface SettingsState {
   betaFeatures: boolean;
   analyticsOpt: boolean;
 
-  updateSetting: (key: string, value: any) => void;
+  updateSetting: <K extends keyof SettingsValues>(key: K, value: SettingsValues[K]) => void;
   resetAppearance: () => void;
 }
+
+type SettingsActions = 'updateSetting' | 'resetAppearance';
+type SettingsValues = Omit<SettingsState, SettingsActions>;
 
 export const useSettingsStore = create<SettingsState>()(
   persist(

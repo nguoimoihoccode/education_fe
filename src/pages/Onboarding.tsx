@@ -9,14 +9,10 @@ import {
   Brain,
   Globe,
   BookOpen,
-  Flame,
   Trophy,
-  Clock,
   Check,
   Rocket,
   Languages,
-  User,
-  Zap,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import './Education.css';
@@ -67,7 +63,7 @@ export default function Onboarding() {
   const [skillLevel, setSkillLevel] = useState('');
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [dailyTime, setDailyTime] = useState('15');
-  const [displayName, setDisplayName] = useState(user?.displayName || '');
+  const displayName = user?.displayName || '';
 
   const toggleLanguage = (id: string) => {
     setSelectedLanguages((prev) =>

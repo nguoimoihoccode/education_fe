@@ -9,8 +9,6 @@ import {
   Lock,
   Shield,
   Eye,
-  EyeOff,
-  Download,
   Trash2,
   Monitor,
   Volume2,
@@ -21,7 +19,6 @@ import {
   Database,
   Wifi,
   WifiOff,
-  Smartphone,
   Keyboard,
   Zap,
   BarChart2,
@@ -30,35 +27,17 @@ import {
   BookOpen,
   Save,
   RotateCcw,
-  ChevronRight,
   AlertTriangle,
   Info,
   Check,
   HardDrive,
   Sparkles,
 } from 'lucide-react';
-import { useAuthStore } from '@/store/auth.store';
-import { useSettingsStore } from '@/store/settings.store';
+import type { LucideIcon } from 'lucide-react';
+import { useSettingsStore, type SettingsState } from '@/store/settings.store';
 import './Education.css';
 
 /* ================================================================ */
-
-interface SettingToggle {
-  id: string;
-  label: string;
-  description: string;
-  icon: any;
-  enabled: boolean;
-}
-
-interface SettingSelect {
-  id: string;
-  label: string;
-  description: string;
-  icon: any;
-  value: string;
-  options: { value: string; label: string }[];
-}
 
 const SETTING_SECTIONS = [
   { id: 'appearance', label: 'Appearance', icon: Palette },
@@ -71,49 +50,53 @@ const SETTING_SECTIONS = [
 ] as const;
 
 type SectionId = typeof SETTING_SECTIONS[number]['id'];
+type SettingsValues = Omit<SettingsState, 'updateSetting' | 'resetAppearance'>;
 
 export default function AdvancedSettings() {
-  const { user } = useAuthStore();
   const [activeSection, setActiveSection] = useState<SectionId>('appearance');
   const [hasChanges, setHasChanges] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
 
   const s = useSettingsStore();
 
-  const theme = s.theme; const setTheme = (v: any) => s.updateSetting('theme', v);
-  const accentColor = s.accentColor; const setAccentColor = (v: any) => s.updateSetting('accentColor', v);
-  const fontSize = s.fontSize; const setFontSize = (v: any) => s.updateSetting('fontSize', v);
-  const reducedMotion = s.reducedMotion; const setReducedMotion = (v: any) => s.updateSetting('reducedMotion', v);
-  const compactMode = s.compactMode; const setCompactMode = (v: any) => s.updateSetting('compactMode', v);
-  const pushNotif = s.pushNotif; const setPushNotif = (v: any) => s.updateSetting('pushNotif', v);
-  const emailDigest = s.emailDigest; const setEmailDigest = (v: any) => s.updateSetting('emailDigest', v);
-  const streakReminder = s.streakReminder; const setStreakReminder = (v: any) => s.updateSetting('streakReminder', v);
-  const quizResults = s.quizResults; const setQuizResults = (v: any) => s.updateSetting('quizResults', v);
-  const communityMentions = s.communityMentions; const setCommunityMentions = (v: any) => s.updateSetting('communityMentions', v);
-  const soundEffects = s.soundEffects; const setSoundEffects = (v: any) => s.updateSetting('soundEffects', v);
-  const quietHoursEnabled = s.quietHoursEnabled; const setQuietHoursEnabled = (v: any) => s.updateSetting('quietHoursEnabled', v);
-  const dailyGoal = s.dailyGoal; const setDailyGoal = (v: any) => s.updateSetting('dailyGoal', v);
-  const autoPlay = s.autoPlay; const setAutoPlay = (v: any) => s.updateSetting('autoPlay', v);
-  const showHints = s.showHints; const setShowHints = (v: any) => s.updateSetting('showHints', v);
-  const aiDifficulty = s.aiDifficulty; const setAiDifficulty = (v: any) => s.updateSetting('aiDifficulty', v);
-  const flashcardOrder = s.flashcardOrder; const setFlashcardOrder = (v: any) => s.updateSetting('flashcardOrder', v);
-  const showProgressBar = s.showProgressBar; const setShowProgressBar = (v: any) => s.updateSetting('showProgressBar', v);
-  const autoSubmitQuiz = s.autoSubmitQuiz; const setAutoSubmitQuiz = (v: any) => s.updateSetting('autoSubmitQuiz', v);
-  const profileVisibility = s.profileVisibility; const setProfileVisibility = (v: any) => s.updateSetting('profileVisibility', v);
-  const showOnLeaderboard = s.showOnLeaderboard; const setShowOnLeaderboard = (v: any) => s.updateSetting('showOnLeaderboard', v);
-  const activityStatus = s.activityStatus; const setActivityStatus = (v: any) => s.updateSetting('activityStatus', v);
-  const shareProgress = s.shareProgress; const setShareProgress = (v: any) => s.updateSetting('shareProgress', v);
-  const twoFactorAuth = s.twoFactorAuth; const setTwoFactorAuth = (v: any) => s.updateSetting('twoFactorAuth', v);
-  const loginAlerts = s.loginAlerts; const setLoginAlerts = (v: any) => s.updateSetting('loginAlerts', v);
-  const highContrast = s.highContrast; const setHighContrast = (v: any) => s.updateSetting('highContrast', v);
-  const screenReader = s.screenReader; const setScreenReader = (v: any) => s.updateSetting('screenReader', v);
-  const keyboardNav = s.keyboardNav; const setKeyboardNav = (v: any) => s.updateSetting('keyboardNav', v);
-  const largeText = s.largeText; const setLargeText = (v: any) => s.updateSetting('largeText', v);
-  const offlineMode = s.offlineMode; const setOfflineMode = (v: any) => s.updateSetting('offlineMode', v);
-  const autoSync = s.autoSync; const setAutoSync = (v: any) => s.updateSetting('autoSync', v);
-  const devMode = s.devMode; const setDevMode = (v: any) => s.updateSetting('devMode', v);
-  const betaFeatures = s.betaFeatures; const setBetaFeatures = (v: any) => s.updateSetting('betaFeatures', v);
-  const analyticsOpt = s.analyticsOpt; const setAnalyticsOpt = (v: any) => s.updateSetting('analyticsOpt', v);
+  const setSetting = <K extends keyof SettingsValues>(key: K, value: SettingsValues[K]) => {
+    s.updateSetting(key, value);
+  };
+
+  const theme = s.theme; const setTheme = (v: string) => setSetting('theme', v);
+  const accentColor = s.accentColor; const setAccentColor = (v: string) => setSetting('accentColor', v);
+  const fontSize = s.fontSize; const setFontSize = (v: string) => setSetting('fontSize', v);
+  const reducedMotion = s.reducedMotion; const setReducedMotion = (v: boolean) => setSetting('reducedMotion', v);
+  const compactMode = s.compactMode; const setCompactMode = (v: boolean) => setSetting('compactMode', v);
+  const pushNotif = s.pushNotif; const setPushNotif = (v: boolean) => setSetting('pushNotif', v);
+  const emailDigest = s.emailDigest; const setEmailDigest = (v: boolean) => setSetting('emailDigest', v);
+  const streakReminder = s.streakReminder; const setStreakReminder = (v: boolean) => setSetting('streakReminder', v);
+  const quizResults = s.quizResults; const setQuizResults = (v: boolean) => setSetting('quizResults', v);
+  const communityMentions = s.communityMentions; const setCommunityMentions = (v: boolean) => setSetting('communityMentions', v);
+  const soundEffects = s.soundEffects; const setSoundEffects = (v: boolean) => setSetting('soundEffects', v);
+  const quietHoursEnabled = s.quietHoursEnabled; const setQuietHoursEnabled = (v: boolean) => setSetting('quietHoursEnabled', v);
+  const dailyGoal = s.dailyGoal; const setDailyGoal = (v: string) => setSetting('dailyGoal', v);
+  const autoPlay = s.autoPlay; const setAutoPlay = (v: boolean) => setSetting('autoPlay', v);
+  const showHints = s.showHints; const setShowHints = (v: boolean) => setSetting('showHints', v);
+  const aiDifficulty = s.aiDifficulty; const setAiDifficulty = (v: string) => setSetting('aiDifficulty', v);
+  const flashcardOrder = s.flashcardOrder; const setFlashcardOrder = (v: string) => setSetting('flashcardOrder', v);
+  const showProgressBar = s.showProgressBar; const setShowProgressBar = (v: boolean) => setSetting('showProgressBar', v);
+  const autoSubmitQuiz = s.autoSubmitQuiz; const setAutoSubmitQuiz = (v: boolean) => setSetting('autoSubmitQuiz', v);
+  const profileVisibility = s.profileVisibility; const setProfileVisibility = (v: string) => setSetting('profileVisibility', v);
+  const showOnLeaderboard = s.showOnLeaderboard; const setShowOnLeaderboard = (v: boolean) => setSetting('showOnLeaderboard', v);
+  const activityStatus = s.activityStatus; const setActivityStatus = (v: boolean) => setSetting('activityStatus', v);
+  const shareProgress = s.shareProgress; const setShareProgress = (v: boolean) => setSetting('shareProgress', v);
+  const twoFactorAuth = s.twoFactorAuth; const setTwoFactorAuth = (v: boolean) => setSetting('twoFactorAuth', v);
+  const loginAlerts = s.loginAlerts; const setLoginAlerts = (v: boolean) => setSetting('loginAlerts', v);
+  const highContrast = s.highContrast; const setHighContrast = (v: boolean) => setSetting('highContrast', v);
+  const screenReader = s.screenReader; const setScreenReader = (v: boolean) => setSetting('screenReader', v);
+  const keyboardNav = s.keyboardNav; const setKeyboardNav = (v: boolean) => setSetting('keyboardNav', v);
+  const largeText = s.largeText; const setLargeText = (v: boolean) => setSetting('largeText', v);
+  const offlineMode = s.offlineMode; const setOfflineMode = (v: boolean) => setSetting('offlineMode', v);
+  const autoSync = s.autoSync; const setAutoSync = (v: boolean) => setSetting('autoSync', v);
+  const devMode = s.devMode; const setDevMode = (v: boolean) => setSetting('devMode', v);
+  const betaFeatures = s.betaFeatures; const setBetaFeatures = (v: boolean) => setSetting('betaFeatures', v);
+  const analyticsOpt = s.analyticsOpt; const setAnalyticsOpt = (v: boolean) => setSetting('analyticsOpt', v);
 
   const cacheSize = '245 MB';
 
@@ -455,7 +438,7 @@ export default function AdvancedSettings() {
 
 function SettingsPanel({ title, icon: Icon, description, children }: {
   title: string;
-  icon: any;
+  icon: LucideIcon;
   description: string;
   children: React.ReactNode;
 }) {
@@ -480,7 +463,7 @@ function SettingsPanel({ title, icon: Icon, description, children }: {
 function SettingRow({ label, description, icon: Icon, children }: {
   label: string;
   description: string;
-  icon: any;
+  icon: LucideIcon;
   children: React.ReactNode;
 }) {
   return (
@@ -500,7 +483,7 @@ function SettingRow({ label, description, icon: Icon, children }: {
 function ToggleRow({ label, description, icon: Icon, checked, onChange }: {
   label: string;
   description: string;
-  icon: any;
+  icon: LucideIcon;
   checked: boolean;
   onChange: () => void;
 }) {

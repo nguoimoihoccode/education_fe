@@ -7,7 +7,6 @@ import {
 import type {
   FlashcardDeck,
   Flashcard,
-  UserFlashcard,
   ReviewSession,
   FlashcardStats,
   DeckStats,

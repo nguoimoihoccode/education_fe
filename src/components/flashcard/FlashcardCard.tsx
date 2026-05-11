@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Volume2, RotateCw, Image as ImageIcon } from 'lucide-react';
+import { Volume2, RotateCw } from 'lucide-react';
 import type { Flashcard } from '@/types/flashcard.types';
 import clsx from 'clsx';
 
@@ -182,7 +182,7 @@ export function FlashcardCard({
       </div>
 
       {/* Flip Animation Styles */}
-      {/* @ts-ignore */}
+      {/* @ts-expect-error - JSX style attribute is supported by the active build tooling. */}
       <style jsx>{`
         .perspective-1000 {
           perspective: 1000px;

@@ -1,7 +1,9 @@
+import type { LucideIcon } from 'lucide-react';
+
 export function StatCard({
   icon: Icon, value, label, color, suffix = '',
 }: {
-  icon: any; value: number; label: string;
+  icon: LucideIcon; value: number; label: string;
   color: 'violet' | 'emerald' | 'amber' | 'fuchsia'; suffix?: string;
 }) {
   const colorConfigs = {
@@ -24,7 +26,7 @@ export function StatCard({
 }
 
 export function DetailRow({ icon: Icon, label, value, valueColor = 'text-white' }: {
-  icon: any; label: string; value: string; valueColor?: string;
+  icon: LucideIcon; label: string; value: string; valueColor?: string;
 }) {
   return (
     <div className="flex items-center gap-4 p-4 rounded-2xl bg-black/20 border border-white/5">

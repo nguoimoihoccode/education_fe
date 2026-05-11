@@ -19,7 +19,7 @@ interface OverviewTabProps {
   isLoadingThreads: boolean;
   toggleJoinGroup: (id: string, isJoined: boolean) => void;
   toggleRegisterEvent: (id: string, isRegistered: boolean) => void;
-  setActiveTab: (tab: any) => void;
+  setActiveTab: (tab: 'overview' | 'groups' | 'forum' | 'events' | 'resources') => void;
 }
 
 export default function OverviewTab({

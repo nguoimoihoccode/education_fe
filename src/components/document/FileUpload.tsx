@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Upload, FileText, X, CheckCircle, AlertCircle, Loader2, CloudUpload } from 'lucide-react';
+import { FileText, X, CheckCircle, AlertCircle, Loader2, CloudUpload } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import type { UploadedFile, DocumentFileType } from '@/types/document.types';
 import clsx from 'clsx';
 
@@ -12,7 +13,7 @@ interface FileUploadProps {
   className?: string;
 }
 
-const FILE_TYPE_ICONS: Record<DocumentFileType, any> = {
+const FILE_TYPE_ICONS: Record<DocumentFileType, LucideIcon> = {
   pdf: FileText,
   doc: FileText,
   docx: FileText,
@@ -61,7 +62,7 @@ export function FileUpload({
     return ext as DocumentFileType;
   };
 
-  const validateFile = (file: File): { valid: boolean; error?: string } => {
+  const validateFile = useCallback((file: File): { valid: boolean; error?: string } => {
     // Check file type
     const fileType = getFileType(file.name);
     if (!acceptedTypes.includes(fileType)) {
@@ -80,7 +81,7 @@ export function FileUpload({
     }
 
     return { valid: true };
-  };
+  }, [acceptedTypes, maxSize]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -94,27 +95,7 @@ export function FileUpload({
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsDragging(false);
-
-      const files = Array.from(e.dataTransfer.files);
-      processFiles(files);
-    },
-    [acceptedTypes, maxSize, maxFiles]
-  );
-
-  const handleFileSelect = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files || []);
-      processFiles(files);
-    },
-    [acceptedTypes, maxSize, maxFiles]
-  );
-
-  const processFiles = (files: File[]) => {
+  const processFiles = useCallback((files: File[]) => {
     const validFiles: File[] = [];
     const newErrors: Record<string, string> = {};
 
@@ -138,7 +119,27 @@ export function FileUpload({
     if (validFiles.length > 0) {
       onFileSelect(validFiles);
     }
-  };
+  }, [maxFiles, onFileSelect, uploadedFiles.length, validateFile]);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
+
+      const files = Array.from(e.dataTransfer.files);
+      processFiles(files);
+    },
+    [processFiles]
+  );
+
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files || []);
+      processFiles(files);
+    },
+    [processFiles]
+  );
 
   const handleRemoveFile = (fileId: string) => {
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));

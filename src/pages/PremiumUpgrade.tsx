@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Crown,
   Zap,
@@ -12,25 +11,19 @@ import {
   Bot,
   Users,
   BookOpen,
-  Flame,
   Trophy,
-  Infinity,
-  ArrowRight,
   ChevronDown,
   ChevronUp,
   MessageCircle,
   Download,
-  BarChart2,
-  Target,
   Rocket,
   Gift,
-  CreditCard,
   Lock,
   Globe,
   Headphones,
   Clock,
 } from 'lucide-react';
-import { useAuthStore } from '@/store/auth.store';
+import type { LucideIcon } from 'lucide-react';
 import './Education.css';
 
 /* ============ Plan Data ============ */
@@ -43,7 +36,7 @@ interface PlanFeature {
 interface Plan {
   id: string;
   name: string;
-  icon: any;
+  icon: LucideIcon;
   description: string;
   monthlyPrice: number;
   yearlyPrice: number;
@@ -151,10 +144,8 @@ const FAQ_ITEMS = [
 ];
 
 export default function PremiumUpgrade() {
-  const { user } = useAuthStore();
   const [isYearly, setIsYearly] = useState(true);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
   const toggleFaq = (index: number) => {
     setExpandedFaq(expandedFaq === index ? null : index);
@@ -296,7 +287,7 @@ export default function PremiumUpgrade() {
 
                   {/* CTA Button */}
                   <button
-                    onClick={() => setSelectedPlan(plan.id)}
+                    onClick={() => undefined}
                     className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all mb-8 ${
                       plan.id === 'free'
                         ? 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
@@ -369,7 +360,7 @@ export default function PremiumUpgrade() {
               color="emerald"
             />
             <FeatureCard
-              icon={Infinity}
+              icon={Sparkles}
               title="Unlimited Access"
               description="No limits on courses, flashcards, quizzes, or study time. Learn without boundaries"
               color="amber"
@@ -551,7 +542,7 @@ function FeatureCard({
   description,
   color,
 }: {
-  icon: any;
+  icon: LucideIcon;
   title: string;
   description: string;
   color: 'violet' | 'fuchsia' | 'emerald' | 'amber' | 'blue';

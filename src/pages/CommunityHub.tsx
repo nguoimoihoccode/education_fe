@@ -1,4 +1,5 @@
 import { Compass, Users, Calendar, MessageSquare, BookOpen } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useCommunityData, type TabId } from './community/hooks/useCommunityData';
 import OverviewTab from './community/components/OverviewTab';
 import GroupsTab from './community/components/GroupsTab';
@@ -7,7 +8,7 @@ import ForumTab from './community/components/ForumTab';
 import ResourcesTab from './community/components/ResourcesTab';
 import './Education.css';
 
-const TAB_ITEMS: { id: TabId; label: string; icon: any }[] = [
+const TAB_ITEMS: { id: TabId; label: string; icon: LucideIcon }[] = [
   { id: 'overview', label: 'Overview', icon: Compass },
   { id: 'groups', label: 'Study Groups', icon: Users },
   { id: 'events', label: 'Events', icon: Calendar },

@@ -6,12 +6,8 @@ import {
   Medal,
   Flame,
   BookOpen,
-  Brain,
   Target,
-  TrendingUp,
-  ChevronDown,
   Search,
-  Star,
   Zap,
   Award,
   Timer,
@@ -20,6 +16,7 @@ import {
   Minus,
   Loader2,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import {
   getLeaderboard,
@@ -431,7 +428,7 @@ function GlobalStat({
   label,
   color,
 }: {
-  icon: any;
+  icon: LucideIcon;
   value: string;
   label: string;
   color: 'violet' | 'emerald' | 'amber' | 'fuchsia';

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { cn, debounce } from '@/lib/utils'
+import React, { useState, useRef, useEffect } from 'react'
+import { cn } from '@/lib/utils'
 export interface Stock {
   symbol: string;
   name: string;
@@ -74,20 +74,19 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
 
-  // Debounced search function
-  const debouncedSearch = useCallback(
-    debounce((term: string) => {
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
       if (onSearchChange) {
-        onSearchChange(term)
+        onSearchChange(searchTerm)
       }
 
-      if (!term.trim()) {
+      if (!searchTerm.trim()) {
         setFilteredStocks([])
         setIsOpen(false)
         return
       }
 
-      const lowerTerm = term.toLowerCase()
+      const lowerTerm = searchTerm.toLowerCase()
       const results = stocks
         .filter(stock => 
           stock.symbol.toLowerCase().includes(lowerTerm) ||
@@ -98,15 +97,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       setFilteredStocks(results)
       setIsOpen(results.length > 0)
       setSelectedIndex(-1)
-    }, debounceMs),
-    [stocks, maxResults, onSearchChange]
-  )
+    }, debounceMs)
+
+    return () => window.clearTimeout(timer)
+  }, [debounceMs, maxResults, onSearchChange, searchTerm, stocks])
 
   // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSearchTerm(value)
-    debouncedSearch(value)
   }
 
   // Handle stock selection

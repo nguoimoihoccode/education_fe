@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "test": "vitest",
     "test:run": "vitest run",
-    "ci": "npm run test:run && npm run build",
+    "test:contracts": "node --test tests/*.test.ts",
+    "ci": "npm run lint && npm run test:run && npm run test:contracts && npm run build",
     "preview": "vite preview"
   },
   "dependencies": {

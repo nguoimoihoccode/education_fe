@@ -3,15 +3,18 @@ import {
   User, Mail, Phone, Calendar, Shield, Zap, CheckCircle, Edit3,
 } from 'lucide-react';
 import { StatCard, DetailRow } from './SharedComponents';
+import type { User as AuthUser } from '@/api/auth.api';
+import type { UserProgress, UserStreak } from '@/types/education.types';
+import type { QuizStats } from '@/types/quiz.types';
 
 interface OverviewTabProps {
   isEditing: boolean;
   editForm: { displayName: string; phone: string };
   setEditForm: (form: { displayName: string; phone: string }) => void;
-  progress: any;
-  streak: any;
-  quizStats: any;
-  user: any;
+  progress?: UserProgress;
+  streak?: UserStreak;
+  quizStats?: QuizStats;
+  user?: AuthUser | null;
   memberSince: string;
 }
 

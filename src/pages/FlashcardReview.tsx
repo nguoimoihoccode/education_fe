@@ -1,15 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { X, CheckCircle, Award, Home, RotateCw } from 'lucide-react';
+import { CheckCircle, Award, Home, RotateCw } from 'lucide-react';
 import {
   startReviewSession,
   reviewFlashcard,
   completeReviewSession,
-  getDueFlashcards,
 } from '@/api/flashcard.api';
 import { FlashcardReview } from '@/components/flashcard';
-import type { Flashcard, ReviewSession, StartReviewSessionDto } from '@/types/flashcard.types';
+import type { ReviewSession } from '@/types/flashcard.types';
 import toast from 'react-hot-toast';
 
 export default function FlashcardReviewPage() {
@@ -19,7 +18,6 @@ export default function FlashcardReviewPage() {
   const deckId = searchParams.get('deckId');
 
   const [session, setSession] = useState<ReviewSession | null>(null);
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
@@ -30,12 +28,8 @@ export default function FlashcardReviewPage() {
     enabled: !session,
   });
 
-  useEffect(() => {
-    if (sessionData) {
-      setSession(sessionData.session);
-      setFlashcards(sessionData.flashcards);
-    }
-  }, [sessionData]);
+  const activeSession = session ?? sessionData?.session ?? null;
+  const flashcards = sessionData?.flashcards ?? [];
 
   // Review mutation
   const reviewMutation = useMutation({
@@ -65,17 +59,17 @@ export default function FlashcardReviewPage() {
   };
 
   const handleComplete = () => {
-    if (session) {
-      completeMutation.mutate(session.id);
+    if (activeSession) {
+      completeMutation.mutate(activeSession.id);
     }
   };
 
-  const handleSkip = (flashcardId: string) => {
-    if (session) {
+  const handleSkip = () => {
+    if (activeSession) {
       // Update session stats
       setSession({
-        ...session,
-        skippedCards: session.skippedCards + 1,
+        ...activeSession,
+        skippedCards: activeSession.skippedCards + 1,
       });
     }
     setCurrentIndex(currentIndex + 1);
@@ -87,7 +81,6 @@ export default function FlashcardReviewPage() {
 
   const handleRestart = () => {
     setSession(null);
-    setFlashcards([]);
     setCurrentIndex(0);
     setIsComplete(false);
     queryClient.invalidateQueries({ queryKey: ['reviewSession'] });
@@ -105,7 +98,7 @@ export default function FlashcardReviewPage() {
   }
 
   // No cards to review
-  if (!isLoadingSession && (!session || flashcards.length === 0)) {
+  if (!isLoadingSession && (!activeSession || flashcards.length === 0)) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-900 p-4 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none z-0">

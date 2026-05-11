@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   Send,
   Bot,
@@ -18,7 +18,6 @@ import {
   Copy,
   Check,
   ChevronRight,
-  Clock,
   RotateCcw,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
@@ -50,6 +49,38 @@ const SUGGESTED_PROMPTS = [
   { icon: Lightbulb, label: 'Study tips', prompt: 'What are the most effective techniques for memorizing vocabulary?' },
 ];
 
+const renderSafeMessageContent = (content: string) => {
+  const segments = content.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
+
+  return segments.map((segment, index) => {
+    if (segment.startsWith('**') && segment.endsWith('**')) {
+      return (
+        <strong key={index} className="text-white font-bold">
+          {segment.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    if (segment.startsWith('*') && segment.endsWith('*')) {
+      return (
+        <em key={index} className="text-accent-300">
+          {segment.slice(1, -1)}
+        </em>
+      );
+    }
+
+    if (segment.startsWith('`') && segment.endsWith('`')) {
+      return (
+        <code key={index} className="px-1.5 py-0.5 rounded bg-black/30 text-accent-300 text-xs font-mono">
+          {segment.slice(1, -1)}
+        </code>
+      );
+    }
+
+    return <span key={index}>{segment}</span>;
+  });
+};
+
 export default function AiTutor() {
   const { user } = useAuthStore();
   const [conversations, setConversations] = useState<Conversation[]>([
@@ -70,7 +101,7 @@ export default function AiTutor() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const activeConv = conversations.find((c) => c.id === activeConvId) || conversations[0];
-  const messages = activeConv?.messages || [];
+  const messages = useMemo(() => activeConv?.messages || [], [activeConv]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -92,6 +123,10 @@ export default function AiTutor() {
       const response = await apiClient.post('/ai/chat', { message: userMsg });
       return response.data.reply || response.data.message || response.data.content;
     } catch {
+      if (!import.meta.env.DEV) {
+        throw new Error('AI tutor service unavailable');
+      }
+
       // Simulate AI delay & response
       await new Promise((r) => setTimeout(r, 1200 + Math.random() * 1500));
       const responses: Record<string, string> = {
@@ -361,13 +396,8 @@ export default function AiTutor() {
                             : 'bg-slate-800/80 border border-white/5 text-slate-200 rounded-bl-md'
                         }`}
                       >
-                        {/* Render markdown-like content */}
-                        <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{
-                          __html: msg.content
-                            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
-                            .replace(/\*(.*?)\*/g, '<em class="text-accent-300">$1</em>')
-                            .replace(/`(.*?)`/g, '<code class="px-1.5 py-0.5 rounded bg-black/30 text-accent-300 text-xs font-mono">$1</code>')
-                        }} />
+                        {/* Render lightweight markdown without executing raw HTML. */}
+                        <div className="whitespace-pre-wrap">{renderSafeMessageContent(msg.content)}</div>
                       </div>
 
                       {/* Actions */}

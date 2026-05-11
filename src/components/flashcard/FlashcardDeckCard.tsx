@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { BookOpen, Clock, TrendingUp, MoreVertical, Edit, Trash2, Play } from 'lucide-react';
+import React from 'react';
+import { Clock, MoreVertical, Edit, Trash2, Play } from 'lucide-react';
 import type { FlashcardDeck } from '@/types/flashcard.types';
-import clsx from 'clsx';
 
 interface FlashcardDeckCardProps {
   deck: FlashcardDeck;

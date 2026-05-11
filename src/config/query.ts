@@ -27,6 +27,7 @@ export const QUERY_KEYS = {
   EXERCISES: (lessonId: string) => ['exercises', lessonId],
   USER_PROGRESS: ['user', 'progress'],
   USER_STREAK: ['user', 'streak'],
+  LEARNING_PLAN: ['user', 'learning-plan'],
 
   // Flashcard
   FLASHCARD_DECKS: ['flashcard', 'decks'],

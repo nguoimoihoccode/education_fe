@@ -4,6 +4,7 @@ export interface User {
   id: string;
   email: string;
   displayName: string;
+  roles?: string[];
   avatar?: string;
   phone?: string;
   createdAt: string;
@@ -45,4 +46,3 @@ export const authApi = {
     return response.data;
   },
 };
-

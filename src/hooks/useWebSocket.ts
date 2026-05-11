@@ -5,7 +5,7 @@ export interface Price {
   price?: number;
   change?: number;
   changePercent?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
@@ -131,4 +131,3 @@ export const useWebSocket = ({ symbols, enabled = true }: UseWebSocketOptions) =
     unsubscribeFromChart,
   };
 };
-

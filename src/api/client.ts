@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { setupCache, buildMemoryStorage, buildWebStorage } from 'axios-cache-interceptor';
+import { setupCache, buildWebStorage } from 'axios-cache-interceptor';
 import { useAuthStore } from '../store/auth.store';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -37,6 +37,15 @@ export const apiClient = setupCache(axiosInstance, {
   staleIfError: true,
 });
 
+let refreshPromise: Promise<string> | null = null;
+
+export const clearApiSessionState = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('auth-storage');
+  apiClient.storage.clear?.();
+};
+
 // ============================================
 // Cache config cho từng loại API
 // ============================================
@@ -68,9 +77,7 @@ export const CACHE_PROFILES = {
 // Request interceptor để thêm token vào header
 apiClient.interceptors.request.use(
   (config) => {
-    // Ưu tiên đọc từ store, fallback về localStorage
-    const store = useAuthStore.getState();
-    const token = store.accessToken || localStorage.getItem('accessToken');
+    const token = useAuthStore.getState().accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -96,35 +103,30 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Đọc refreshToken từ store hoặc localStorage
-        let refreshToken = useAuthStore.getState().refreshToken;
-        if (!refreshToken) {
-          refreshToken = localStorage.getItem('refreshToken');
-        }
+        const refreshToken = useAuthStore.getState().refreshToken;
 
         if (!refreshToken) {
           throw new Error('No refresh token available');
         }
 
-        // Gọi refresh token API
-        const response = await apiClient.post('/auth/refresh', {
-          refreshToken,
-        });
+        refreshPromise ??= apiClient
+          .post('/auth/refresh', { refreshToken }, { cache: false })
+          .then((response) => {
+            const { accessToken, refreshToken: newRefreshToken, user } = response.data;
 
-        const { accessToken, refreshToken: newRefreshToken, user } = response.data;
+            useAuthStore.getState().setTokens(
+              accessToken,
+              newRefreshToken || refreshToken,
+              user
+            );
 
-        // Cập nhật store với tokens mới (giữ nguyên user nếu không có user mới)
-        useAuthStore.getState().setTokens(
-          accessToken,
-          newRefreshToken || refreshToken,
-          user
-        );
+            return accessToken;
+          })
+          .finally(() => {
+            refreshPromise = null;
+          });
 
-        // Cập nhật localStorage (backup)
-        localStorage.setItem('accessToken', accessToken);
-        if (newRefreshToken) {
-          localStorage.setItem('refreshToken', newRefreshToken);
-        }
+        const accessToken = await refreshPromise;
 
         // Retry request với token mới
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -132,12 +134,7 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed - logout và chuyển về login
         useAuthStore.getState().logout();
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('auth-storage'); // Zustand persisted state
-
-        // Clear API cache khi logout
-        apiClient.storage.clear?.();
+        clearApiSessionState();
 
         // Chỉ redirect nếu không phải request login
         if (!originalRequest.url?.includes('/auth/login')) {
