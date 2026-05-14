@@ -13,13 +13,13 @@ function NavSection({
   const location = useLocation();
 
   return (
-    <>
+    <div className={`stock-sidebar-group ${!isSidebarOpen ? 'collapsed' : ''}`}>
       {isSidebarOpen && (
-        <p className="text-xs font-bold uppercase tracking-wider mb-2 px-3"
-          style={{ color: 'var(--stock-text-tertiary)' }}>
+        <p className="stock-sidebar-section-title">
           {title}
         </p>
       )}
+      <div className="space-y-1">
       {items.map((item) => (
         (() => {
           return (
@@ -52,10 +52,11 @@ function NavSection({
           )}
           {/* Tooltip for collapsed sidebar */}
           {!isSidebarOpen && (
-            <span className="absolute left-full ml-2 px-2 py-1.5 text-white text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50"
+            <span className="absolute left-full ml-2 px-2 py-1.5 text-slate-700 text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50"
               style={{
-                background: 'linear-gradient(135deg, #1e293b, #334155)',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                background: '#ffffff',
+                boxShadow: '0 12px 28px rgba(15, 23, 42, 0.12)',
+                border: '1px solid rgba(15, 23, 42, 0.08)',
               }}>
               {item.label}
             </span>
@@ -64,7 +65,8 @@ function NavSection({
           );
         })()
       ))}
-    </>
+      </div>
+    </div>
   );
 }
 
@@ -124,7 +126,7 @@ function SidebarUserFooter({
   if (!isSidebarOpen) {
     return (
       <div className="p-3 flex justify-center" style={{ borderTop: '1px solid var(--stock-glass-border)' }}>
-        <button type="button" onClick={onLogout} aria-label="Đăng xuất" className="p-2 rounded-lg transition-all hover:bg-white/5"
+        <button type="button" onClick={onLogout} aria-label="Đăng xuất" className="p-2 rounded-lg transition-all hover:bg-emerald-50"
           style={{ color: 'var(--stock-text-tertiary)' }} title="Đăng xuất">
           <LogOut size={18} />
         </button>
@@ -133,8 +135,8 @@ function SidebarUserFooter({
   }
 
   return (
-    <div className="p-3" style={{ borderTop: '1px solid var(--stock-glass-border)', background: 'linear-gradient(to top, rgba(10,12,16,0.8), transparent)' }}>
-      <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition-all cursor-pointer group">
+    <div className="p-3" style={{ borderTop: '1px solid var(--stock-glass-border)', background: 'linear-gradient(to top, rgba(236,253,245,0.75), transparent)' }}>
+      <div className="flex items-center gap-2 p-2 rounded-xl hover:bg-emerald-50 transition-all cursor-pointer group">
         <Link to="/profile" className="relative flex-shrink-0">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-md"
             style={{ background: 'linear-gradient(135deg, #2CB34A 0%, #0d9488 100%)' }}>
@@ -147,7 +149,7 @@ function SidebarUserFooter({
           <p className="text-sm font-semibold truncate" style={{ color: 'var(--stock-text-primary)' }}>{displayName}</p>
           <p className="text-xs truncate" style={{ color: 'var(--stock-text-tertiary)' }}>Đang học hôm nay</p>
         </Link>
-        <button type="button" onClick={onLogout} aria-label="Đăng xuất" className="p-1.5 rounded-lg transition-all hover:bg-white/5"
+        <button type="button" onClick={onLogout} aria-label="Đăng xuất" className="p-1.5 rounded-lg transition-all hover:bg-emerald-50"
           style={{ color: 'var(--stock-text-tertiary)' }}>
           <LogOut size={16} />
         </button>
@@ -177,7 +179,7 @@ export function DesktopSidebar({
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-5 overflow-y-auto overflow-x-hidden">
+      <nav className="flex-1 p-3 space-y-3 overflow-y-auto overflow-x-hidden">
         {learningNavSections.map((section) => (
           <NavSection
             key={section.title}
@@ -218,14 +220,14 @@ export function MobileSidebar({
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-3" style={{ borderBottom: '1px solid var(--stock-glass-border)' }}>
         <SidebarLogo isSidebarOpen onClick={onClose} />
-        <button type="button" onClick={onClose} aria-label="Đóng menu điều hướng" className="p-1.5 rounded-lg hover:bg-white/5 transition-all"
+        <button type="button" onClick={onClose} aria-label="Đóng menu điều hướng" className="p-1.5 rounded-lg hover:bg-emerald-50 transition-all"
           style={{ color: 'var(--stock-text-tertiary)' }}>
           <X size={20} />
         </button>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-5 overflow-y-auto">
+      <nav className="flex-1 p-3 space-y-3 overflow-y-auto">
         {learningNavSections.map((section) => (
           <NavSection
             key={section.title}
@@ -238,7 +240,7 @@ export function MobileSidebar({
       </nav>
 
       {/* Footer */}
-      <div className="p-3" style={{ borderTop: '1px solid var(--stock-glass-border)', background: 'linear-gradient(to top, rgba(10,12,16,0.8), transparent)' }}>
+      <div className="p-3" style={{ borderTop: '1px solid var(--stock-glass-border)', background: 'linear-gradient(to top, rgba(236,253,245,0.75), transparent)' }}>
         {isAuthenticated ? (
           <button type="button" onClick={() => { onLogout(); onClose(); }}
             className="stock-sidebar-link w-full" style={{ color: 'var(--stock-accent-rose)' }}>

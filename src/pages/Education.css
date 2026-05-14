@@ -33,6 +33,17 @@
     /* Slate 200 */
     --text-secondary: #94a3b8;
     /* Slate 400 */
+
+    /* Shared readable dark-card tokens */
+    --edu-surface-readable: rgba(15, 23, 42, 0.92);
+    --edu-surface-readable-hover: rgba(15, 23, 42, 0.98);
+    --edu-surface-muted: rgba(30, 41, 59, 0.72);
+    --edu-border-readable: rgba(148, 163, 184, 0.28);
+    --edu-border-readable-weak: rgba(148, 163, 184, 0.26);
+    --edu-text-readable: #f8fafc;
+    --edu-text-muted-readable: #e2e8f0;
+    --edu-text-subtle-readable: #cbd5e1;
+    --edu-readable-shadow: 0 18px 48px rgba(2, 6, 23, 0.34);
 }
 
 /* --- Base Layout --- */
@@ -66,10 +77,10 @@
 
 .learning-panel,
 .learning-card {
-    background: rgba(15, 23, 42, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--edu-surface-readable);
+    border: 1px solid var(--edu-border-readable);
     border-radius: 1rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--edu-readable-shadow);
     backdrop-filter: blur(16px);
 }
 
@@ -80,8 +91,8 @@
 }
 
 .learning-card:hover {
-    background: rgba(30, 41, 59, 0.74);
-    border-color: rgba(167, 139, 250, 0.24);
+    background: var(--edu-surface-readable-hover);
+    border-color: rgba(167, 139, 250, 0.42);
     transform: translateY(-2px);
 }
 
@@ -792,11 +803,9 @@
 
 /* --- Glass Cards (Unified with Stock) --- */
 .glass-card {
-    background-color: rgba(30, 41, 59, 0.4);
-    /* More transparent for 3D feel */
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    /* Highlight top */
+    background-color: var(--edu-surface-readable);
+    border: 1px solid var(--edu-border-readable);
+    border-top: 1px solid rgba(203, 213, 225, 0.32);
     border-radius: 1.5rem;
     padding: 1.5rem;
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -804,15 +813,16 @@
     backdrop-filter: blur(12px);
     transform-style: preserve-3d;
     perspective: 1000px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--edu-readable-shadow);
     position: relative;
     overflow: visible;
+    color: var(--edu-text-readable);
 }
 
 .glass-card:hover {
-    border-color: rgba(245, 158, 11, 0.3);
+    border-color: rgba(167, 139, 250, 0.42);
     /* Amber hover */
-    background-color: rgba(30, 41, 59, 0.6);
+    background-color: var(--edu-surface-readable-hover);
     transform: translateY(-4px) scale(1.005);
     box-shadow:
         0 20px 25px -5px rgba(0, 0, 0, 0.2),
@@ -846,11 +856,45 @@
     transition: left 0.7s ease;
 }
 
-/* Quiz-specific override: remove sweeping shine effect for calmer UX */
-.quiz-ui-static .glass-card::before,
-.quiz-ui-static .glass-card:hover::before {
-    content: none;
-    transition: none;
+/* Shared dark-card readability layer for education pages. */
+.education-container:not(.education-path-page) .glass-pane,
+.education-container:not(.education-path-page) .learning-card,
+.education-container:not(.education-path-page) .learning-panel {
+    background: var(--edu-surface-readable);
+    border-color: var(--edu-border-readable);
+    color: var(--edu-text-readable);
+    box-shadow: var(--edu-readable-shadow);
+}
+
+.education-container:not(.education-path-page) .glass-pane:hover,
+.education-container:not(.education-path-page) .learning-card:hover,
+.education-container:not(.education-path-page) .learning-panel:hover {
+    background: var(--edu-surface-readable-hover);
+    border-color: rgba(167, 139, 250, 0.42);
+}
+
+.education-container:not(.education-path-page) .bg-white\/5 {
+    background-color: var(--edu-surface-muted);
+}
+
+.education-container:not(.education-path-page) .border-white\/5,
+.education-container:not(.education-path-page) .border-white\/10 {
+    border-color: var(--edu-border-readable-weak);
+}
+
+.education-container:not(.education-path-page) .text-slate-300,
+.education-container:not(.education-path-page) .text-slate-400 {
+    color: var(--edu-text-muted-readable);
+}
+
+.education-container:not(.education-path-page) .text-slate-500,
+.education-container:not(.education-path-page) .text-slate-600 {
+    color: var(--edu-text-subtle-readable);
+}
+
+.education-container:not(.education-path-page) input::placeholder,
+.education-container:not(.education-path-page) textarea::placeholder {
+    color: var(--edu-text-subtle-readable);
 }
 
 /* Card with overflow hidden (for images, gradients) */

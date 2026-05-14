@@ -101,7 +101,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
               {quiz.name}
             </h3>
             {quiz.description && (
-              <p className="text-sm text-slate-400 mt-2 line-clamp-2 leading-relaxed">{quiz.description}</p>
+              <p className="text-sm text-slate-300 mt-2 line-clamp-2 leading-relaxed">{quiz.description}</p>
             )}
           </div>
 
@@ -109,7 +109,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
           <div className="relative ml-3">
             <button
               onClick={handleMenuClick}
-              className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white border border-transparent hover:border-white/10"
+              className="p-2.5 rounded-xl hover:bg-white/5 text-slate-300 hover:text-white border border-transparent hover:border-white/10"
               aria-label="Thêm tùy chọn"
             >
               <MoreVertical className="w-4 h-4" />
@@ -158,7 +158,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
             </span>
           )}
           {quiz.questionType && quiz.questionType !== 'MIXED' && (
-            <span className="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase bg-white/5 text-slate-400 border border-white/5">
+            <span className="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase bg-white/5 text-slate-300 border border-white/10">
               {getQuestionTypeLabel(quiz.questionType)}
             </span>
           )}
@@ -171,7 +171,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
               <List className="w-3.5 h-3.5 text-accent-400" />
             </div>
             <div className="text-xl font-black font-mono text-white">{quiz.questionCount}</div>
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Câu hỏi</div>
+            <div className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Câu hỏi</div>
           </div>
 
           <div className="text-center p-3 bg-black/20 rounded-xl border border-white/5">
@@ -179,7 +179,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
               <Clock className="w-3.5 h-3.5 text-amber-400" />
             </div>
             <div className="text-xl font-black font-mono text-white">{formatTimeLimit(quiz.timeLimit)}</div>
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Thời gian</div>
+            <div className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Thời gian</div>
           </div>
 
           <div className="text-center p-3 bg-black/20 rounded-xl border border-white/5">
@@ -187,7 +187,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
               <Target className="w-3.5 h-3.5 text-emerald-400" />
             </div>
             <div className="text-xl font-black font-mono text-white">{quiz.passingScore}%</div>
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Đạt</div>
+            <div className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Đạt</div>
           </div>
         </div>
       </div>
@@ -200,7 +200,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
               'px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase border',
               quiz.isPublic
                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                : 'bg-white/5 text-slate-500 border-white/5'
+                : 'bg-white/5 text-slate-300 border-white/10'
             )}>
               {quiz.isPublic ? 'Công khai' : 'Riêng tư'}
             </span>

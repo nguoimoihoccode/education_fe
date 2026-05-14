@@ -44,7 +44,7 @@ export const Layout = ({ children }: LayoutProps) => {
   const email = user?.email || 'learner@edupro.vn';
 
   return (
-    <div className="min-h-screen relative" style={{ backgroundColor: '#020405', color: 'var(--stock-text-primary)' }}>
+    <div className="min-h-screen relative" style={{ backgroundColor: '#f6f8f3', color: 'var(--stock-text-primary)' }}>
       {/* Ambient Background */}
       <div className="ambient-background" style={{ zIndex: 0 }}>
         <div className="orb orb-1"></div>

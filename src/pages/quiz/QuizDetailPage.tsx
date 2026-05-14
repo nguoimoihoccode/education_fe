@@ -82,7 +82,7 @@ export default function QuizDetailPage() {
         </div>
         <div className="detail-wrapper py-20 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Không tìm thấy bài quiz</h2>
-          <p className="text-slate-400 mb-6">Bài quiz bạn đang tìm không tồn tại hoặc đã bị gỡ bỏ.</p>
+          <p className="text-slate-300 mb-6">Bài quiz bạn đang tìm không tồn tại hoặc đã bị gỡ bỏ.</p>
           <Link to="/quiz" className="px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all">
             Quay lại danh sách quiz
           </Link>
@@ -92,7 +92,7 @@ export default function QuizDetailPage() {
   }
 
   return (
-    <div className="education-container quiz-ui-static">
+    <div className="education-container">
       
 
       <div className="detail-wrapper">
@@ -116,7 +116,7 @@ export default function QuizDetailPage() {
                   </span>
                 )}
                 {quiz.questionType && quiz.questionType !== 'MIXED' && (
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-500/10 text-slate-400 border border-slate-500/20">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-500/10 text-slate-300 border border-slate-500/30">
                     {quiz.questionType.replace('_', ' ')}
                   </span>
                 )}
@@ -147,7 +147,7 @@ export default function QuizDetailPage() {
             <h3 className="font-bold text-white mb-4">Cấu hình luyện HSK</h3>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-slate-400 mb-3">Độ khó</p>
+                <p className="text-sm text-slate-300 mb-3">Độ khó</p>
                 <div className="flex gap-2 flex-wrap">
                   {(['EASY', 'MEDIUM', 'HARD'] as const).map((difficulty) => (
                     <button
@@ -166,7 +166,7 @@ export default function QuizDetailPage() {
                 </div>
               </div>
               <div>
-                <p className="text-sm text-slate-400 mb-3">Số câu hỏi</p>
+                <p className="text-sm text-slate-300 mb-3">Số câu hỏi</p>
                 <div className="flex gap-2 flex-wrap">
                   {([10, 20, 30] as const).map((count) => (
                     <button
@@ -197,36 +197,36 @@ export default function QuizDetailPage() {
             </h3>
             <dl className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <dt className="text-slate-400">Questions</dt>
+                <dt className="text-slate-300">Questions</dt>
                 <dd className="text-white font-medium">{isOfflineHskQuiz ? selectedQuestionCount : quiz.questionCount}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Thời gian làm bài</dt>
+                <dt className="text-slate-300">Thời gian làm bài</dt>
                 <dd className="text-white font-medium">{formatTime(quiz.timeLimit)}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Điểm đạt</dt>
+                <dt className="text-slate-300">Điểm đạt</dt>
                 <dd className="text-white font-medium">{quiz.passingScore}%</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Số lần làm lại</dt>
+                <dt className="text-slate-300">Số lần làm lại</dt>
                 <dd className="text-white font-medium">
                   {quiz.allowRetry ? `${quiz.maxRetries} lần` : 'Không cho phép'}
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Trộn câu hỏi</dt>
+                <dt className="text-slate-300">Trộn câu hỏi</dt>
                 <dd className="text-white font-medium">
                   {quiz.shuffleQuestions ? 'Câu hỏi' : 'Không'}
                   {quiz.shuffleAnswers && ' + Đáp án'}
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Hiển thị đáp án</dt>
+                <dt className="text-slate-300">Hiển thị đáp án</dt>
                 <dd className="text-white font-medium">{quiz.showCorrectAnswer ? 'Sau khi nộp bài' : 'Ẩn'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-400">Hiển thị</dt>
+                <dt className="text-slate-300">Hiển thị</dt>
                 <dd className="text-white font-medium">{quiz.isPublic ? 'Công khai' : 'Riêng tư'}</dd>
               </div>
             </dl>
@@ -240,7 +240,7 @@ export default function QuizDetailPage() {
             </h3>
 
             {isOfflineHskQuiz && (
-              <p className="text-sm text-slate-400 mb-4">
+               <p className="text-sm text-slate-300 mb-4">
                 Xem trước {selectedQuestionCount} câu - Mức {selectedDifficulty === 'EASY' ? 'Dễ' : selectedDifficulty === 'MEDIUM' ? 'Vừa' : 'Khó'}
               </p>
             )}
@@ -251,7 +251,7 @@ export default function QuizDetailPage() {
                       <div key={question.id} className="p-4 bg-white/5 rounded-xl border border-white/5">
                         <div className="flex items-start justify-between mb-2">
                         <span className="text-sm font-bold text-accent-400">Câu hỏi {idx + 1}</span>
-                          <div className="flex items-center gap-2 text-xs text-slate-400">
+                          <div className="flex items-center gap-2 text-xs text-slate-300">
                             <span className="capitalize">{question.type.replace('_', ' ')}</span>
                             <span>•</span>
                             <span>{question.points} điểm</span>
@@ -261,7 +261,7 @@ export default function QuizDetailPage() {
                     {question.options && question.options.length > 0 && (
                       <ul className="space-y-2 mb-3">
                         {question.options.map((option, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                           <li key={i} className="flex items-start gap-2 text-sm text-slate-100">
                             <span className="w-5 h-5 rounded-full bg-accent-500/20 text-accent-400 flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
                               {String.fromCharCode(65 + i)}
                             </span>
@@ -274,7 +274,7 @@ export default function QuizDetailPage() {
                 ))}
               </div>
             ) : (
-              <div className="py-10 text-center text-slate-500">
+              <div className="py-10 text-center text-slate-300">
                 <p>Bài quiz này chưa có câu hỏi.</p>
               </div>
             )}
@@ -294,6 +294,6 @@ function getDifficultyColor(difficulty: string) {
     case 'HARD':
       return 'bg-red-500/10 text-red-400 border-red-500/30';
     default:
-      return 'bg-slate-500/10 text-slate-400 border-slate-500/30';
+      return 'bg-slate-500/10 text-slate-300 border-slate-500/30';
   }
 }

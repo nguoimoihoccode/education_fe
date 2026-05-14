@@ -26,7 +26,7 @@ const Navbar = () => {
           </div>
           <div className="hidden sm:block">
             <span className="font-heading italic text-xl text-white">EduPro</span>
-            <span className="block text-[10px] uppercase tracking-widest text-white/50 font-body font-medium">Learning Platform</span>
+            <span className="block text-[10px] uppercase tracking-widest text-white/70 font-body font-medium">Learning Platform</span>
           </div>
         </Link>
 

@@ -153,7 +153,7 @@ export default function QuizListPage() {
   };
 
   return (
-    <div className="education-container quiz-ui-static">
+    <div className="education-container">
 
       <div className="dashboard-wrapper">
         {/* Header */}
@@ -163,7 +163,7 @@ export default function QuizListPage() {
               <Target className="w-8 h-8 text-accent-400" />
               Trung tâm luyện tập
             </h1>
-            <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">
+            <p className="text-slate-300 text-sm font-bold tracking-widest uppercase">
               Luyện kiến thức, xem điểm yếu và theo dõi kết quả
             </p>
           </div>
@@ -196,7 +196,7 @@ export default function QuizListPage() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white mb-1">Lịch sử làm bài</h3>
-                <p className="text-sm text-slate-400">Xem lại các lần luyện tập</p>
+                <p className="text-sm text-slate-300">Xem lại các lần luyện tập</p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-accent-400 text-sm font-medium group-hover:text-accent-300">
@@ -214,7 +214,7 @@ export default function QuizListPage() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white mb-1">Thống kê chi tiết</h3>
-                <p className="text-sm text-slate-400">Theo dõi tiến bộ</p>
+                <p className="text-sm text-slate-300">Theo dõi tiến bộ</p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-emerald-400 text-sm font-medium group-hover:text-emerald-300">
@@ -232,7 +232,7 @@ export default function QuizListPage() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white mb-1">Danh sách quiz</h3>
-                <p className="text-sm text-slate-400">Chọn bài luyện phù hợp</p>
+                <p className="text-sm text-slate-300">Chọn bài luyện phù hợp</p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-amber-400 text-sm font-medium group-hover:text-amber-300">
@@ -253,7 +253,7 @@ export default function QuizListPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 aria-label="Tìm quiz"
-                className="bg-transparent border-none outline-none text-white placeholder-slate-600 text-sm w-full"
+                className="bg-transparent border-none outline-none text-white placeholder-slate-400 text-sm w-full"
               />
             </div>
           </div>
@@ -300,10 +300,10 @@ export default function QuizListPage() {
             {filteredQuizzes.length === 0 && !isLoadingQuizzes && (
               <div className="py-20 text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
-                  <BookOpen className="w-7 h-7 text-slate-600" />
+                  <BookOpen className="w-7 h-7 text-slate-300" />
                 </div>
-                <p className="text-slate-500 text-sm font-medium">Không tìm thấy quiz.</p>
-                <p className="text-slate-600 text-xs mt-1">
+                <p className="text-slate-300 text-sm font-medium">Không tìm thấy quiz.</p>
+                <p className="text-slate-400 text-xs mt-1">
                   {searchQuery || topicFilter
                     ? 'Thử đổi từ khóa hoặc bộ lọc.'
                     : 'Tạo quiz đầu tiên để bắt đầu luyện tập.'}
@@ -340,7 +340,7 @@ export default function QuizListPage() {
                   <Plus className="w-6 h-6 text-accent-400" />
                   {isEditMode ? 'Sửa quiz' : 'Tạo quiz mới'}
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-slate-300 mt-1">
                   {isEditMode ? 'Cập nhật cấu hình quiz' : 'Thiết lập bài luyện mới'}
                 </p>
               </div>
@@ -348,7 +348,7 @@ export default function QuizListPage() {
                   type="button"
                   onClick={closeQuizModal}
                   aria-label="Đóng form quiz"
-                  className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white border border-transparent hover:border-white/10 text-xl"
+                  className="p-2.5 rounded-xl hover:bg-white/5 text-slate-300 hover:text-white border border-transparent hover:border-white/10 text-xl"
                 >
                 &times;
               </button>
@@ -358,7 +358,7 @@ export default function QuizListPage() {
               {/* Basic Info */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="quiz-name" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label htmlFor="quiz-name" className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
                     Tên quiz *
                   </label>
                   <input
@@ -367,12 +367,12 @@ export default function QuizListPage() {
                     value={form.name}
                     onChange={(e) => setForm((current) => ({ ...current, name: e.target.value }))}
                     placeholder="Ví dụ: HSK 1 cơ bản"
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/10 text-white placeholder-slate-400 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="quiz-topic" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label htmlFor="quiz-topic" className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
                     Chủ đề
                   </label>
                   <input
@@ -381,13 +381,13 @@ export default function QuizListPage() {
                     value={form.topic}
                     onChange={(e) => setForm((current) => ({ ...current, topic: e.target.value }))}
                     placeholder="Ví dụ: Chào hỏi"
-                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none"
+                    className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/10 text-white placeholder-slate-400 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
                   Mô tả
                 </label>
                 <textarea
@@ -395,13 +395,13 @@ export default function QuizListPage() {
                   onChange={(e) => setForm((current) => ({ ...current, description: e.target.value }))}
                   placeholder="Mô tả ngắn về nội dung luyện tập..."
                   rows={3}
-                  className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white placeholder-slate-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none resize-none"
+                  className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/10 text-white placeholder-slate-400 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none resize-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
                     Độ khó
                   </label>
                   <select
@@ -417,7 +417,7 @@ export default function QuizListPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
                     Loại câu hỏi
                   </label>
                   <select
@@ -433,7 +433,7 @@ export default function QuizListPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
                     Questions
                   </label>
                   <input
@@ -448,7 +448,7 @@ export default function QuizListPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
                     Time (min)
                   </label>
                   <input
@@ -465,7 +465,7 @@ export default function QuizListPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
                     Passing Score (%)
                   </label>
                   <input
@@ -480,7 +480,7 @@ export default function QuizListPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+                  <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
                     Max Retries
                   </label>
                   <input
@@ -496,7 +496,7 @@ export default function QuizListPage() {
 
               {/* Options */}
               <div className="space-y-4 pt-5 border-t border-white/5">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Options</h4>
+                <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest">Options</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
                     <input
@@ -507,7 +507,7 @@ export default function QuizListPage() {
                     />
                     <div>
                       <div className="text-sm font-bold text-white">Shuffle Questions</div>
-                      <div className="text-xs text-slate-500">Randomize order</div>
+                      <div className="text-xs text-slate-300">Randomize order</div>
                     </div>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
@@ -519,7 +519,7 @@ export default function QuizListPage() {
                     />
                     <div>
                       <div className="text-sm font-bold text-white">Shuffle Answers</div>
-                      <div className="text-xs text-slate-500">Randomize options</div>
+                      <div className="text-xs text-slate-300">Randomize options</div>
                     </div>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
@@ -531,7 +531,7 @@ export default function QuizListPage() {
                     />
                     <div>
                       <div className="text-sm font-bold text-white">Show Correct</div>
-                      <div className="text-xs text-slate-500">After submission</div>
+                      <div className="text-xs text-slate-300">After submission</div>
                     </div>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
@@ -543,7 +543,7 @@ export default function QuizListPage() {
                     />
                     <div>
                       <div className="text-sm font-bold text-white">Allow Retry</div>
-                      <div className="text-xs text-slate-500">Multiple attempts</div>
+                      <div className="text-xs text-slate-300">Multiple attempts</div>
                     </div>
                   </label>
                 </div>

@@ -100,7 +100,7 @@ const Hero = () => {
         {/* Features Bar */}
         <div className="mt-auto pb-8 pt-16 flex flex-col items-center gap-6">
           <div className="liquid-glass rounded-full px-3.5 py-1">
-            <span className="text-white/70 text-xs font-body font-medium">
+            <span className="text-white/80 text-xs font-body font-medium">
               Mọi thứ bạn cần trong một nền tảng
             </span>
           </div>

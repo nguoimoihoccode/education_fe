@@ -24,13 +24,13 @@ export default function QuizStatsPage() {
   const totalPages = historyData?.totalPages || 1;
 
   return (
-    <div className="education-container quiz-ui-static">
+    <div className="education-container">
       
 
       <div className="dashboard-wrapper">
         <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Thống kê quiz</h1>
-          <p className="text-slate-400">Theo dõi kết quả và tiến độ của bạn</p>
+          <p className="text-slate-300">Theo dõi kết quả và tiến độ của bạn</p>
         </header>
 
         {isLoadingStats ? (
@@ -63,20 +63,20 @@ export default function QuizStatsPage() {
                               height: `${score}%`,
                             } as React.CSSProperties}
                           ></div>
-                          <span className="text-[10px] text-slate-500 mt-1">
+                          <span className="text-[10px] text-slate-300 mt-1">
                             {idx + 1}
                           </span>
                         </div>
                       );
                     })}
                   </div>
-                  <div className="flex justify-between text-xs text-slate-400 mt-2">
+                  <div className="flex justify-between text-xs text-slate-300 mt-2">
                     <span>Cũ hơn</span>
                     <span>Gần đây</span>
                   </div>
                 </div>
               ) : (
-                <div className="py-10 text-center text-slate-500">
+                <div className="py-10 text-center text-slate-300">
                   <p>Chưa có lịch sử làm bài.</p>
                 </div>
               )}
@@ -91,7 +91,7 @@ export default function QuizStatsPage() {
                   <div className="w-10 h-10 border-2 border-accent-500/40 rounded-full mx-auto"></div>
                 </div>
               ) : history.length === 0 ? (
-                <div className="py-10 text-center text-slate-500">
+                <div className="py-10 text-center text-slate-300">
                   <p>Bạn chưa làm quiz nào.</p>
                   <a href="/quiz" className="text-accent-400 hover:underline mt-2 inline-block">
                     Bắt đầu quiz đầu tiên
@@ -102,7 +102,7 @@ export default function QuizStatsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-slate-400 border-b border-white/10">
+                        <tr className="text-left text-slate-300 border-b border-white/10">
                           <th className="pb-3 font-medium">Quiz</th>
                           <th className="pb-3 font-medium">Chủ đề</th>
                           <th className="pb-3 font-medium">Ngày</th>
@@ -120,7 +120,7 @@ export default function QuizStatsPage() {
                               </a>
                             </td>
                             <td className="py-4 text-slate-300">{item.topic}</td>
-                            <td className="py-4 text-slate-400">
+                            <td className="py-4 text-slate-300">
                               {new Date(item.startTime).toLocaleDateString()}
                             </td>
                             <td className="py-4">
@@ -133,7 +133,7 @@ export default function QuizStatsPage() {
                                 {item.passed ? 'Đạt' : 'Chưa đạt'}
                               </span>
                             </td>
-                            <td className="py-4 text-slate-400">
+                            <td className="py-4 text-slate-300">
                               {formatTime(item.timeSpent)}
                             </td>
                           </tr>

@@ -51,17 +51,17 @@ const CtaFooter = () => {
         {/* Footer */}
         <div className="mt-32 pt-8 border-t border-white/10 w-full max-w-6xl">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-white/40 text-xs font-body">
+            <p className="text-white/60 text-xs font-body">
               © 2026 EduPro Learning Platform. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <Link to="/coming-soon" className="text-white/40 text-xs font-body hover:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
+              <Link to="/coming-soon" className="text-white/60 text-xs font-body hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
                 Chính sách bảo mật
               </Link>
-              <Link to="/coming-soon" className="text-white/40 text-xs font-body hover:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
+              <Link to="/coming-soon" className="text-white/60 text-xs font-body hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
                 Điều khoản
               </Link>
-              <Link to="/coming-soon" className="text-white/40 text-xs font-body hover:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
+              <Link to="/coming-soon" className="text-white/60 text-xs font-body hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
                 Liên hệ
               </Link>
             </div>

@@ -249,7 +249,7 @@ export default function QuizSessionPage() {
         </div>
         <div className="detail-wrapper py-20 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Lỗi phiên làm bài</h2>
-          <p className="text-slate-400 mb-6">Không thể tải phiên quiz.</p>
+          <p className="text-slate-300 mb-6">Không thể tải phiên quiz.</p>
           <button
             onClick={() => navigate('/quiz')}
             className="px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all"
@@ -262,7 +262,7 @@ export default function QuizSessionPage() {
   }
 
   return (
-    <div className="education-container quiz-ui-static">
+    <div className="education-container">
       
 
       <div className="detail-wrapper">
@@ -271,7 +271,7 @@ export default function QuizSessionPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex-1">
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 truncate">{quiz.name}</h1>
-              <div className="flex items-center gap-4 text-sm text-slate-400">
+              <div className="flex items-center gap-4 text-sm text-slate-300">
                 <span>Câu hỏi {displayQuestionIndex + 1} / {totalQuestions}</span>
                 <span className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
@@ -282,11 +282,11 @@ export default function QuizSessionPage() {
             <div className="flex items-center gap-2">
               <div className="glass-card px-4 py-2 text-center">
                 <div className="text-lg font-bold text-accent-400">{session.correctAnswers}</div>
-                <div className="text-xs text-slate-400">Đúng</div>
+                <div className="text-xs text-slate-300">Đúng</div>
               </div>
               <div className="glass-card px-4 py-2 text-center">
                 <div className="text-lg font-bold text-white">{session.score}%</div>
-                <div className="text-xs text-slate-400">Điểm</div>
+                <div className="text-xs text-slate-300">Điểm</div>
               </div>
             </div>
           </div>
@@ -308,7 +308,7 @@ export default function QuizSessionPage() {
                 <span className="text-sm font-bold text-accent-400">
                   {getQuestionTypeLabel(currentQuestion.type)}
                 </span>
-                <span className="text-sm text-slate-400">{currentQuestion.points} điểm</span>
+                <span className="text-sm text-slate-300">{currentQuestion.points} điểm</span>
               </div>
               <h2 className="text-xl md:text-2xl font-bold text-white">{currentQuestion.question}</h2>
             </div>
@@ -327,14 +327,14 @@ export default function QuizSessionPage() {
                       className={`w-full p-4 rounded-xl text-left ${
                         isSelected
                           ? 'bg-accent-600/20 border-2 border-accent-500 text-white'
-                          : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:border-accent-500/30'
+                          : 'bg-white/5 border border-white/10 text-slate-100 hover:bg-white/10 hover:border-accent-500/30'
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
                           isSelected
                             ? 'bg-accent-600 text-white'
-                            : 'bg-white/10 text-slate-400'
+                            : 'bg-white/10 text-slate-200'
                         }`}>
                           {String.fromCharCode(65 + idx)}
                         </span>
@@ -374,7 +374,7 @@ export default function QuizSessionPage() {
 
         {/* Info */}
         <div className="glass-card p-4">
-          <div className="flex items-center gap-2 text-sm text-slate-400">
+              <div className="flex items-center gap-2 text-sm text-slate-300">
             <AlertCircle className="w-4 h-4" />
             <span>Câu trả lời được lưu tự động. Bạn không thể quay lại câu trước.</span>
           </div>

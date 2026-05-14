@@ -23,6 +23,7 @@ const GoogleCallback = lazy(() => import('@/pages/GoogleCallback').then(m => ({ 
 
 // Landing pages
 const LandingPageNew = lazy(() => import('@/pages/landing/LandingPageNew'));
+const DashboardLanding = lazy(() => import('@/pages/DashboardLanding'));
 
 // Education core
 const Education = lazy(() => import('@/pages/Education'));
@@ -432,7 +433,7 @@ function App() {
                 path="/coming-soon"
                 element={<ComingSoon />}
               />
-              <Route path="/dashboard-landing" element={<LandingPageNew />} />
+              <Route path="/dashboard-landing" element={<DashboardLanding />} />
               <Route path="/unauthorized" element={<ComingSoon />} />
               <Route path="/" element={<LandingPageNew />} />
               <Route path="*" element={<NotFoundPage />} />

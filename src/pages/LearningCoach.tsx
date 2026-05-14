@@ -78,7 +78,7 @@ function CoachDashboard({ data }: { data: LearningCoachSummary }) {
                   <div className="grid h-full w-full place-items-center rounded-full bg-white text-center shadow-sm">
                     <div>
                       <strong className="block text-5xl font-black text-slate-950">{plan}%</strong>
-                      <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Daily plan</span>
+                      <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Daily plan</span>
                     </div>
                   </div>
                 </div>
@@ -158,7 +158,7 @@ function MiniStat({ icon, label, value }: { icon: ReactNode; label: string; valu
   return (
     <div className="rounded-2xl border border-slate-100 bg-white p-4">
       <div className="mb-2 text-emerald-700">{icon}</div>
-      <p className="text-xs font-bold text-slate-400">{label}</p>
+      <p className="text-xs font-bold text-slate-500">{label}</p>
       <p className="mt-1 text-xl font-black text-slate-950">{value}</p>
     </div>
   );

@@ -75,7 +75,7 @@ export function QuizStats({ stats, topicStats, className }: QuizStatsProps) {
             unit="%"
             color="bg-emerald-500"
           />
-          <div className="flex items-center justify-between text-sm text-slate-400 pt-4 border-t border-white/5">
+          <div className="flex items-center justify-between text-sm text-slate-300 pt-4 border-t border-white/5">
             <span>Lowest Score: <strong className="text-white">{stats.lowestScore}%</strong></span>
             <span>Avg Time/Question: <strong className="text-white">{formatTime(stats.averageTimePerQuestion)}</strong></span>
           </div>
@@ -99,7 +99,7 @@ export function QuizStats({ stats, topicStats, className }: QuizStatsProps) {
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
                   <h4 className="font-bold text-white">{topic.topic}</h4>
                   <div className="flex items-center gap-4 text-sm">
-                    <span className="text-slate-400">{topic.totalAttempts} attempts</span>
+                    <span className="text-slate-300">{topic.totalAttempts} attempts</span>
                     <span className="font-black text-emerald-400 text-lg">{Math.round(topic.averageScore)}% avg</span>
                   </div>
                 </div>
@@ -189,7 +189,7 @@ function StatCard({
 
   return (
     <div className="glass-pane p-6 md:p-8 rounded-2xl relative overflow-hidden group hover:shadow-[0_0_30px_rgba(255,255,255,0.02)]">
-      <p className="text-slate-400 text-sm font-medium mb-1">{label}</p>
+      <p className="text-slate-300 text-sm font-medium mb-1">{label}</p>
       <h3 className={`text-4xl font-black ${config.text}`}>{value}</h3>
       {subtext && (
         <div className={`mt-4 pt-4 border-t border-white/5 flex items-center gap-2 text-xs font-bold ${config.text}`}>

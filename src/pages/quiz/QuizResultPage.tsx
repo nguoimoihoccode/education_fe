@@ -54,7 +54,7 @@ export default function QuizResultPage() {
         </div>
         <div className="detail-wrapper py-20 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Không tìm thấy kết quả</h2>
-          <p className="text-slate-400 mb-6">Không thể tải kết quả quiz.</p>
+          <p className="text-slate-300 mb-6">Không thể tải kết quả quiz.</p>
           <Link to="/quiz" className="px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all">
             Quay lại danh sách quiz
           </Link>
@@ -114,7 +114,7 @@ export default function QuizResultPage() {
             </div>
             <div className="p-4 bg-white/5 rounded-xl">
               <div className="text-3xl font-bold text-white mb-1">{session.timeSpent ? formatTime(session.timeSpent) : '--'}</div>
-              <div className="text-sm text-slate-400">Thời gian</div>
+              <div className="text-sm text-slate-300">Thời gian</div>
             </div>
           </div>
 
@@ -182,7 +182,7 @@ export default function QuizResultPage() {
                     </div>
                   </div>
                   {item.explanation && (
-                    <p className="mt-3 text-sm text-slate-400 italic">{item.explanation}</p>
+                    <p className="mt-3 text-sm text-slate-300 italic">{item.explanation}</p>
                   )}
                 </div>
               ))}
@@ -195,19 +195,19 @@ export default function QuizResultPage() {
           <h3 className="font-bold text-white mb-4">Chi tiết phiên làm bài</h3>
           <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <dt className="text-slate-400">Quiz</dt>
+              <dt className="text-slate-300">Quiz</dt>
               <dd className="text-white font-medium truncate">{quiz.name}</dd>
             </div>
             <div>
-              <dt className="text-slate-400">Trạng thái</dt>
+              <dt className="text-slate-300">Trạng thái</dt>
               <dd className="text-white font-medium capitalize">{getStatusLabel(session.status)}</dd>
             </div>
             <div>
-              <dt className="text-slate-400">Bắt đầu</dt>
+              <dt className="text-slate-300">Bắt đầu</dt>
               <dd className="text-white font-medium">{new Date(session.startTime).toLocaleString()}</dd>
             </div>
             <div>
-              <dt className="text-slate-400">Hoàn thành</dt>
+              <dt className="text-slate-300">Hoàn thành</dt>
               <dd className="text-white font-medium">
                 {session.endTime ? new Date(session.endTime).toLocaleString() : '-'}
               </dd>
