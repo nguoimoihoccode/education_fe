@@ -72,6 +72,37 @@ export interface TodayPlan {
     tasks: TodayPlanTask[];
 }
 
+export type TodayLearningHubTaskType = 'continue_lesson' | 'review_vocabulary' | 'quick_quiz' | 'fix_mistakes';
+
+export interface TodayLearningHubTask {
+    id: string;
+    type: TodayLearningHubTaskType;
+    title: string;
+    description: string;
+    ctaLabel: string;
+    targetUrl: string;
+    estimatedMinutes: number;
+    completed: boolean;
+    priority: number;
+    metadata?: Record<string, string | number | boolean>;
+}
+
+export interface TodayLearningHub {
+    date: string;
+    dailyGoalMinutes: number;
+    minutesLearnedToday: number;
+    xpToday: number;
+    completedTasks: number;
+    totalTasks: number;
+    streak: {
+        current: number;
+        longest: number;
+        isAtRisk: boolean;
+    };
+    primaryTask?: TodayLearningHubTask;
+    tasks: TodayLearningHubTask[];
+}
+
 export enum LessonType {
     VOCABULARY = 'vocabulary',
     GRAMMAR = 'grammar',
@@ -231,6 +262,28 @@ export interface LearningPlan {
         level: number;
     };
     recommendedActions: LearningPlanAction[];
+}
+
+export interface LearningCoachSummary {
+    headline: string;
+    focusArea: string;
+    dailyGoal: LearningPlan['dailyGoal'];
+    progress: {
+        planCompletion: number;
+        minuteCompletion: number;
+        completedLessons: number;
+        masteredVocabularies: number;
+    };
+    streak: LearningPlan['streak'];
+    nextBestAction?: LearningPlanAction;
+    risks: Array<{
+        title: string;
+        topic: string;
+        score: number;
+        route: string;
+    }>;
+    tasks: TodayPlanTask[];
+    recommendations: LearningPlanAction[];
 }
 
 export interface ExerciseResult {

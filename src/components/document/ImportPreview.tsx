@@ -20,10 +20,11 @@ import type {
   ImportOptions,
 } from '@/types/document.types';
 import clsx from 'clsx';
+import { buildSelectedFlashcards } from './importPreviewSelection';
 
 interface ImportPreviewProps {
   preview: ImportPreview;
-  onImport: (options: ImportOptions) => void;
+  onImport: (options: ImportOptions, selectedCards: SuggestedFlashcard[]) => void;
   onCancel: () => void;
   onEditFlashcard?: (flashcard: SuggestedFlashcard) => void;
   onDeleteFlashcard?: (flashcardId: string) => void;
@@ -80,16 +81,20 @@ export function ImportPreview({
   };
 
   const handleImport = () => {
-    const cardsToImport = selectedCards.size > 0
-      ? preview.suggestedFlashcards.filter((c) => selectedCards.has(c.id))
-      : preview.suggestedFlashcards;
+    const cardsToImport = buildSelectedFlashcards(
+      preview.suggestedFlashcards,
+      Array.from(selectedCards),
+    );
 
-    onImport({
-      maxCards: cardsToImport.length,
-      difficulty: 'auto',
-      includeExamples: true,
-      includePronunciation: true,
-    });
+    onImport(
+      {
+        maxCards: cardsToImport.length,
+        difficulty: 'auto',
+        includeExamples: true,
+        includePronunciation: true,
+      },
+      cardsToImport,
+    );
   };
 
   const getConfidenceColor = (confidence: number) => {
@@ -127,7 +132,7 @@ export function ImportPreview({
           </button>
           <button
             onClick={handleImport}
-            disabled={selectedCards.size === 0 && preview.suggestedFlashcards.length > 0}
+            disabled={preview.suggestedFlashcards.length === 0}
             className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm tracking-wider uppercase"
           >
             <Sparkles className="w-4 h-4" />

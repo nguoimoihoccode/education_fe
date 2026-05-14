@@ -9,7 +9,7 @@ import {
 } from '@/api/flashcard.api';
 import { QUERY_KEYS } from '@/config/query';
 import { FlashcardReview } from '@/components/flashcard';
-import type { ReviewSession } from '@/types/flashcard.types';
+import type { ReviewResult, ReviewSession } from '@/types/flashcard.types';
 import toast from 'react-hot-toast';
 
 export default function FlashcardReviewPage() {
@@ -21,6 +21,8 @@ export default function FlashcardReviewPage() {
   const [session, setSession] = useState<ReviewSession | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [reviewResults, setReviewResults] = useState<ReviewResult[]>([]);
+  const [skippedCards, setSkippedCards] = useState(0);
 
   // Start review session
   const { data: sessionData, isLoading: isLoadingSession } = useQuery({
@@ -39,16 +41,20 @@ export default function FlashcardReviewPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['flashcardStats'] });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_PLAN });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_HUB });
     },
     onError: () => toast.error('Failed to review flashcard'),
   });
 
   // Complete session mutation
   const completeMutation = useMutation({
-    mutationFn: (sessionId: string) => completeReviewSession({ sessionId }),
+    mutationFn: (sessionId: string) =>
+      completeReviewSession({ sessionId, results: reviewResults, skippedCards }),
     onSuccess: (completedSession) => {
       queryClient.invalidateQueries({ queryKey: ['flashcardStats'] });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_PLAN });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_HUB });
+      setSession(completedSession);
       setIsComplete(true);
       toast.success(`Review complete! +${completedSession.xpEarned} XP`);
     },
@@ -58,6 +64,16 @@ export default function FlashcardReviewPage() {
   const handleReview = (flashcardId: string, quality: number) => {
     if (reviewMutation.isPending) return;
     reviewMutation.mutate({ flashcardId, quality });
+    setReviewResults((previous) => [
+      ...previous,
+      {
+        flashcardId,
+        quality,
+        correct: quality >= 3,
+        isCorrect: quality >= 3,
+        timeSpent: 0,
+      },
+    ]);
     setCurrentIndex(currentIndex + 1);
   };
 
@@ -70,6 +86,7 @@ export default function FlashcardReviewPage() {
   const handleSkip = () => {
     if (activeSession) {
       // Update session stats
+      setSkippedCards((previous) => previous + 1);
       setSession({
         ...activeSession,
         skippedCards: activeSession.skippedCards + 1,
@@ -86,6 +103,8 @@ export default function FlashcardReviewPage() {
     setSession(null);
     setCurrentIndex(0);
     setIsComplete(false);
+    setReviewResults([]);
+    setSkippedCards(0);
     queryClient.invalidateQueries({ queryKey: ['reviewSession'] });
   };
 
@@ -129,9 +148,9 @@ export default function FlashcardReviewPage() {
   }
 
   // Complete state
-  if (isComplete && session) {
-    const accuracy = session.totalCards > 0
-      ? Math.round((session.correctCards / session.totalCards) * 100)
+  if (isComplete && activeSession) {
+    const accuracy = activeSession.totalCards > 0
+      ? Math.round((activeSession.correctCards / activeSession.totalCards) * 100)
       : 0;
 
     return (
@@ -151,15 +170,15 @@ export default function FlashcardReviewPage() {
 
           <div className="grid grid-cols-3 gap-4 mb-8">
             <div className="bg-black/20 rounded-2xl p-4 border border-white/5">
-              <div className="text-3xl font-black font-mono text-emerald-400">{session.correctCards}</div>
+              <div className="text-3xl font-black font-mono text-emerald-400">{activeSession.correctCards}</div>
               <div className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mt-1">Correct</div>
             </div>
             <div className="bg-black/20 rounded-2xl p-4 border border-white/5">
-              <div className="text-3xl font-black font-mono text-rose-400">{session.wrongCards}</div>
+              <div className="text-3xl font-black font-mono text-rose-400">{activeSession.wrongCards}</div>
               <div className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mt-1">Wrong</div>
             </div>
             <div className="bg-black/20 rounded-2xl p-4 border border-white/5">
-              <div className="text-3xl font-black font-mono text-amber-400">{session.xpEarned}</div>
+              <div className="text-3xl font-black font-mono text-amber-400">{activeSession.xpEarned}</div>
               <div className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mt-1">XP Earned</div>
             </div>
           </div>
@@ -202,7 +221,7 @@ export default function FlashcardReviewPage() {
   return (
     <FlashcardReview
       flashcards={flashcards}
-      session={session!}
+      session={activeSession!}
       onReview={handleReview}
       onComplete={handleComplete}
       onSkip={handleSkip}

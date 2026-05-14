@@ -12,17 +12,17 @@ export function normalizeCollectionPage<T>(
 
   return {
     items: Array.isArray(collection) ? (collection as T[]) : [],
-    total: typeof payload.total === 'number' ? payload.total : 0,
-    page: typeof payload.page === 'number' ? payload.page : 1,
-    limit: typeof payload.limit === 'number' ? payload.limit : 0,
-    totalPages: typeof payload.totalPages === 'number' ? payload.totalPages : 1,
+    total: typeof payload.total === "number" ? payload.total : 0,
+    page: typeof payload.page === "number" ? payload.page : 1,
+    limit: typeof payload.limit === "number" ? payload.limit : 0,
+    totalPages: typeof payload.totalPages === "number" ? payload.totalPages : 1,
   };
 }
 
 export function normalizeQuizSession<T extends Record<string, unknown>>(
   payload: T,
 ): T & {
-  status: 'IN_PROGRESS' | 'COMPLETED';
+  status: "IN_PROGRESS" | "COMPLETED";
   startTime: unknown;
   endTime: unknown;
   totalAnswers: number;
@@ -35,7 +35,7 @@ export function normalizeQuizSession<T extends Record<string, unknown>>(
 
   return {
     ...payload,
-    status: payload.completed ? 'COMPLETED' : 'IN_PROGRESS',
+    status: payload.completed ? "COMPLETED" : "IN_PROGRESS",
     startTime: payload.startedAt,
     endTime: payload.completedAt,
     totalAnswers: correctAnswers + wrongAnswers + skippedAnswers,
@@ -56,14 +56,14 @@ export interface QuizSessionLike {
 export function normalizeQuizSessionObject<T extends QuizSessionLike>(
   payload: T,
 ): T & {
-  status: 'IN_PROGRESS' | 'COMPLETED';
+  status: "IN_PROGRESS" | "COMPLETED";
   startTime: unknown;
   endTime: unknown;
   totalAnswers: number;
   currentQuestionIndex: number;
 } {
   return normalizeQuizSession(payload as Record<string, unknown>) as T & {
-    status: 'IN_PROGRESS' | 'COMPLETED';
+    status: "IN_PROGRESS" | "COMPLETED";
     startTime: unknown;
     endTime: unknown;
     totalAnswers: number;
@@ -71,16 +71,18 @@ export function normalizeQuizSessionObject<T extends QuizSessionLike>(
   };
 }
 
-export function normalizeWrongAnswers<T>(payload: T): T extends unknown[] ? T : T[] {
+export function normalizeWrongAnswers<T>(
+  payload: T,
+): T extends unknown[] ? T : T[] {
   if (Array.isArray(payload)) {
     return payload as T extends unknown[] ? T : T[];
   }
 
-  if (payload && typeof payload === 'object' && 'wrongAnswers' in payload) {
+  if (payload && typeof payload === "object" && "wrongAnswers" in payload) {
     const wrongAnswers = (payload as { wrongAnswers?: unknown }).wrongAnswers;
-    return (Array.isArray(wrongAnswers) ? wrongAnswers : []) as T extends unknown[]
-      ? T
-      : T[];
+    return (
+      Array.isArray(wrongAnswers) ? wrongAnswers : []
+    ) as T extends unknown[] ? T : T[];
   }
 
   return [] as T extends unknown[] ? T : T[];
@@ -102,7 +104,7 @@ export function normalizeFlashcardStats<T extends Record<string, unknown>>(
   totalXp: number;
 } {
   const statusStats =
-    payload.statusStats && typeof payload.statusStats === 'object'
+    payload.statusStats && typeof payload.statusStats === "object"
       ? (payload.statusStats as Record<string, number>)
       : {};
 
@@ -119,13 +121,78 @@ export function normalizeFlashcardStats<T extends Record<string, unknown>>(
     newFlashcards: toNumber(payload.newFlashcards ?? statusStats.NEW),
     totalReviews: toNumber(payload.totalReviews),
     averageAccuracy: Math.round(
-      typeof payload.averageAccuracy === 'number'
+      typeof payload.averageAccuracy === "number"
         ? payload.averageAccuracy
         : toNumber(payload.correctRate) * 100,
     ),
     currentStreak: toNumber(payload.currentStreak),
     longestStreak: toNumber(payload.longestStreak),
     totalXp: toNumber(payload.totalXp),
+  };
+}
+
+export function normalizeQuizStats<T extends Record<string, unknown>>(
+  payload: T,
+): {
+  totalQuizzes: number;
+  totalAttempts: number;
+  averageScore: number;
+  highestScore: number;
+  lowestScore: number;
+  averageTimePerQuestion: number;
+  watchedTopics: string[];
+  completedQuizzes: number;
+  passedQuizzes: number;
+} {
+  const totalSessions = toNumber(payload.totalSessions);
+  const passRate = toNumber(payload.passRate);
+
+  return {
+    totalQuizzes: toNumber(payload.totalQuizzes),
+    totalAttempts: totalSessions,
+    averageScore: toNumber(payload.averageScore),
+    highestScore: toNumber(payload.highestScore),
+    lowestScore: toNumber(payload.lowestScore),
+    averageTimePerQuestion: toNumber(payload.averageTimePerQuestion),
+    watchedTopics: Array.isArray(payload.watchedTopics)
+      ? (payload.watchedTopics as string[])
+      : [],
+    completedQuizzes: totalSessions,
+    passedQuizzes:
+      typeof payload.passedQuizzes === "number"
+        ? payload.passedQuizzes
+        : Math.round((totalSessions * passRate) / 100),
+  };
+}
+
+export function normalizeTopicQuizStats<T extends Record<string, unknown>>(
+  payload: T,
+  fallbackTopic: string,
+): {
+  topic: string;
+  totalAttempts: number;
+  averageScore: number;
+  highestScore: number;
+  lowestScore: number;
+  favoriteQuestionTypes: string[];
+  strengths: string[];
+  weaknesses: string[];
+} {
+  return {
+    topic: typeof payload.topic === "string" ? payload.topic : fallbackTopic,
+    totalAttempts: toNumber(payload.totalSessions),
+    averageScore: toNumber(payload.averageScore),
+    highestScore: toNumber(payload.highestScore),
+    lowestScore: toNumber(payload.lowestScore),
+    favoriteQuestionTypes: Array.isArray(payload.favoriteQuestionTypes)
+      ? (payload.favoriteQuestionTypes as string[])
+      : [],
+    strengths: Array.isArray(payload.strengths)
+      ? (payload.strengths as string[])
+      : [],
+    weaknesses: Array.isArray(payload.weaknesses)
+      ? (payload.weaknesses as string[])
+      : [],
   };
 }
 
@@ -140,5 +207,5 @@ export function buildReviewSessionResponse<TSession, TFlashcard>(
 }
 
 function toNumber(value: unknown): number {
-  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }

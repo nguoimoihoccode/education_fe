@@ -90,6 +90,7 @@ export default function QuizSessionPage() {
       queryClient.invalidateQueries({ queryKey: ['quizStats'] });
       queryClient.invalidateQueries({ queryKey: ['quizHistory'] });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_PLAN });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_HUB });
       navigate(`/quiz/session/${sessionId}/result`);
     },
     onError: () => {

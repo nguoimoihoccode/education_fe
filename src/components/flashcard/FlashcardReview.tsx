@@ -28,6 +28,7 @@ export function FlashcardReview({
   const cardRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
+  const reviewTimeoutRef = useRef<number | null>(null);
 
   const currentFlashcard = flashcards[currentIndex];
   const progress = ((currentIndex + 1) / flashcards.length) * 100;
@@ -45,7 +46,7 @@ export function FlashcardReview({
     const diff = touchStartX.current - touchEndX.current;
     if (Math.abs(diff) > 50) {
       setSwipeDirection(diff > 0 ? 'left' : 'right');
-      setTimeout(() => {
+      reviewTimeoutRef.current = window.setTimeout(() => {
         if (diff > 0) {
           handleReview(0); // Swipe left = wrong
         } else {
@@ -67,7 +68,7 @@ export function FlashcardReview({
       cardRef.current.style.opacity = '0';
     }
 
-    setTimeout(() => {
+    reviewTimeoutRef.current = window.setTimeout(() => {
       onReview(currentFlashcard.id, quality);
 
       if (currentIndex < flashcards.length - 1) {
@@ -83,8 +84,17 @@ export function FlashcardReview({
       } else {
         onComplete();
       }
+      reviewTimeoutRef.current = null;
     }, 300);
   }, [currentFlashcard, currentIndex, flashcards.length, isAnimating, onComplete, onReview]);
+
+  useEffect(() => {
+    return () => {
+      if (reviewTimeoutRef.current !== null) {
+        window.clearTimeout(reviewTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Handle keyboard shortcuts
   useEffect(() => {

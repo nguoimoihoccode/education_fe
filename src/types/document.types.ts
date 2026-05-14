@@ -84,6 +84,46 @@ export interface ImportResult {
   errors: ImportError[];
 }
 
+export interface ConfirmDocumentImportRequest {
+  fileName: string;
+  deckName?: string;
+  deckColor?: string;
+  deckIsPublic?: boolean;
+  topic?: string;
+  flashcards: Array<{
+    id: string;
+    front: string;
+    back: string;
+    pronunciation?: string;
+    example?: string;
+    exampleTranslation?: string;
+    description?: string;
+    notes?: string;
+    difficulty: number;
+  }>;
+}
+
+export interface DocumentConversionResult {
+  id: string;
+  originalName: string;
+  fileType: string;
+  fileSize: number;
+  structureType: string;
+  detectedTopic?: string;
+  usedTopic: string;
+  textLength: number;
+  generatedContent: Array<{
+    contentType: string;
+    name: string;
+    id: string;
+    itemCount: number;
+    createdItems?: string[];
+    details?: Record<string, unknown>;
+  }>;
+  processingTime: number;
+  processedAt: string;
+}
+
 export interface ImportError {
   line: number;
   message: string;

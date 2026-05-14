@@ -65,6 +65,7 @@ export default function LessonView() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_PLAN });
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TODAY_HUB });
             toast.success('Lesson completed! 🎉');
         },
     });

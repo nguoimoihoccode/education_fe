@@ -27,6 +27,7 @@ const LandingPageNew = lazy(() => import('@/pages/landing/LandingPageNew'));
 // Education core
 const Education = lazy(() => import('@/pages/Education'));
 const Today = lazy(() => import('@/pages/Today'));
+const LearningCoach = lazy(() => import('@/pages/LearningCoach'));
 const CourseDetail = lazy(() => import('@/pages/CourseDetail'));
 const LessonView = lazy(() => import('@/pages/LessonView'));
 
@@ -246,6 +247,14 @@ function App() {
                 }
               />
               <Route path="/education" element={<Education />} />
+              <Route
+                path="/learning-coach"
+                element={
+                  <ProtectedRoute>
+                    <LearningCoach />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/education/courses/:id" element={<CourseDetail />} />
               <Route
                 path="/education/lessons/:id"
@@ -424,6 +433,7 @@ function App() {
                 element={<ComingSoon />}
               />
               <Route path="/dashboard-landing" element={<LandingPageNew />} />
+              <Route path="/unauthorized" element={<ComingSoon />} />
               <Route path="/" element={<LandingPageNew />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

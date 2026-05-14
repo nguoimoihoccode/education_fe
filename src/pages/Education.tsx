@@ -59,9 +59,10 @@ export default function Education() {
   const courses: Course[] = coursesData?.items || [];
   const totalPages = coursesData?.totalPages || 1;
   const filteredCourses = courses.filter((course) =>
-    course.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    `${course.title} ${course.language?.name ?? ''}`.toLowerCase().includes(searchQuery.toLowerCase()),
   );
   const pathCourses = filteredCourses.slice(0, 6);
+  const primaryTodayTask = todayPlan?.tasks.find((task) => !task.completed) ?? todayPlan?.tasks[0];
 
   const handlePageChange = (page: number) => {
     setPageByLanguage((previous) => ({ ...previous, [languageKey]: page }));
@@ -139,8 +140,8 @@ export default function Education() {
                     <span><Flame className="h-4 w-4" />{todayPlan.streak.current} ngày liên tiếp</span>
                     <span><Target className="h-4 w-4" />Kỷ lục {todayPlan.streak.longest} ngày</span>
                   </div>
-                  {todayPlan.tasks[0] && (
-                    <Link to={todayPlan.tasks[0].targetUrl} className="edu-primary-action">
+                  {primaryTodayTask && (
+                    <Link to={primaryTodayTask.targetUrl} className="edu-primary-action">
                       Bắt đầu học
                       <ArrowRight className="h-4 w-4" />
                     </Link>

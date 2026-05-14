@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { useAuthStore } from '@/store/auth.store';
 export interface Price {
   symbol: string;
   price?: number;
@@ -58,7 +59,7 @@ export const useWebSocket = ({ symbols, enabled = true }: UseWebSocketOptions) =
   useEffect(() => {
     if (!enabled || symbols.length === 0) return;
 
-    const token = localStorage.getItem('accessToken');
+    const token = useAuthStore.getState().accessToken;
     if (!token) {
       console.warn('No access token found for WebSocket connection');
       return;
@@ -71,7 +72,7 @@ export const useWebSocket = ({ symbols, enabled = true }: UseWebSocketOptions) =
 
     socketRef.current = socket;
 
-    socket.on('connect', () => {
+    const handleConnect = () => {
       setConnected(true);
       console.log('WebSocket connected');
       
@@ -82,27 +83,27 @@ export const useWebSocket = ({ symbols, enabled = true }: UseWebSocketOptions) =
       symbols.forEach(symbol => {
         socket.emit('subscribe-chart', { symbol });
       });
-    });
+    };
 
-    socket.on('disconnect', () => {
+    const handleDisconnect = () => {
       setConnected(false);
       console.log('WebSocket disconnected');
-    });
+    };
 
-    socket.on('connect_error', (error) => {
+    const handleConnectError = (error: Error) => {
       console.error('WebSocket connection error:', error);
       setConnected(false);
-    });
+    };
 
-    socket.on('price-update', (data: Price & { symbol: string }) => {
+    const handlePriceUpdate = (data: Price & { symbol: string }) => {
       setPrices((prev) => {
         const newMap = new Map(prev);
         newMap.set(data.symbol, data);
         return newMap;
       });
-    });
+    };
 
-    socket.on('chart-update', (data: ChartUpdate) => {
+    const handleChartUpdate = (data: ChartUpdate) => {
       setChartUpdates((prev) => {
         const newMap = new Map(prev);
         // Store by symbol and period-interval key
@@ -110,7 +111,13 @@ export const useWebSocket = ({ symbols, enabled = true }: UseWebSocketOptions) =
         newMap.set(key, data);
         return newMap;
       });
-    });
+    };
+
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('connect_error', handleConnectError);
+    socket.on('price-update', handlePriceUpdate);
+    socket.on('chart-update', handleChartUpdate);
 
     return () => {
       if (socketRef.current) {
@@ -118,6 +125,11 @@ export const useWebSocket = ({ symbols, enabled = true }: UseWebSocketOptions) =
         symbols.forEach(symbol => {
           socketRef.current?.emit('unsubscribe-chart', { symbol });
         });
+        socketRef.current.off('connect', handleConnect);
+        socketRef.current.off('disconnect', handleDisconnect);
+        socketRef.current.off('connect_error', handleConnectError);
+        socketRef.current.off('price-update', handlePriceUpdate);
+        socketRef.current.off('chart-update', handleChartUpdate);
         socketRef.current.disconnect();
       }
     };

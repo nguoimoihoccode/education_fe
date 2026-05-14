@@ -25,6 +25,11 @@ const destinations: Array<GlobalSearchDestination & { keywords: string[] }> = [
     keywords: ['ai', 'tutor', 'tro ly', 'gia su'],
   },
   {
+    path: '/learning-coach',
+    label: 'Coach học tập',
+    keywords: ['coach', 'learning coach', 'hoc tap', 'lo trinh', 'ke hoach'],
+  },
+  {
     path: '/leaderboard',
     label: 'Bảng xếp hạng',
     keywords: ['bang xep hang', 'leaderboard', 'rank', 'ranking'],

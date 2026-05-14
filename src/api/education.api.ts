@@ -10,7 +10,9 @@ import type {
     UserStreak,
     UserProgress,
     LearningPlan,
+    LearningCoachSummary,
     TodayPlan,
+    TodayLearningHub,
     CoursesResponse,
     LessonsResponse,
     SubmitExercisesResult,
@@ -125,6 +127,15 @@ export const getTodayPlan = async (): Promise<TodayPlan> => {
     return response.data;
 };
 
+export const getTodayLearningHub = async (): Promise<TodayLearningHub> => {
+    const response = await apiClient.get('/education/today', CACHE_PROFILES.NO_CACHE);
+    return response.data;
+};
+
+export const completeTodayPlanTask = async (taskId: string): Promise<void> => {
+    await apiClient.post(`/education/today-plan/tasks/${taskId}/complete`);
+};
+
 export const getUserStreak = async (): Promise<UserStreak> => {
     const response = await apiClient.get('/education/streak', CACHE_PROFILES.DYNAMIC);
     return response.data;
@@ -132,5 +143,15 @@ export const getUserStreak = async (): Promise<UserStreak> => {
 
 export const getLearningPlan = async (): Promise<LearningPlan> => {
     const response = await apiClient.get('/education/learning-plan', CACHE_PROFILES.USER);
+    return response.data;
+};
+
+export const getLearningCoachSummary = async (): Promise<LearningCoachSummary> => {
+    const response = await apiClient.get('/education/coach/summary', CACHE_PROFILES.NO_CACHE);
+    return response.data;
+};
+
+export const getTodayRecommendations = async (): Promise<LearningPlan> => {
+    const response = await apiClient.get('/education/recommendations/today', CACHE_PROFILES.USER);
     return response.data;
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Settings,
@@ -56,6 +56,7 @@ export default function AdvancedSettings() {
   const [activeSection, setActiveSection] = useState<SectionId>('appearance');
   const [hasChanges, setHasChanges] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
+  const savedToastTimeoutRef = useRef<number | null>(null);
 
   const s = useSettingsStore();
 
@@ -105,8 +106,22 @@ export default function AdvancedSettings() {
   const handleSave = () => {
     setHasChanges(false);
     setShowSavedToast(true);
-    setTimeout(() => setShowSavedToast(false), 2500);
+    if (savedToastTimeoutRef.current !== null) {
+      window.clearTimeout(savedToastTimeoutRef.current);
+    }
+    savedToastTimeoutRef.current = window.setTimeout(() => {
+      setShowSavedToast(false);
+      savedToastTimeoutRef.current = null;
+    }, 2500);
   };
+
+  useEffect(() => {
+    return () => {
+      if (savedToastTimeoutRef.current !== null) {
+        window.clearTimeout(savedToastTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleReset = () => {
     s.resetAppearance();

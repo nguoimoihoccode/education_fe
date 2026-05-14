@@ -46,7 +46,7 @@ describe('ProtectedRoute', () => {
   });
 
   it('renders authenticated users when no roles are required', () => {
-    useAuthStore.setState({ isAuthenticated: true });
+    useAuthStore.setState({ isAuthenticated: true, accessToken: 'access-token' });
 
     renderProtectedRoute();
 
@@ -56,6 +56,7 @@ describe('ProtectedRoute', () => {
   it('renders authenticated users with a matching role', () => {
     useAuthStore.setState({
       isAuthenticated: true,
+      accessToken: 'access-token',
       user: { roles: ['admin'] } as never,
     });
 
@@ -67,6 +68,7 @@ describe('ProtectedRoute', () => {
   it('redirects authenticated users without a required role', () => {
     useAuthStore.setState({
       isAuthenticated: true,
+      accessToken: 'access-token',
       user: { roles: ['student'] } as never,
     });
 

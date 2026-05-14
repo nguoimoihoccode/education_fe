@@ -14,6 +14,7 @@ describe('globalSearch', () => {
     expect(getGlobalSearchDestination('bài tập')?.path).toBe('/quiz');
     expect(getGlobalSearchDestination('tài liệu')?.path).toBe('/flashcards/document-import');
     expect(getGlobalSearchDestination('cộng đồng')?.path).toBe('/community');
+    expect(getGlobalSearchDestination('coach học tập')?.path).toBe('/learning-coach');
   });
 
   it('falls back to education hub for unknown non-empty searches', () => {

@@ -6,15 +6,14 @@ import {
   ImportPreview,
 } from '@/components/document';
 import {
-  uploadDocument,
-  parseDocument,
-  generateImportPreview,
-  executeImport,
+  confirmDocumentImport,
+  previewDocumentImport,
 } from '@/api/document.api';
 import type {
   ImportPreview as ImportPreviewType,
   ImportOptions,
   ImportResult,
+  SuggestedFlashcard,
 } from '@/types/document.types';
 import {
   ArrowLeft,
@@ -55,35 +54,43 @@ export default function DocumentImportPage() {
     includePronunciation: true,
   });
 
-  // Mutations
-  const uploadMutation = useMutation({
-    mutationFn: uploadDocument,
-    onSuccess: () => {
-      toast.success('File uploaded successfully!');
-    },
-    onError: () => toast.error('Failed to upload file'),
-  });
-
-  const parseMutation = useMutation({
-    mutationFn: (fileId: string) => parseDocument(fileId),
-    onSuccess: () => {
-      toast.success('Document parsed successfully!');
-    },
-    onError: () => toast.error('Failed to parse document'),
-  });
-
-  const generatePreviewMutation = useMutation({
-    mutationFn: (fileId: string) => generateImportPreview(fileId),
+  const previewMutation = useMutation({
+    mutationFn: ({ file, options }: { file: File; options: ImportOptions }) =>
+      previewDocumentImport(file, options),
     onSuccess: (previewData) => {
       setPreview(previewData);
       setStep('preview');
+      toast.success(`Generated ${previewData.totalFlashcards} preview cards`);
     },
-    onError: () => toast.error('Failed to generate preview'),
+    onError: () => toast.error('Failed to preview document'),
   });
 
   const importMutation = useMutation({
-    mutationFn: ({ previewId, options }: { previewId: string; options: ImportOptions }) =>
-      executeImport(previewId, options),
+    mutationFn: ({
+      options,
+      selectedCards,
+    }: {
+      options: ImportOptions;
+      selectedCards: SuggestedFlashcard[];
+    }) =>
+      confirmDocumentImport({
+        fileName: preview?.fileName || 'Imported Document',
+        deckName: options.deckName || preview?.fileName?.replace(/\.[^.]+$/, '') || 'Imported Deck',
+        deckColor: options.deckColor || '#8b5cf6',
+        deckIsPublic: false,
+        topic: preview?.parsedContent.metadata.tags?.[0],
+        flashcards: selectedCards.map((card) => ({
+          id: card.id,
+          front: card.front,
+          back: card.back,
+          pronunciation: card.pronunciation,
+          example: card.example,
+          exampleTranslation: card.exampleTranslation,
+          description: card.description,
+          notes: card.notes,
+          difficulty: card.difficulty,
+        })),
+      }),
     onSuccess: (result) => {
       setImportResult(result);
       setStep('complete');
@@ -101,14 +108,7 @@ export default function DocumentImportPage() {
     setIsProcessing(true);
 
     try {
-      // Upload file
-      const uploadedFile = await uploadMutation.mutateAsync(file);
-
-      // Parse document
-      await parseMutation.mutateAsync(uploadedFile.id);
-
-      // Generate preview
-      await generatePreviewMutation.mutateAsync(uploadedFile.id);
+      await previewMutation.mutateAsync({ file, options: importOptions });
     } catch (error) {
       console.error('Error processing file:', error);
     } finally {
@@ -116,13 +116,9 @@ export default function DocumentImportPage() {
     }
   };
 
-  const handleImport = (options: ImportOptions) => {
-    if (!preview) return;
-
-    importMutation.mutate({
-      previewId: preview.fileId,
-      options,
-    });
+  const handleImport = (options: ImportOptions, selectedCards: SuggestedFlashcard[]) => {
+    if (!preview || selectedCards.length === 0) return;
+    importMutation.mutate({ options: { ...importOptions, ...options }, selectedCards });
   };
 
   const handleCancel = () => {

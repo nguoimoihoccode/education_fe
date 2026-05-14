@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Star, Briefcase, BarChart3, Settings,
+  LayoutDashboard, Star, Briefcase, BarChart3, Settings, Brain,
   GraduationCap, Bot, Trophy, Users, Crown, Compass,
 } from 'lucide-react';
 
@@ -26,6 +26,7 @@ export const learningNavSections: NavSection[] = [
         to: '/education',
         matcher: ({ pathname, search }) => pathname === '/education' && search !== '?view=courses',
       },
+      { icon: <Brain size={20} />, label: 'Coach', to: '/learning-coach' },
       {
         icon: <GraduationCap size={20} />,
         label: 'Khóa học',

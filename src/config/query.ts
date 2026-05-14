@@ -28,7 +28,10 @@ export const QUERY_KEYS = {
   USER_PROGRESS: ['user', 'progress'],
   USER_STREAK: ['user', 'streak'],
   LEARNING_PLAN: ['user', 'learning-plan'],
+  LEARNING_COACH: ['user', 'learning-coach'],
+  TODAY_RECOMMENDATIONS: ['user', 'today-recommendations'],
   TODAY_PLAN: ['user', 'today-plan'],
+  TODAY_HUB: ['user', 'today-hub'],
 
   // Flashcard
   FLASHCARD_DECKS: ['flashcard', 'decks'],

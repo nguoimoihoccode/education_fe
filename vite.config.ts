@@ -142,14 +142,20 @@ export default defineConfig({
             return 'vendor-axios';
           }
 
-          // HLS.js — only needed for landing page
+          // HLS.js is dynamically imported only by landing video components.
           if (id.includes('node_modules/hls.js')) {
-            return 'vendor-hls';
+            return 'hls-light';
           }
 
           // Lucide icons
           if (id.includes('node_modules/lucide-react')) {
             return 'vendor-icons';
+          }
+
+          if (id.includes('node_modules/vite-plugin-pwa') ||
+              id.includes('node_modules/workbox-') ||
+              id.includes('node_modules/idb/')) {
+            return 'vendor-pwa';
           }
 
           // All other node_modules
@@ -160,7 +166,7 @@ export default defineConfig({
       },
     },
 
-    // Smaller chunks, better caching
-    chunkSizeWarningLimit: 300,
+    // Keep warnings strict while allowing the lazy HLS decoder chunk.
+    chunkSizeWarningLimit: 350,
   },
 })

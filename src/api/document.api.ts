@@ -1,33 +1,37 @@
-import { apiClient, CACHE_PROFILES } from './client';
+import { apiClient } from './client';
+import {
+  DOCUMENT_IMPORT_CONFIRM_PATH,
+  DOCUMENT_IMPORT_PREVIEW_PATH,
+} from './documentImportPreviewPaths';
 import type {
-  UploadedFile,
   ImportPreview,
   ImportOptions,
   ImportResult,
+  ConfirmDocumentImportRequest,
 } from '@/types/document.types';
 
-export const uploadDocument = async (file: File): Promise<UploadedFile> => {
+export const previewDocumentImport = async (
+  file: File,
+  options: ImportOptions = {},
+): Promise<ImportPreview> => {
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('language', 'zh');
+  formData.append('maxVocabulary', String(options.maxCards ?? 50));
+  formData.append('minWordLength', '1');
 
-  const response = await apiClient.post('/documents/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+  const response = await apiClient.post(DOCUMENT_IMPORT_PREVIEW_PATH, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    cache: false,
   });
   return response.data;
 };
 
-export const parseDocument = async (fileId: string): Promise<void> => {
-  await apiClient.post(`/documents/${fileId}/parse`);
-};
-
-export const generateImportPreview = async (fileId: string): Promise<ImportPreview> => {
-  const response = await apiClient.get(`/documents/${fileId}/preview`, CACHE_PROFILES.NO_CACHE);
-  return response.data;
-};
-
-export const executeImport = async (previewId: string, options: ImportOptions): Promise<ImportResult> => {
-  const response = await apiClient.post(`/documents/${previewId}/import`, options);
+export const confirmDocumentImport = async (
+  payload: ConfirmDocumentImportRequest,
+): Promise<ImportResult> => {
+  const response = await apiClient.post(DOCUMENT_IMPORT_CONFIRM_PATH, payload, {
+    cache: false,
+  });
   return response.data;
 };

@@ -17,6 +17,7 @@ import { getCourseById, enrollCourse, getMyCourses, getLessonsByCourse } from '@
 import { useAuth } from '@/hooks/useAuth';
 import { Pagination } from '@/components/ui';
 import type { CourseLevel, LessonType } from '@/types/education.types';
+import { getCoursePrimaryAction, getLessonTargetUrl } from './courseDetailView';
 import './Education.css';
 
 const levelLabels: Record<CourseLevel, string> = {
@@ -44,6 +45,7 @@ export default function CourseDetail() {
     const { isAuthenticated } = useAuth();
     const [currentPage, setCurrentPage] = useState(1);
     const lessonsPerPage = 10;
+    const syllabusSectionId = 'course-syllabus';
 
     useEffect(() => {
         const animatedBg = document.querySelector('.animated-bg') as HTMLElement;
@@ -95,12 +97,33 @@ export default function CourseDetail() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const handleCourseInfo = () => {
+        document.getElementById(syllabusSectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
     if (isLoadingCourse) return <div className="education-container flex items-center justify-center"><div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div></div>;
     if (!course) return <div className="education-container flex items-center justify-center">Course not found</div>;
 
     const lessons = lessonsData?.items || [];
     const totalLessons = lessonsData?.total || 0;
     const totalPages = lessonsData?.totalPages || 1;
+    const primaryAction = getCoursePrimaryAction({ isAuthenticated, isEnrolled, lessons });
+
+    const handlePrimaryAction = () => {
+        if (primaryAction.type === 'login') {
+            navigate(primaryAction.targetUrl);
+            return;
+        }
+
+        if (primaryAction.type === 'enroll') {
+            handleEnroll();
+            return;
+        }
+
+        if (primaryAction.type === 'lesson') {
+            navigate(primaryAction.targetUrl);
+        }
+    };
 
     return (
         <div className="education-container">
@@ -142,11 +165,20 @@ export default function CourseDetail() {
                                 )}
                             </h1>
                             <div className="flex flex-wrap gap-4 mt-8">
-                                <button className="px-8 py-4 bg-gradient-to-r from-accent-600 to-indigo-600 text-white rounded-xl font-bold flex items-center gap-3 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all">
+                                <button
+                                    type="button"
+                                    onClick={handlePrimaryAction}
+                                    disabled={primaryAction.type === 'none' || enrollMutation.isPending}
+                                    className="px-8 py-4 bg-gradient-to-r from-accent-600 to-indigo-600 text-white rounded-xl font-bold flex items-center gap-3 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-60"
+                                >
                                     <Play className="w-5 h-5 fill-current" />
-                                    Tiếp tục học
+                                    {enrollMutation.isPending ? 'Enrolling...' : primaryAction.label}
                                 </button>
-                                <button className="px-8 py-4 bg-slate-800/80 backdrop-blur-md border border-white/10 text-white rounded-xl font-bold flex items-center gap-3 hover:bg-white/10 transition-all">
+                                <button
+                                    type="button"
+                                    onClick={handleCourseInfo}
+                                    className="px-8 py-4 bg-slate-800/80 backdrop-blur-md border border-white/10 text-white rounded-xl font-bold flex items-center gap-3 hover:bg-white/10 transition-all"
+                                >
                                     <BookOpen className="w-5 h-5" />
                                     Thông tin khóa học
                                 </button>
@@ -189,7 +221,7 @@ export default function CourseDetail() {
                 </section>
 
                 {/* Syllabus Content */}
-                <section className="mt-12">
+                <section id={syllabusSectionId} className="mt-12 scroll-mt-24">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                             <div>
                             <h2 className="text-3xl font-black font-headline mb-3 text-white">Giáo trình khóa học</h2>
@@ -216,6 +248,7 @@ export default function CourseDetail() {
                                         const config = typeConfig[lesson.type as LessonType] || typeConfig.vocabulary;
                                         const Icon = config.icon;
                                         const locked = !isEnrolled;
+                                        const lessonTargetUrl = getLessonTargetUrl(isEnrolled, lesson.id);
                                         
                                         // Status logic mimicking Stitch design
                                         const statusClass = locked ? "opacity-50 hover:opacity-75" : "hover:bg-white/5";
@@ -237,19 +270,28 @@ export default function CourseDetail() {
                                                             </p>
                                                         </div>
                                                     </div>
-                                                <Link to={locked ? '#' : `/education/lessons/${lesson.id}`} className="shrink-0 flex items-center justify-center">
-                                                    {locked ? (
-                                                        <span className="text-slate-600"><Lock className="w-5 h-5" /></span>
-                                                    ) : idx === 0 ? (
-                                                        <span className="w-10 h-10 rounded-full bg-accent-600 text-white flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-110 transition-transform">
-                                                            <Play className="w-5 h-5 fill-current ml-0.5" />
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-slate-500 group-hover:text-accent-400 transition-colors">
-                                                            <Play className="w-8 h-8" />
-                                                        </span>
-                                                    )}
-                                                </Link>
+                                                {lessonTargetUrl ? (
+                                                    <Link to={lessonTargetUrl} className="shrink-0 flex items-center justify-center" aria-label={`Mở bài học ${lesson.title}`}>
+                                                        {idx === 0 ? (
+                                                            <span className="w-10 h-10 rounded-full bg-accent-600 text-white flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-110 transition-transform">
+                                                                <Play className="w-5 h-5 fill-current ml-0.5" />
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-slate-500 group-hover:text-accent-400 transition-colors">
+                                                                <Play className="w-8 h-8" />
+                                                            </span>
+                                                        )}
+                                                    </Link>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleEnroll}
+                                                        className="shrink-0 flex items-center justify-center text-slate-600 hover:text-emerald-400 transition-colors"
+                                                        aria-label="Enroll để mở bài học"
+                                                    >
+                                                        <Lock className="w-5 h-5" />
+                                                    </button>
+                                                )}
                                             </div>
                                         );
                                     })}

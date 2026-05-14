@@ -1,29 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { ArrowRight, BookOpen, Flame, GraduationCap, RotateCcw, Sparkles, Target, Trophy } from 'lucide-react';
+import { ArrowRight, BookOpen, Flame, RotateCcw, Sparkles, Target, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getLearningPlan } from '@/api/education.api';
+import { getTodayLearningHub } from '@/api/education.api';
 import { QUERY_KEYS } from '@/config';
-import type { LearningPlanAction } from '@/types/education.types';
+import type { TodayLearningHubTask } from '@/types/education.types';
 import './Education.css';
 
-const actionIcons: Record<LearningPlanAction['type'], ReactNode> = {
-  lesson: <BookOpen className="h-5 w-5" />,
-  flashcard_review: <RotateCcw className="h-5 w-5" />,
-  quiz_retry: <Target className="h-5 w-5" />,
+const actionIcons: Record<TodayLearningHubTask['type'], ReactNode> = {
+  continue_lesson: <BookOpen className="h-5 w-5" />,
+  review_vocabulary: <RotateCcw className="h-5 w-5" />,
+  fix_mistakes: <Target className="h-5 w-5" />,
+  quick_quiz: <Trophy className="h-5 w-5" />,
 };
 
 export default function Today() {
-  const { data: plan, isLoading } = useQuery({
-    queryKey: QUERY_KEYS.LEARNING_PLAN,
-    queryFn: getLearningPlan,
+  const { data: hub, isError, isLoading, refetch } = useQuery({
+    queryKey: QUERY_KEYS.TODAY_HUB,
+    queryFn: getTodayLearningHub,
   });
-  const minutePercent = plan
-    ? Math.min(100, Math.round((plan.dailyGoal.completedMinutes / plan.dailyGoal.targetMinutes) * 100))
+  const minutePercent = hub && hub.dailyGoalMinutes > 0
+    ? Math.min(100, Math.round((hub.minutesLearnedToday / hub.dailyGoalMinutes) * 100))
     : 0;
-  const reviewPercent = plan
-    ? Math.min(100, Math.round((plan.dailyGoal.completedReviews / plan.dailyGoal.targetReviews) * 100))
+  const taskPercent = hub && hub.totalTasks > 0
+    ? Math.min(100, Math.round((hub.completedTasks / hub.totalTasks) * 100))
     : 0;
+  const primaryTask = hub?.primaryTask;
 
   return (
     <div className="education-container education-path-page min-h-screen">
@@ -47,7 +49,15 @@ export default function Today() {
           <div className="edu-loading-path">
             <div className="h-10 w-10 rounded-full border-2 border-emerald-400/30 border-t-emerald-500 animate-spin" />
           </div>
-        ) : plan ? (
+        ) : isError ? (
+          <div className="edu-empty-path">
+            <BookOpen className="mx-auto mb-4 h-10 w-10 text-slate-400" />
+            <p>Không tải được kế hoạch hôm nay.</p>
+            <button type="button" className="edu-primary-action" onClick={() => refetch()}>
+              Thử lại
+            </button>
+          </div>
+        ) : hub ? (
           <>
             <main className="edu-learning-grid">
               <section className="edu-next-lesson">
@@ -55,37 +65,38 @@ export default function Today() {
                   <Sparkles className="h-4 w-4" />
                   Việc nên làm trước
                 </div>
-                <h2>{plan.recommendedActions[0]?.title || 'Bắt đầu một phiên học ngắn'}</h2>
+                <h2>{primaryTask?.title || 'Hoàn thành quiz ngắn hôm nay'}</h2>
                 <p>
-                  {plan.recommendedActions[0]?.reason ||
-                    'Chọn một bài học hoặc quiz ngắn để duy trì nhịp học.'}
+                  {primaryTask?.description ||
+                    'Bạn đã xong các task chính. Làm thêm một quiz ngắn để củng cố kiến thức.'}
                 </p>
                 <div className="edu-lesson-meta">
                   <span>
                     <Flame className="h-4 w-4" />
-                    {plan.streak.current} ngày streak
+                    {hub.streak.current} ngày streak
                   </span>
                   <span>
                     <Trophy className="h-4 w-4" />
-                    Level {plan.streak.level} • {plan.streak.xp} XP
+                    {hub.xpToday} XP
                   </span>
                 </div>
-                <Link to={plan.recommendedActions[0]?.route || '/education'} className="edu-primary-action">
-                  Bắt đầu ngay
+                {hub.streak.isAtRisk && <p>Hoàn thành một task để giữ streak hôm nay.</p>}
+                <Link to={primaryTask?.targetUrl || '/quiz'} className="edu-primary-action">
+                  {primaryTask?.ctaLabel || 'Làm quiz'}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </section>
 
               <aside className="edu-study-today">
-                <GoalCard title="Mục tiêu học" value={`${plan.dailyGoal.completedMinutes}/${plan.dailyGoal.targetMinutes} phút`} percent={minutePercent} />
-                <GoalCard title="Ôn tập" value={`${plan.dueReviews.count} đến hạn`} percent={reviewPercent} />
+                <GoalCard title="Mục tiêu học" value={`${hub.minutesLearnedToday}/${hub.dailyGoalMinutes} phút`} percent={minutePercent} />
+                <GoalCard title="Task hôm nay" value={`${hub.completedTasks}/${hub.totalTasks} task`} percent={taskPercent} />
                 <Link to="/quiz/stats" className="edu-study-card">
                   <div className="edu-study-icon"><Flame className="h-5 w-5" /></div>
                   <div>
                     <h3>Chuỗi học</h3>
-                    <p>Kỷ lục {plan.streak.longest} ngày</p>
+                    <p>Kỷ lục {hub.streak.longest} ngày</p>
                   </div>
-                  <span>{plan.streak.current} ngày</span>
+                  <span>{hub.streak.current} ngày</span>
                 </Link>
               </aside>
             </main>
@@ -98,62 +109,19 @@ export default function Today() {
                 </div>
               </div>
               <div className="education-learning-path">
-                {plan.recommendedActions.map((action) => (
-                  <Link key={`${action.type}-${action.route}`} to={action.route} className="path-node active">
-                    <div className="path-node-index">{actionIcons[action.type]}</div>
+                {hub.tasks.map((task) => (
+                  <Link key={task.id} to={task.targetUrl} className={`path-node ${task.completed ? '' : 'active'}`}>
+                    <div className="path-node-index">{actionIcons[task.type]}</div>
                     <div>
-                      <p className="path-node-step">Ưu tiên {action.priority}</p>
-                      <h3>{action.title}</h3>
-                      <p>{action.reason}</p>
+                      <p className="path-node-step">Ưu tiên {task.priority} • {task.estimatedMinutes} phút</p>
+                      <h3>{task.title}</h3>
+                      <p>{task.description}</p>
                     </div>
-                    <span>Làm ngay</span>
+                    <span>{task.completed ? 'Đã xong' : task.ctaLabel}</span>
                   </Link>
                 ))}
               </div>
             </section>
-
-            {plan.nextLesson && (
-              <section className="edu-course-library">
-                <div className="edu-library-header">
-                  <div>
-                    <h2>Bài học tiếp theo</h2>
-                    <p>{plan.nextLesson.courseTitle}</p>
-                  </div>
-                </div>
-                <Link to={plan.nextLesson.route} className="edu-course-card">
-                  <div className="edu-course-flag"><GraduationCap className="h-5 w-5" /></div>
-                  <div>
-                    <p>{plan.nextLesson.estimatedMinutes} phút</p>
-                    <h3>{plan.nextLesson.title}</h3>
-                    <span>Tiếp tục khóa học đang học</span>
-                  </div>
-                </Link>
-              </section>
-            )}
-
-            {plan.weakQuizzes.length > 0 && (
-              <section className="edu-course-library">
-                <div className="edu-library-header">
-                  <div>
-                    <h2>Điểm yếu cần luyện</h2>
-                    <p>Những quiz điểm thấp được đưa vào kế hoạch để bạn ôn đúng chỗ.</p>
-                  </div>
-                </div>
-                <div className="edu-course-grid">
-                  {plan.weakQuizzes.map((quiz) => (
-                    <Link key={quiz.quizId} to={quiz.route} className="edu-course-card">
-                      <div className="edu-course-flag"><Target className="h-5 w-5" /></div>
-                      <div>
-                        <p>{quiz.topic}</p>
-                        <h3>{quiz.title}</h3>
-                        <span>{quiz.recommendation}</span>
-                      </div>
-                      <strong className="text-amber-300">{quiz.score}%</strong>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
           </>
         ) : (
           <div className="edu-empty-path">

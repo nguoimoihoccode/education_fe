@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import Hls from 'hls.js';
+import type Hls from 'hls.js';
 
 interface HlsVideoProps {
   src: string;
@@ -15,25 +15,38 @@ const HlsVideo = ({ src, className = '', style }: HlsVideoProps) => {
     if (!video) return;
 
     let hls: Hls | null = null;
+    let disposed = false;
+    const playVideo = () => {
+      video.play().catch(() => {});
+    };
 
-    if (Hls.isSupported()) {
-      hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: false,
-      });
-      hls.loadSource(src);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(() => {});
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = src;
-      video.addEventListener('loadedmetadata', () => {
-        video.play().catch(() => {});
-      });
-    }
+    const loadHls = async () => {
+      const { default: Hls } = await import('hls.js/light');
+
+      if (disposed) return;
+
+      if (Hls.isSupported()) {
+        const hlsInstance = new Hls({
+          enableWorker: true,
+          lowLatencyMode: false,
+        });
+        hls = hlsInstance;
+        hlsInstance.loadSource(src);
+        hlsInstance.attachMedia(video);
+        hlsInstance.on(Hls.Events.MANIFEST_PARSED, playVideo);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src;
+        video.addEventListener('loadedmetadata', playVideo);
+      }
+    };
+
+    void loadHls();
 
     return () => {
+      disposed = true;
+      video.removeEventListener('loadedmetadata', playVideo);
+      video.removeAttribute('src');
+      video.load();
       if (hls) {
         hls.destroy();
       }

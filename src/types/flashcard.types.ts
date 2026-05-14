@@ -75,7 +75,8 @@ export interface ReviewSession {
 export interface ReviewResult {
   flashcardId: string;
   quality: number;
-  correct: boolean;
+  correct?: boolean;
+  isCorrect?: boolean;
   timeSpent: number;
 }
 
@@ -170,6 +171,8 @@ export interface StartReviewSessionDto {
 
 export interface CompleteReviewSessionDto {
   sessionId: string;
+  results?: ReviewResult[];
+  skippedCards?: number;
 }
 
 export interface ImportFromVocabularyDto {
