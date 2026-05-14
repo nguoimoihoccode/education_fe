@@ -11,7 +11,7 @@ const HERO_VIDEO_URL =
 
 const Hero = () => {
   return (
-    <section className="relative overflow-visible min-h-screen" style={{ height: 1000 }} id="home">
+    <section className="relative min-h-[760px] overflow-hidden lg:min-h-screen" id="home">
       <img
         src={heroFallbackImage}
         alt=""
@@ -23,15 +23,15 @@ const Hero = () => {
         loop
         muted
         playsInline
-        className="absolute left-0 w-full h-auto object-contain z-0"
-        style={{ top: '20%' }}
+        className="absolute left-1/2 top-[18%] w-[1200px] max-w-none -translate-x-1/2 object-contain z-0 opacity-90 md:w-full"
         poster={heroFallbackImage}
       >
         <source src={HERO_VIDEO_URL} type="video/mp4" />
       </video>
 
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/5 z-0" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/35 to-black/80 z-0" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.35)_72%)] z-0" />
 
       {/* Bottom gradient fade */}
       <div
@@ -43,7 +43,7 @@ const Hero = () => {
       />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center h-full" style={{ paddingTop: 150 }}>
+      <div className="relative z-10 flex min-h-[760px] flex-col items-center text-center lg:min-h-screen" style={{ paddingTop: 150 }}>
         {/* Badge */}
         <div className="liquid-glass rounded-full px-1 py-1 inline-flex items-center gap-2 mb-8">
           <span className="bg-white text-black rounded-full px-3 py-1 text-xs font-semibold font-body">
@@ -57,7 +57,7 @@ const Hero = () => {
         {/* Heading */}
         <BlurText
           text="Chinh Phục Ngôn Ngữ Cùng AI"
-          className="text-6xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.8] max-w-3xl tracking-normal"
+          className="text-5xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.85] max-w-3xl tracking-normal drop-shadow-[0_8px_32px_rgba(0,0,0,0.55)]"
           delay={100}
           direction="bottom"
           as="h1"
@@ -68,7 +68,7 @@ const Hero = () => {
           initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
           animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6, ease: 'easeOut' }}
-          className="text-sm md:text-base text-white font-body font-light leading-tight max-w-md mt-8"
+          className="text-sm md:text-base text-white/90 font-body font-light leading-relaxed max-w-xl mt-8 drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]"
         >
           Học ngôn ngữ thông minh hơn với AI Tutor, Flashcards thích ứng,
           và hệ thống lặp lại ngắt quãng. Hành trình chinh phục của bạn bắt đầu tại đây.
@@ -79,18 +79,18 @@ const Hero = () => {
           initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
           animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
           transition={{ delay: 1.1, duration: 0.6, ease: 'easeOut' }}
-          className="flex items-center gap-4 mt-8"
+          className="flex flex-col items-center gap-4 mt-8 sm:flex-row"
         >
           <Link
             to="/register"
-            className="liquid-glass-strong rounded-full px-5 py-2.5 text-white font-body font-medium text-sm inline-flex items-center gap-2 lp-btn-glass"
+            className="rounded-full bg-white px-6 py-3 text-black font-body font-semibold text-sm inline-flex min-h-12 items-center gap-2 shadow-[0_18px_50px_rgba(255,255,255,0.22)] transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             Đăng ký miễn phí
             <ArrowUpRight className="w-4 h-4" />
           </Link>
           <Link
             to="/education"
-            className="text-white font-body font-medium text-sm inline-flex items-center gap-2 hover:text-white/80 transition-colors"
+            className="rounded-full px-4 py-3 text-white font-body font-medium text-sm inline-flex min-h-12 items-center gap-2 hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
           >
             <Play className="w-4 h-4 fill-white" />
             Khám phá khóa học

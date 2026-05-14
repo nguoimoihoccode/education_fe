@@ -36,13 +36,13 @@ const CtaFooter = () => {
         <div className="flex items-center gap-4">
           <Link
             to="/register"
-            className="liquid-glass-strong rounded-full px-6 py-3 text-white font-body font-medium text-sm lp-btn-glass"
+            className="liquid-glass-strong rounded-full px-6 py-3 text-white font-body font-medium text-sm lp-btn-glass focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
           >
             Đăng ký miễn phí
           </Link>
           <Link
             to="/premium"
-            className="bg-white text-black rounded-full px-6 py-3 font-body font-medium text-sm lp-btn-white"
+            className="bg-white text-black rounded-full px-6 py-3 font-body font-medium text-sm lp-btn-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
           >
             Xem gói Premium
           </Link>
@@ -55,15 +55,15 @@ const CtaFooter = () => {
               © 2026 EduPro Learning Platform. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <a href="#" className="text-white/40 text-xs font-body hover:text-white/70 transition-colors">
+              <Link to="/coming-soon" className="text-white/40 text-xs font-body hover:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
                 Chính sách bảo mật
-              </a>
-              <a href="#" className="text-white/40 text-xs font-body hover:text-white/70 transition-colors">
+              </Link>
+              <Link to="/coming-soon" className="text-white/40 text-xs font-body hover:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
                 Điều khoản
-              </a>
-              <a href="#" className="text-white/40 text-xs font-body hover:text-white/70 transition-colors">
+              </Link>
+              <Link to="/coming-soon" className="text-white/40 text-xs font-body hover:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
                 Liên hệ
-              </a>
+              </Link>
             </div>
           </div>
         </div>

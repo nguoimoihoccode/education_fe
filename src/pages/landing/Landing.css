@@ -131,6 +131,16 @@
   height: auto;
 }
 
+.landing-page-root a,
+.landing-page-root button {
+  cursor: pointer;
+}
+
+.landing-page-root a:focus-visible,
+.landing-page-root button:focus-visible {
+  outline: none;
+}
+
 /* Smooth scrollbar for landing page */
 .landing-page-root::-webkit-scrollbar {
   width: 6px;

@@ -1,5 +1,6 @@
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import LearningPreview from './components/LearningPreview';
 import StartSection from './components/StartSection';
 import FeaturesChess from './components/FeaturesChess';
 import FeaturesGrid from './components/FeaturesGrid';
@@ -14,6 +15,7 @@ const LandingPageNew = () => {
       <div className="relative z-10">
         <Navbar />
         <Hero />
+        <LearningPreview />
         <div className="bg-black">
           <StartSection />
           <FeaturesChess />
