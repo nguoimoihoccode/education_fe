@@ -13,7 +13,12 @@ import {
   Check,
   Rocket,
   Languages,
+  Sprout,
+  Coffee,
+  Gem,
+  Flame,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import './Education.css';
 
@@ -30,11 +35,11 @@ const LANGUAGES = [
   { id: 'vietnamese', label: 'Vietnamese', flag: '🇻🇳', popular: false },
 ];
 
-const SKILL_LEVELS = [
-  { id: 'beginner', label: 'Beginner', icon: '🌱', description: 'I\'m just starting out' },
-  { id: 'elementary', label: 'Elementary', icon: '📘', description: 'I know some basics' },
-  { id: 'intermediate', label: 'Intermediate', icon: '📗', description: 'I can hold a conversation' },
-  { id: 'advanced', label: 'Advanced', icon: '📕', description: 'I\'m near fluency' },
+const SKILL_LEVELS: Array<{ id: string; label: string; icon: LucideIcon; description: string }> = [
+  { id: 'beginner', label: 'Beginner', icon: Sprout, description: 'I\'m just starting out' },
+  { id: 'elementary', label: 'Elementary', icon: BookOpen, description: 'I know some basics' },
+  { id: 'intermediate', label: 'Intermediate', icon: GraduationCap, description: 'I can hold a conversation' },
+  { id: 'advanced', label: 'Advanced', icon: Trophy, description: 'I\'m near fluency' },
 ];
 
 const GOALS = [
@@ -46,11 +51,11 @@ const GOALS = [
   { id: 'social', label: 'Social', icon: Languages, description: 'Connect with people globally' },
 ];
 
-const DAILY_TIMES = [
-  { id: '5', label: '5 min', description: 'Casual', icon: '☕' },
-  { id: '15', label: '15 min', description: 'Regular', icon: '📖' },
-  { id: '30', label: '30 min', description: 'Serious', icon: '🔥' },
-  { id: '60', label: '60 min', description: 'Intense', icon: '💎' },
+const DAILY_TIMES: Array<{ id: string; label: string; description: string; icon: LucideIcon }> = [
+  { id: '5', label: '5 min', description: 'Casual', icon: Coffee },
+  { id: '15', label: '15 min', description: 'Regular', icon: BookOpen },
+  { id: '30', label: '30 min', description: 'Serious', icon: Flame },
+  { id: '60', label: '60 min', description: 'Intense', icon: Gem },
 ];
 
 const TOTAL_STEPS = 5;
@@ -187,6 +192,7 @@ export default function Onboarding() {
                 <div className="space-y-3">
                   {SKILL_LEVELS.map((level) => {
                     const selected = skillLevel === level.id;
+                    const LevelIcon = level.icon;
                     return (
                       <button
                         key={level.id}
@@ -197,7 +203,9 @@ export default function Onboarding() {
                             : 'bg-slate-800/60 border-white/5 hover:border-white/10 hover:bg-white/[0.02]'
                         }`}
                       >
-                        <span className="text-3xl">{level.icon}</span>
+                        <div className={`grid h-11 w-11 place-items-center rounded-xl ${selected ? 'bg-accent-600' : 'bg-slate-700'}`}>
+                          <LevelIcon className="h-5 w-5 text-white" />
+                        </div>
                         <div className="flex-1">
                           <p className={`text-base font-bold ${selected ? 'text-white' : 'text-slate-300'}`}>{level.label}</p>
                           <p className="text-xs text-slate-500 mt-0.5">{level.description}</p>
@@ -259,6 +267,7 @@ export default function Onboarding() {
                 <div className="grid grid-cols-2 gap-4">
                   {DAILY_TIMES.map((time) => {
                     const selected = dailyTime === time.id;
+                    const TimeIcon = time.icon;
                     return (
                       <button
                         key={time.id}
@@ -269,7 +278,9 @@ export default function Onboarding() {
                             : 'bg-slate-800/60 border-white/5 hover:border-white/10 hover:bg-white/[0.02]'
                         }`}
                       >
-                        <span className="text-4xl">{time.icon}</span>
+                        <div className={`grid h-14 w-14 place-items-center rounded-2xl ${selected ? 'bg-accent-600' : 'bg-slate-700'}`}>
+                          <TimeIcon className="h-7 w-7 text-white" />
+                        </div>
                         <div>
                           <p className={`text-xl font-black font-mono ${selected ? 'text-white' : 'text-slate-300'}`}>{time.label}</p>
                           <p className="text-xs text-slate-500 font-bold mt-1">{time.description}</p>

@@ -401,7 +401,7 @@ export default function PremiumUpgrade() {
             </div>
             <div className="bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-center">
               <div className="text-3xl font-black font-mono text-emerald-400">4.9</div>
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">App Rating ⭐</div>
+              <div className="inline-flex items-center justify-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">App Rating <Star className="h-3 w-3 text-amber-400" /></div>
             </div>
             <div className="bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-center">
               <div className="text-3xl font-black font-mono text-amber-400">98%</div>

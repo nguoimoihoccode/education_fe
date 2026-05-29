@@ -877,24 +877,93 @@
     background-color: var(--edu-surface-muted);
 }
 
+.education-container:not(.education-path-page) .bg-white\/10,
+.education-container:not(.education-path-page) .bg-white\/20 {
+    background-color: rgba(51, 65, 85, 0.82);
+}
+
+.education-container:not(.education-path-page) .bg-slate-800\/50,
+.education-container:not(.education-path-page) .bg-slate-800\/80,
+.education-container:not(.education-path-page) .bg-slate-900\/95,
+.education-container:not(.education-path-page) .bg-black\/20,
+.education-container:not(.education-path-page) .bg-black\/40 {
+    background-color: var(--edu-surface-readable);
+}
+
 .education-container:not(.education-path-page) .border-white\/5,
-.education-container:not(.education-path-page) .border-white\/10 {
+.education-container:not(.education-path-page) .border-white\/10,
+.education-container:not(.education-path-page) .border-white\/15,
+.education-container:not(.education-path-page) .border-white\/20 {
     border-color: var(--edu-border-readable-weak);
 }
 
 .education-container:not(.education-path-page) .text-slate-300,
-.education-container:not(.education-path-page) .text-slate-400 {
+.education-container:not(.education-path-page) .text-slate-400,
+.education-container:not(.education-path-page) .text-gray-300,
+.education-container:not(.education-path-page) .text-gray-400 {
     color: var(--edu-text-muted-readable);
 }
 
 .education-container:not(.education-path-page) .text-slate-500,
-.education-container:not(.education-path-page) .text-slate-600 {
+.education-container:not(.education-path-page) .text-slate-600,
+.education-container:not(.education-path-page) .text-slate-700,
+.education-container:not(.education-path-page) .text-gray-500,
+.education-container:not(.education-path-page) .text-gray-600 {
     color: var(--edu-text-subtle-readable);
 }
 
 .education-container:not(.education-path-page) input::placeholder,
-.education-container:not(.education-path-page) textarea::placeholder {
+.education-container:not(.education-path-page) textarea::placeholder,
+.education-container:not(.education-path-page) .placeholder-slate-400::placeholder,
+.education-container:not(.education-path-page) .placeholder-slate-500::placeholder,
+.education-container:not(.education-path-page) .placeholder-slate-600::placeholder,
+.education-container:not(.education-path-page) .placeholder\:text-slate-700::placeholder,
+.education-container:not(.education-path-page) .placeholder\:text-gray-500::placeholder {
     color: var(--edu-text-subtle-readable);
+}
+
+.education-container:not(.education-path-page) .hover\:bg-white\/5:hover,
+.education-container:not(.education-path-page) .hover\:bg-white\/10:hover,
+.education-container:not(.education-path-page) .hover\:bg-white\/20:hover {
+    background-color: rgba(71, 85, 105, 0.9);
+}
+
+.education-container:not(.education-path-page) .hover\:border-white\/20:hover,
+.education-container:not(.education-path-page) .hover\:border-accent-500\/30:hover {
+    border-color: rgba(167, 139, 250, 0.5);
+}
+
+.education-container:not(.education-path-page) button,
+.education-container:not(.education-path-page) a[role="button"],
+.education-container:not(.education-path-page) [class*="hover:"] {
+    cursor: pointer;
+}
+
+.education-container:not(.education-path-page) button:focus-visible,
+.education-container:not(.education-path-page) a:focus-visible,
+.education-container:not(.education-path-page) input:focus-visible,
+.education-container:not(.education-path-page) textarea:focus-visible,
+.education-container:not(.education-path-page) select:focus-visible {
+    outline: 2px solid rgba(34, 211, 238, 0.85);
+    outline-offset: 2px;
+}
+
+/* Page headers sit outside cards, so make their title/subtitle contrast explicit. */
+.education-container:not(.education-path-page) header h1,
+.education-container:not(.education-path-page) header h2,
+.education-container:not(.education-path-page) header h3 {
+    color: var(--edu-text-readable);
+}
+
+.education-container:not(.education-path-page) header p,
+.education-container:not(.education-path-page) header span:not([class*="text-accent"]):not([class*="text-emerald"]):not([class*="text-amber"]):not([class*="text-rose"]):not([class*="text-red"]):not([class*="text-blue"]):not([class*="text-fuchsia"]) {
+    color: var(--edu-text-muted-readable);
+}
+
+.education-container:not(.education-path-page) .font-headline.text-transparent.bg-clip-text,
+.education-container:not(.education-path-page) .font-headline.bg-clip-text.text-transparent {
+    --tw-gradient-from: #ffffff var(--tw-gradient-from-position);
+    --tw-gradient-to: #e2e8f0 var(--tw-gradient-to-position);
 }
 
 /* Card with overflow hidden (for images, gradients) */

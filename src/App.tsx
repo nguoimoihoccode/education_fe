@@ -31,6 +31,11 @@ const Today = lazy(() => import('@/pages/Today'));
 const LearningCoach = lazy(() => import('@/pages/LearningCoach'));
 const CourseDetail = lazy(() => import('@/pages/CourseDetail'));
 const LessonView = lazy(() => import('@/pages/LessonView'));
+const Slides = lazy(() => import('@/pages/Slides'));
+const SlideCreate = lazy(() => import('@/pages/SlideCreate'));
+const SlideEdit = lazy(() => import('@/pages/SlideEdit'));
+const SlidePresent = lazy(() => import('@/pages/SlidePresent'));
+const SlideDemo = lazy(() => import('@/pages/SlideDemo'));
 
 // Flashcards
 const FlashcardDecks = lazy(() => import('@/pages/FlashcardDecks'));
@@ -265,6 +270,11 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/education/slides" element={<ProtectedRoute><Slides /></ProtectedRoute>} />
+              <Route path="/education/slides/create" element={<ProtectedRoute><SlideCreate /></ProtectedRoute>} />
+              <Route path="/education/slides/demo" element={<ProtectedRoute><SlideDemo /></ProtectedRoute>} />
+              <Route path="/education/slides/:id/edit" element={<ProtectedRoute><SlideEdit /></ProtectedRoute>} />
+              <Route path="/education/slides/:id/present" element={<ProtectedRoute><SlidePresent /></ProtectedRoute>} />
               <Route
                 path="/flashcards"
                 element={

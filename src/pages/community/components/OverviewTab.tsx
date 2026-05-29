@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import {
   Users, MessageSquare, BookOpen, Calendar, Flame,
   ChevronRight, ArrowRight, Clock, Trophy, Eye, Heart,
-  Award, Loader2,
+  Award, Loader2, Pin, CheckCircle,
 } from 'lucide-react';
 import type { StudyGroup, CommunityEvent, ForumThread, TopMember } from '@/api/community.api';
 import { GroupCard, QuickStat, EmptyState } from './SharedComponents';
@@ -46,7 +46,7 @@ export default function OverviewTab({
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">🔥 Active Challenge</span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20"><Flame className="h-3 w-3" /> Active Challenge</span>
               </div>
               <h3 className="text-xl font-black font-headline text-white mb-1">{events[0].title}</h3>
               <p className="text-sm text-slate-400 mb-2">{events[0].description}</p>
@@ -64,7 +64,7 @@ export default function OverviewTab({
                   : 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:scale-[1.02]'
               }`}
             >
-              {events[0].isRegistered ? '✓ Joined' : 'Join Challenge'}
+              {events[0].isRegistered ? <><CheckCircle className="h-4 w-4" /> Joined</> : 'Join Challenge'}
             </button>
           </div>
         </div>
@@ -158,8 +158,8 @@ export default function OverviewTab({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-white truncate flex items-center gap-2">
-                      {thread.isPinned && <span className="text-amber-400">📌</span>}
-                      {thread.isSolved && <span className="text-emerald-400">✅</span>}
+                      {thread.isPinned && <Pin className="h-3.5 w-3.5 text-amber-400" />}
+                      {thread.isSolved && <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />}
                       {thread.title}
                     </p>
                     <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-500 font-bold">

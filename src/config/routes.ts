@@ -11,6 +11,10 @@ export const ROUTES = {
   COURSES: '/education',
   COURSE_DETAIL: (id: string) => `/education/courses/${id}`,
   LESSON: (id: string) => `/education/lessons/${id}`,
+  SLIDES: '/education/slides',
+  SLIDE_CREATE: '/education/slides/create',
+  SLIDE_EDIT: (id: string) => `/education/slides/${id}/edit`,
+  SLIDE_PRESENT: (id: string) => `/education/slides/${id}/present`,
   TODAY: '/today',
 
   // Flashcard routes
@@ -51,6 +55,7 @@ export const ROUTE_TITLES: Record<string, string> = {
   [ROUTES.FORGOT_PASSWORD]: 'Quên mật khẩu',
   [ROUTES.COURSES]: 'Khóa học',
   [ROUTES.TODAY]: 'Hôm nay',
+  [ROUTES.SLIDES]: 'AI Slide Studio',
   [ROUTES.FLASHCARDS]: 'Flashcards',
   [ROUTES.FLASHCARD_DECKS]: 'Flashcard Decks',
   [ROUTES.FLASHCARD_REVIEW]: 'Flashcard Review',

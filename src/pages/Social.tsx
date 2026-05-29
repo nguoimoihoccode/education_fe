@@ -18,6 +18,8 @@ import {
   Calendar,
   ThumbsUp,
   Globe,
+  Award,
+  HelpCircle,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import {
@@ -62,11 +64,11 @@ interface Comment {
 }
 
 const FEED_FILTERS = [
-  { id: 'all', label: 'All' },
-  { id: 'achievement', label: '🏅 Achievements' },
-  { id: 'question', label: '❓ Questions' },
-  { id: 'share', label: '📚 Resources' },
-  { id: 'milestone', label: '🔥 Milestones' },
+  { id: 'all', label: 'All', icon: Globe },
+  { id: 'achievement', label: 'Achievements', icon: Award },
+  { id: 'question', label: 'Questions', icon: HelpCircle },
+  { id: 'share', label: 'Resources', icon: BookOpen },
+  { id: 'milestone', label: 'Milestones', icon: Flame },
 ];
 
 // Map API response to local post format
@@ -192,7 +194,7 @@ export default function Social() {
           // Also add locally for instant UI feedback
           const newPost: SocialPost = {
             id: Math.random().toString(36).substr(2, 9),
-            author: { name: user?.displayName || 'You', level: 15, badge: '🔥' },
+            author: { name: user?.displayName || 'You', level: 15, badge: 'streak' },
             content: newPostText,
             likes: 0,
             comments: [],
@@ -296,19 +298,23 @@ export default function Social() {
 
             {/* Feed Filters */}
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-              {FEED_FILTERS.map((f) => (
+              {FEED_FILTERS.map((f) => {
+                const FilterIcon = f.icon;
+                return (
                 <button
                   key={f.id}
                   onClick={() => setFeedFilter(f.id)}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                  className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                     feedFilter === f.id
                       ? 'bg-accent-600 text-white shadow-[0_0_12px_rgba(139,92,246,0.3)]'
                       : 'bg-slate-800/60 text-slate-400 hover:text-white hover:bg-white/5 border border-white/5'
                   }`}
                 >
+                  <FilterIcon className="h-3.5 w-3.5" />
                   {f.label}
                 </button>
-              ))}
+              );
+              })}
             </div>
 
             {/* Posts */}
@@ -331,7 +337,7 @@ export default function Social() {
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-bold text-white">{post.author.name}</p>
-                          <span className="text-sm">{post.author.badge}</span>
+                          {post.author.badge ? <Flame className="h-3.5 w-3.5 text-orange-400" aria-label={post.author.badge} /> : null}
                           {getTypeIcon(post.type)}
                         </div>
                         <p className="text-[10px] text-slate-500 font-bold flex items-center gap-1.5">
@@ -474,10 +480,10 @@ export default function Social() {
               </h3>
               <div className="space-y-3">
                 {[
-                  { name: 'Minh Tuấn', badge: '🏆', level: 24, streak: 45 },
-                  { name: 'Thu Hà', badge: '🥈', level: 22, streak: 38 },
-                  { name: 'Đức Anh', badge: '🥉', level: 21, streak: 33 },
-                  { name: 'Lan Phương', badge: '⭐', level: 19, streak: 28 },
+                  { name: 'Minh Tuấn', badge: 'trophy', level: 24, streak: 45 },
+                  { name: 'Thu Hà', badge: 'star', level: 22, streak: 38 },
+                  { name: 'Đức Anh', badge: 'star', level: 21, streak: 33 },
+                  { name: 'Lan Phương', badge: 'star', level: 19, streak: 28 },
                 ].map((person) => (
                   <div key={person.name} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all">
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent-500 to-fuchsia-600 flex items-center justify-center text-white text-sm font-bold shadow-md">
@@ -485,9 +491,9 @@ export default function Social() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-white flex items-center gap-1.5 truncate">
-                        {person.name} <span>{person.badge}</span>
+                        {person.name} {person.badge === 'trophy' ? <Trophy className="h-3.5 w-3.5 text-amber-400" /> : <Star className="h-3.5 w-3.5 text-amber-400" />}
                       </p>
-                      <p className="text-[10px] text-slate-500 font-bold">LVL {person.level} • {person.streak}d 🔥</p>
+                      <p className="text-[10px] text-slate-500 font-bold inline-flex items-center gap-1.5">LVL {person.level} • {person.streak}d <Flame className="h-3 w-3 text-orange-400" /></p>
                     </div>
                     <button className="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wider uppercase bg-accent-500/10 text-accent-400 border border-accent-500/20 hover:bg-accent-500/20 transition-all">
                       Follow

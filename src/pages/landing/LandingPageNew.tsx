@@ -1,13 +1,15 @@
+import { lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import LearningPreview from './components/LearningPreview';
 import StartSection from './components/StartSection';
-import FeaturesChess from './components/FeaturesChess';
 import FeaturesGrid from './components/FeaturesGrid';
 import Stats from './components/Stats';
 import Testimonials from './components/Testimonials';
 import CtaFooter from './components/CtaFooter';
 import './Landing.css';
+
+const FeaturesChess = lazy(() => import('./components/FeaturesChess'));
 
 const LandingPageNew = () => {
   return (
@@ -18,7 +20,9 @@ const LandingPageNew = () => {
         <LearningPreview />
         <div className="bg-black">
           <StartSection />
-          <FeaturesChess />
+          <Suspense fallback={<div className="h-96" aria-hidden="true" />}>
+            <FeaturesChess />
+          </Suspense>
           <FeaturesGrid />
           <Stats />
           <Testimonials />

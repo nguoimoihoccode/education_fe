@@ -1,4 +1,4 @@
-import { Search, Plus, MessageSquare, Eye, Heart, Loader2 } from 'lucide-react';
+import { Search, Plus, MessageSquare, Eye, Heart, Loader2, Pin, CheckCircle } from 'lucide-react';
 import type { ForumThread } from '@/api/community.api';
 import { EmptyState } from './SharedComponents';
 
@@ -41,8 +41,8 @@ export default function ForumTab({ threads, isLoading }: ForumTabProps) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-white flex items-center gap-2 flex-wrap">
-                  {thread.isPinned && <span className="px-2 py-0.5 rounded-md text-[9px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">📌 Pinned</span>}
-                  {thread.isSolved && <span className="px-2 py-0.5 rounded-md text-[9px] font-bold tracking-widest uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">✅ Solved</span>}
+                  {thread.isPinned && <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20"><Pin className="h-2.5 w-2.5" /> Pinned</span>}
+                  {thread.isSolved && <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-widest uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><CheckCircle className="h-2.5 w-2.5" /> Solved</span>}
                   <span className="truncate">{thread.title}</span>
                 </p>
                 <div className="flex items-center gap-3 mt-1.5">

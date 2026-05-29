@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import BlurText from './BlurText';
-import heroFallbackImage from '@/assets/landing/feature-1.gif';
 
 const partners = ['AI Tutor', 'Flashcards', 'Quiz', 'Community', 'Leaderboard'];
 
@@ -12,19 +11,13 @@ const HERO_VIDEO_URL =
 const Hero = () => {
   return (
     <section className="relative min-h-[760px] overflow-hidden lg:min-h-screen" id="home">
-      <img
-        src={heroFallbackImage}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
-      />
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_20%,rgba(16,185,129,0.26),transparent_34rem),radial-gradient(circle_at_35%_60%,rgba(139,92,246,0.22),transparent_30rem),linear-gradient(180deg,#020617_0%,#05010a_58%,#000_100%)]" />
       <video
         autoPlay
         loop
         muted
         playsInline
         className="absolute left-1/2 top-[18%] w-[1200px] max-w-none -translate-x-1/2 object-contain z-0 opacity-90 md:w-full"
-        poster={heroFallbackImage}
       >
         <source src={HERO_VIDEO_URL} type="video/mp4" />
       </video>

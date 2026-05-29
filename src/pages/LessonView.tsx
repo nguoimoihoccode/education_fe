@@ -13,6 +13,7 @@ import {
     completeLesson,
     submitExercises,
 } from '@/api/education.api';
+import { getPublishedLessonSlideDecks } from '@/api/slides.api';
 import type { Vocabulary, Exercise, SubmitExercisesResult } from '@/types/education.types';
 import { QUERY_KEYS } from '@/config/query';
 import ReactMarkdown from 'react-markdown';
@@ -56,6 +57,7 @@ export default function LessonView() {
     const { data: lesson, isLoading } = useQuery({ queryKey: ['lesson', id], queryFn: () => getLessonById(id!), enabled: !!id });
     const { data: vocabularies = [] } = useQuery({ queryKey: ['vocabulary', id], queryFn: () => getVocabularyByLesson(id!), enabled: !!id });
     const { data: exercises = [] } = useQuery({ queryKey: ['exercises', id], queryFn: () => getExercisesByLesson(id!), enabled: !!id });
+    const { data: slideDecks = [] } = useQuery({ queryKey: ['lesson-slides', id], queryFn: () => getPublishedLessonSlideDecks(id!), enabled: !!id });
 
     const completeMutation = useMutation({
         mutationFn: () => {
@@ -111,6 +113,16 @@ export default function LessonView() {
                         {lesson.title}
                     </h1>
                     <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">{lesson.description}</p>
+                    <div className="mt-6 flex flex-wrap justify-center gap-3">
+                        {slideDecks[0] && (
+                            <Link to={`/education/slides/${slideDecks[0].id}/present`} className="rounded-full bg-amber-400 px-5 py-3 font-bold text-slate-950 shadow-[0_0_24px_rgba(251,191,36,0.25)]">
+                                Xem Slides
+                            </Link>
+                        )}
+                        <Link to={`/education/slides/create?lessonId=${lesson.id}`} className="rounded-full border border-white/15 px-5 py-3 font-bold text-white hover:bg-white/10">
+                            Tạo Slides từ bài này
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Glass Tabs */}

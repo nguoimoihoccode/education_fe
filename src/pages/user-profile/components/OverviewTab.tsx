@@ -49,7 +49,7 @@ export default function OverviewTab({
       <div>
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Learning Progress</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard icon={Flame} value={streak?.currentStreak || 0} label="Day Streak" color="amber" suffix=" 🔥" />
+          <StatCard icon={Flame} value={streak?.currentStreak || 0} label="Day Streak" color="amber" />
           <StatCard icon={BookOpen} value={progress?.completedLessons || 0} label="Lessons Done" color="violet" />
           <StatCard icon={Brain} value={progress?.learnedVocabularies || 0} label="Vocab Learned" color="fuchsia" />
           <StatCard icon={Clock} value={progress?.streak?.totalXp || 0} label="Total XP" color="emerald" />

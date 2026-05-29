@@ -1,0 +1,103 @@
+.slide-demo-shell {
+  min-height: 80vh;
+}
+
+.slide-stage-enter {
+  animation: slideStageIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.slide-kicker,
+.slide-title,
+.slide-subtitle {
+  animation: textRise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.slide-title {
+  animation-delay: 80ms;
+}
+
+.slide-subtitle {
+  animation-delay: 180ms;
+}
+
+.slide-bullet {
+  animation: bulletReveal 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.answer-pop {
+  animation: answerPop 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.slide-orb {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 9999px;
+  filter: blur(42px);
+  animation: orbFloat 7s ease-in-out infinite alternate;
+}
+
+.slide-orb-a {
+  top: -80px;
+  right: -40px;
+  background: rgba(139, 92, 246, 0.45);
+}
+
+.slide-orb-b {
+  bottom: -120px;
+  left: -40px;
+  background: rgba(245, 158, 11, 0.32);
+  animation-delay: 800ms;
+}
+
+.slide-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+  animation: gridDrift 10s linear infinite;
+}
+
+@keyframes slideStageIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes textRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bulletReveal {
+  from { opacity: 0; transform: translateX(-18px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes answerPop {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes orbFloat {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-30px, 24px, 0) scale(1.08); }
+}
+
+@keyframes gridDrift {
+  from { background-position: 0 0; }
+  to { background-position: 42px 42px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-stage-enter,
+  .slide-kicker,
+  .slide-title,
+  .slide-subtitle,
+  .slide-bullet,
+  .answer-pop,
+  .slide-orb,
+  .slide-grid {
+    animation: none;
+  }
+}

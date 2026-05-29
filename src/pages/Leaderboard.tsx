@@ -89,7 +89,7 @@ export default function Leaderboard() {
     lessonsCompleted: 0,
     quizScore: 0,
     level: 1,
-    badge: '🔥',
+    badge: 'streak',
     change: 'same' as const,
     changeAmount: 0,
   };
@@ -170,12 +170,12 @@ export default function Leaderboard() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <p className="text-lg font-bold text-white">{myRank.displayName}</p>
-                  <span className="text-sm">{myRank.badge}</span>
+                  <Flame className="h-4 w-4 text-orange-400" aria-label={myRank.badge} />
                   <span className="px-2 py-0.5 rounded-md text-[10px] font-bold tracking-widest uppercase bg-accent-500/20 text-accent-400 border border-accent-500/20">
                     You
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 font-bold">Level {myRank.level} • {myRank.streak} day streak 🔥</p>
+                <p className="text-xs text-slate-500 font-bold inline-flex items-center gap-1.5">Level {myRank.level} • {myRank.streak} day streak <Flame className="h-3 w-3 text-orange-400" /></p>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-black font-mono text-white">

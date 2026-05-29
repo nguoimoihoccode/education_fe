@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Star, Briefcase, BarChart3, Settings, Brain,
-  GraduationCap, Bot, Trophy, Users, Crown, Compass,
+  GraduationCap, Bot, Trophy, Users, Crown, Compass, Presentation,
 } from 'lucide-react';
 
 export interface NavItem {
@@ -35,6 +35,7 @@ export const learningNavSections: NavSection[] = [
       },
       { icon: <Star size={20} />, label: 'Flashcards', to: '/flashcards' },
       { icon: <Bot size={20} />, label: 'Quiz', to: '/quiz' },
+      { icon: <Presentation size={20} />, label: 'Slides', to: '/education/slides' },
       { icon: <Briefcase size={20} />, label: 'Tài liệu', to: '/flashcards/document-import' },
     ],
   },

@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
-import feature1Gif from '@/assets/landing/feature-1.gif';
-import feature2Gif from '@/assets/landing/feature-2.gif';
+import { useEffect, useRef, useState } from 'react';
 
 const features = [
   {
@@ -8,7 +7,7 @@ const features = [
     body: 'Trò chuyện trực tiếp với AI bằng ngôn ngữ bạn đang học. Nhận phản hồi tức thì về ngữ pháp, phát âm và ngữ cảnh văn hóa — mọi lúc, mọi nơi.',
     button: 'Trải nghiệm AI Tutor',
     to: '/ai-tutor',
-    gif: feature1Gif,
+    gifKey: 'feature1',
     reverse: false,
   },
   {
@@ -16,14 +15,53 @@ const features = [
     body: 'Hệ thống Spaced Repetition tự động điều chỉnh theo tốc độ học của bạn. Mỗi thẻ xuất hiện đúng lúc bạn sắp quên — giúp ghi nhớ sâu với ít thời gian nhất.',
     button: 'Khám phá Flashcards',
     to: '/flashcards',
-    gif: feature2Gif,
+    gifKey: 'feature2',
     reverse: true,
   },
 ];
 
+type FeatureGifKey = 'feature1' | 'feature2';
+type FeatureGifMap = Partial<Record<FeatureGifKey, string>>;
+
 const FeaturesChess = () => {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [gifs, setGifs] = useState<FeatureGifMap>({});
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    let cancelled = false;
+
+    const loadGifs = () => {
+      Promise.all([
+        import('@/assets/landing/feature-1.webp'),
+        import('@/assets/landing/feature-2.webp'),
+      ]).then(([feature1, feature2]) => {
+        if (cancelled) return;
+        setGifs({ feature1: feature1.default, feature2: feature2.default });
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        observer.disconnect();
+        loadGifs();
+      },
+      { rootMargin: '360px 0px' },
+    );
+
+    observer.observe(section);
+
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <section className="py-24 px-6 md:px-12 lg:px-24" id="features">
+    <section ref={sectionRef} className="py-24 px-6 md:px-12 lg:px-24" id="features">
       {/* Section header */}
       <div className="text-center mb-16">
         <div className="liquid-glass rounded-full px-3.5 py-1 inline-block mb-6">
@@ -64,11 +102,21 @@ const FeaturesChess = () => {
             {/* GIF */}
             <div className="flex-1">
               <div className="liquid-glass rounded-2xl overflow-hidden">
-                <img
-                  src={feature.gif}
-                  alt={feature.title}
-                  className="w-full h-auto block"
-                />
+                {gifs[feature.gifKey as FeatureGifKey] ? (
+                  <img
+                    src={gifs[feature.gifKey as FeatureGifKey]}
+                    alt={feature.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-auto block"
+                  />
+                ) : (
+                  <div className="grid aspect-video w-full place-items-center bg-[radial-gradient(circle_at_50%_35%,rgba(16,185,129,0.22),transparent_34%),linear-gradient(135deg,rgba(15,23,42,0.95),rgba(2,6,23,0.98))] text-center">
+                    <span className="px-4 text-xs font-bold uppercase tracking-[0.18em] text-white/70">
+                      Đang tải preview
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
