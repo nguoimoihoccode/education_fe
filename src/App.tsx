@@ -61,6 +61,8 @@ const ScholarProfile = lazy(() => import('@/pages/ScholarProfile'));
 // Settings & Misc
 const PremiumUpgrade = lazy(() => import('@/pages/PremiumUpgrade'));
 const AdvancedSettings = lazy(() => import('@/pages/AdvancedSettings'));
+const SessionManagement = lazy(() => import('@/pages/SessionManagement'));
+const AdminSessions = lazy(() => import('@/pages/AdminSessions'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const DataExportLogs = lazy(() => import('@/pages/DataExportLogs'));
 const ComingSoon = lazy(() => import('@/pages/ComingSoon'));
@@ -416,6 +418,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <AdvancedSettings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings/sessions"
+                element={
+                  <ProtectedRoute>
+                    <SessionManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/sessions"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <AdminSessions />
                   </ProtectedRoute>
                 }
               />

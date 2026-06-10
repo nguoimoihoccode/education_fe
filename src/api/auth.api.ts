@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, CACHE_PROFILES } from './client';
 
 export interface User {
   id: string;
@@ -28,6 +28,29 @@ export interface AuthResponse {
   user: User;
 }
 
+export type LoginSession = {
+  tokenId: string;
+  userId: number;
+  email: string;
+  displayName?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  device: string;
+  browser: string;
+  os: string;
+  createdAt: string;
+  lastUsedAt?: string;
+  expiresAt: string;
+  isRevoked: boolean;
+  isCurrentSession: boolean;
+};
+
+export type AdminSessionFilters = {
+  userId?: number;
+  email?: string;
+  active?: boolean;
+};
+
 export const authApi = {
   login: async (data: LoginDto): Promise<AuthResponse> => {
     const response = await apiClient.post<AuthResponse>('/auth/login', data);
@@ -44,5 +67,30 @@ export const authApi = {
       refreshToken,
     });
     return response.data;
+  },
+
+  getMySessions: async (): Promise<LoginSession[]> => {
+    const response = await apiClient.get<LoginSession[]>('/auth/sessions', CACHE_PROFILES.NO_CACHE);
+    return response.data;
+  },
+
+  revokeMySession: async (tokenId: string): Promise<void> => {
+    await apiClient.delete(`/auth/sessions/${tokenId}`, { cache: false });
+  },
+
+  revokeOtherSessions: async (): Promise<void> => {
+    await apiClient.delete('/auth/sessions', { cache: false });
+  },
+
+  getAdminSessions: async (filters?: AdminSessionFilters): Promise<LoginSession[]> => {
+    const response = await apiClient.get<LoginSession[]>('/auth/admin/sessions', {
+      params: filters,
+      ...CACHE_PROFILES.NO_CACHE,
+    });
+    return response.data;
+  },
+
+  revokeAdminSession: async (tokenId: string): Promise<void> => {
+    await apiClient.delete(`/auth/admin/sessions/${tokenId}`, { cache: false });
   },
 };

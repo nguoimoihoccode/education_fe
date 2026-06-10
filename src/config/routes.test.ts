@@ -17,6 +17,8 @@ describe('ROUTES', () => {
     expect(ROUTES.PREMIUM).toBe('/premium');
     expect(ROUTES.COMMUNITY).toBe('/community');
     expect(ROUTES.SETTINGS).toBe('/settings');
+    expect(ROUTES.SESSIONS).toBe('/settings/sessions');
+    expect(ROUTES.ADMIN_SESSIONS).toBe('/admin/sessions');
     expect(ROUTES.DATA_LOGS).toBe('/data-logs');
     expect(ROUTES.ONBOARDING).toBe('/onboarding');
   });
@@ -37,5 +39,7 @@ describe('ROUTES', () => {
     expect(getRouteTitle('/quiz/session/session-1/result')).toBe('Kết quả Quiz');
     expect(getRouteTitle('/scholar/mai')).toBe('Hồ sơ học giả');
     expect(getRouteTitle('/learning-coach')).toBe('Coach học tập');
+    expect(getRouteTitle('/settings/sessions')).toBe('Phiên đăng nhập');
+    expect(getRouteTitle('/admin/sessions')).toBe('Quản lý phiên đăng nhập');
   });
 });
