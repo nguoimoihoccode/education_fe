@@ -10,7 +10,7 @@ export const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { login, isLoading, error, clearError } = useAuth();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [submitError, setSubmitError] = useState('');
@@ -41,7 +41,7 @@ export const Login = () => {
     clearError();
 
     try {
-      await login(email, password);
+      await login(identifier, password);
       toast.success('Welcome back!');
       navigate('/education');
     } catch (err: unknown) {
@@ -86,20 +86,20 @@ export const Login = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="login-form">
-            {/* Email */}
+            {/* Email or username */}
             <div className="login-field">
-              <label className="login-label" htmlFor="login-email">Email</label>
+              <label className="login-label" htmlFor="login-identifier">Email hoặc username</label>
               <div className="login-input-wrap">
                 <Mail size={18} className="login-input-icon" />
                 <input
-                  id="login-email"
-                  type="email"
+                  id="login-identifier"
+                  type="text"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   className="login-input"
-                  placeholder="name@example.com"
-                  autoComplete="email"
+                  placeholder="name@example.com hoặc username"
+                  autoComplete="username"
                 />
               </div>
             </div>

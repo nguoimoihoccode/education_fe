@@ -9,10 +9,22 @@ vi.mock('./client', () => ({
   apiClient: {
     delete: vi.fn(),
     get: vi.fn(),
+    post: vi.fn(),
   },
 }));
 
-describe('auth api sessions', () => {
+describe('auth api', () => {
+  it('logs in with identifier and password', async () => {
+    vi.mocked(apiClient.post).mockResolvedValueOnce({ data: { accessToken: 'a', refreshToken: 'r' } });
+
+    await authApi.login({ identifier: 'learner', password: 'secret123' });
+
+    expect(apiClient.post).toHaveBeenCalledWith('/auth/login', {
+      identifier: 'learner',
+      password: 'secret123',
+    });
+  });
+
   it('lists and revokes current user sessions with no cache', async () => {
     const sessions = [
       {
