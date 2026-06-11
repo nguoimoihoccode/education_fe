@@ -73,28 +73,26 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 // ============================================
 function PageLoader() {
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="flex flex-col items-center gap-4">
-        <div className="relative">
-          <div
-            className="w-12 h-12 rounded-full border-2 border-transparent animate-spin"
-            style={{
-              borderTopColor: '#10b981',
-              borderRightColor: '#10b981',
-            }}
-          />
-          <div
-            className="absolute inset-1 w-10 h-10 rounded-full border-2 border-transparent animate-spin"
-            style={{
-              borderBottomColor: '#0d9488',
-              animationDirection: 'reverse',
-              animationDuration: '0.8s',
-            }}
-          />
+    <div className="min-h-[72vh] px-4 py-8 sm:px-6" role="status" aria-live="polite">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 shadow-2xl shadow-emerald-950/20 backdrop-blur-xl sm:p-8">
+        <div className="flex items-center gap-4">
+          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-violet-500 shadow-lg shadow-emerald-500/20" />
+          <div className="min-w-0 flex-1">
+            <div className="h-4 w-28 rounded-full bg-white/20" />
+            <div className="mt-3 h-3 w-44 max-w-full rounded-full bg-white/10" />
+          </div>
         </div>
-        <p className="text-sm font-medium" style={{ color: 'var(--text-secondary, #94a3b8)' }}>
-          Đang tải...
-        </p>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="h-28 rounded-3xl bg-white/[0.07]" />
+          <div className="h-28 rounded-3xl bg-white/[0.07]" />
+          <div className="h-28 rounded-3xl bg-white/[0.07]" />
+        </div>
+        <div className="space-y-3 rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+          <div className="h-3 w-5/6 rounded-full bg-white/10" />
+          <div className="h-3 w-3/5 rounded-full bg-white/10" />
+          <div className="h-3 w-4/5 rounded-full bg-white/10" />
+        </div>
+        <span className="sr-only">Đang tải nội dung...</span>
       </div>
     </div>
   );
