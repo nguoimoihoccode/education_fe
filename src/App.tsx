@@ -74,23 +74,23 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 function PageLoader() {
   return (
     <div className="min-h-[72vh] px-4 py-8 sm:px-6" role="status" aria-live="polite">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 rounded-[2rem] border border-white/10 bg-slate-950/70 p-5 shadow-2xl shadow-emerald-950/20 backdrop-blur-xl sm:p-8">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 rounded-[2rem] p-5 backdrop-blur-xl sm:p-8" style={{ background: 'var(--app-glass-bg)', border: '1px solid var(--app-border)', boxShadow: 'var(--app-glass-shadow)' }}>
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-violet-500 shadow-lg shadow-emerald-500/20" />
           <div className="min-w-0 flex-1">
-            <div className="h-4 w-28 rounded-full bg-white/20" />
-            <div className="mt-3 h-3 w-44 max-w-full rounded-full bg-white/10" />
+            <div className="h-4 w-28 rounded-full" style={{ background: 'var(--app-border-strong)' }} />
+            <div className="mt-3 h-3 w-44 max-w-full rounded-full" style={{ background: 'var(--app-border)' }} />
           </div>
         </div>
         <div className="grid gap-4 sm:grid-cols-3">
-          <div className="h-28 rounded-3xl bg-white/[0.07]" />
-          <div className="h-28 rounded-3xl bg-white/[0.07]" />
-          <div className="h-28 rounded-3xl bg-white/[0.07]" />
+          <div className="h-28 rounded-3xl" style={{ background: 'var(--app-surface)' }} />
+          <div className="h-28 rounded-3xl" style={{ background: 'var(--app-surface)' }} />
+          <div className="h-28 rounded-3xl" style={{ background: 'var(--app-surface)' }} />
         </div>
-        <div className="space-y-3 rounded-3xl border border-white/10 bg-white/[0.04] p-4">
-          <div className="h-3 w-5/6 rounded-full bg-white/10" />
-          <div className="h-3 w-3/5 rounded-full bg-white/10" />
-          <div className="h-3 w-4/5 rounded-full bg-white/10" />
+        <div className="space-y-3 rounded-3xl p-4" style={{ background: 'var(--app-surface)', border: '1px solid var(--app-border)' }}>
+          <div className="h-3 w-5/6 rounded-full" style={{ background: 'var(--app-border)' }} />
+          <div className="h-3 w-3/5 rounded-full" style={{ background: 'var(--app-border)' }} />
+          <div className="h-3 w-4/5 rounded-full" style={{ background: 'var(--app-border)' }} />
         </div>
         <span className="sr-only">Đang tải nội dung...</span>
       </div>

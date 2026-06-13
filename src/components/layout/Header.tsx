@@ -51,7 +51,7 @@ export function Header({
 
           {/* Desktop sidebar toggle */}
           <button type="button" onClick={onToggleSidebar} aria-label="Thu gọn hoặc mở rộng thanh điều hướng"
-            className="hidden lg:flex p-2 rounded-xl transition-all duration-200 hover:bg-emerald-50"
+            className="hidden lg:flex p-2 rounded-xl transition-all duration-200 hover:bg-[var(--shell-hover-bg)]"
             style={{ color: 'var(--stock-text-tertiary)' }}>
             <Menu size={22} />
           </button>
@@ -85,7 +85,7 @@ export function Header({
           {/* Notifications */}
           <div className="relative">
             <button type="button" onClick={onToggleNotifications} aria-label="Mở thông báo" aria-expanded={isNotificationsOpen}
-              className="relative p-2.5 rounded-xl transition-all duration-200 group hover:bg-emerald-50"
+              className="relative p-2.5 rounded-xl transition-all duration-200 group hover:bg-[var(--shell-hover-bg)]"
               style={{ color: 'var(--stock-text-tertiary)' }}>
               <Bell size={20} className="group-hover:scale-110 transition-transform" />
               <span className="stock-notification-dot" />
@@ -93,9 +93,9 @@ export function Header({
 
             {isNotificationsOpen && (
               <div className="absolute right-0 mt-2 w-80 rounded-2xl p-0 overflow-hidden z-50 stock-fade-in"
-                style={{ background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(20px)', boxShadow: '0 18px 45px rgba(15,23,42,0.12)', border: '1px solid var(--stock-glass-border)' }}>
+                style={{ background: 'var(--shell-popover-bg)', backdropFilter: 'blur(20px)', boxShadow: 'var(--shell-shadow)', border: '1px solid var(--stock-glass-border)' }}>
                 <div className="px-5 py-4 flex items-center justify-between"
-                  style={{ borderBottom: '1px solid var(--stock-glass-border)', background: 'linear-gradient(to right, rgba(236,253,245,0.9), transparent)' }}>
+                  style={{ borderBottom: '1px solid var(--stock-glass-border)', background: 'var(--shell-panel-muted-bg)' }}>
                   <h3 className="font-bold" style={{ color: 'var(--stock-text-primary)' }}>Thông báo</h3>
                   <button className="text-sm font-semibold transition-colors" style={{ color: 'var(--stock-primary-600)' }}>
                     Đánh dấu đã đọc
@@ -116,7 +116,7 @@ export function Header({
           {/* Profile dropdown */}
           <div className="relative">
             <button type="button" onClick={onToggleProfile} aria-label="Mở menu tài khoản" aria-expanded={isProfileOpen}
-              className="flex items-center gap-3 p-1.5 rounded-xl transition-all duration-200 group hover:bg-emerald-50">
+              className="flex items-center gap-3 p-1.5 rounded-xl transition-all duration-200 group hover:bg-[var(--shell-hover-bg)]">
               <div className="w-9 h-9 rounded-lg flex items-center justify-center shadow-sm"
                 style={{ background: 'linear-gradient(135deg, #2CB34A, #0d9488)' }}>
                 <User size={16} color="white" />
@@ -130,19 +130,19 @@ export function Header({
 
             {isProfileOpen && (
               <div className="absolute right-0 mt-2 w-56 rounded-2xl p-0 overflow-hidden z-50 stock-fade-in"
-                style={{ background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(20px)', boxShadow: '0 18px 45px rgba(15,23,42,0.12)', border: '1px solid var(--stock-glass-border)' }}>
-                <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--stock-glass-border)', background: 'linear-gradient(to right, rgba(236,253,245,0.9), transparent)' }}>
+                style={{ background: 'var(--shell-popover-bg)', backdropFilter: 'blur(20px)', boxShadow: 'var(--shell-shadow)', border: '1px solid var(--stock-glass-border)' }}>
+                <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--stock-glass-border)', background: 'var(--shell-panel-muted-bg)' }}>
                   <p className="text-sm font-bold" style={{ color: 'var(--stock-text-primary)' }}>{displayName}</p>
                   <p className="text-sm" style={{ color: 'var(--stock-text-tertiary)' }}>{email}</p>
                 </div>
                 <div className="py-2">
                   <Link to="/profile" onClick={onToggleProfile}
-                    className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-emerald-50"
+                    className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-[var(--shell-hover-bg)]"
                     style={{ color: 'var(--stock-text-secondary)' }}>
                     <User size={18} /> Hồ sơ cá nhân
                   </Link>
                   <Link to="/settings" onClick={onToggleProfile}
-                    className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-emerald-50"
+                    className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-[var(--shell-hover-bg)]"
                     style={{ color: 'var(--stock-text-secondary)' }}>
                     <Settings size={18} /> Cài đặt
                   </Link>

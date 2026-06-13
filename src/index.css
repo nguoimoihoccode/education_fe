@@ -12,15 +12,15 @@
 /* CSS Variables */
 :root {
   /* Canonical app tokens */
-  --app-bg: #020617;
-  --app-bg-elevated: #0f172a;
-  --app-surface: #1e293b;
-  --app-surface-hover: #334155;
-  --app-border: rgba(255, 255, 255, 0.1);
-  --app-border-strong: rgba(255, 255, 255, 0.18);
-  --app-text: #f8fafc;
-  --app-text-muted: #94a3b8;
-  --app-text-subtle: #64748b;
+  --app-bg: #000000;
+  --app-bg-elevated: #050505;
+  --app-surface: #111111;
+  --app-surface-hover: #1a1a1a;
+  --app-border: rgba(255, 255, 255, 0.12);
+  --app-border-strong: rgba(255, 255, 255, 0.22);
+  --app-text: #ffffff;
+  --app-text-muted: #d4d4d4;
+  --app-text-subtle: #a3a3a3;
   --app-primary: #10b981;
   --app-primary-hover: #059669;
   --app-accent: #8b5cf6;
@@ -91,6 +91,73 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --app-bg: #ffffff;
+  --app-bg-elevated: #ffffff;
+  --app-surface: #f8fafc;
+  --app-surface-hover: #f1f5f9;
+  --app-border: rgba(15, 23, 42, 0.12);
+  --app-border-strong: rgba(15, 23, 42, 0.22);
+  --app-text: #0f172a;
+  --app-text-muted: #475569;
+  --app-text-subtle: #64748b;
+  --app-glass-bg: rgba(255, 255, 255, 0.86);
+  --app-glass-border: var(--app-border);
+  --app-glass-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+  --bg-primary: var(--app-bg);
+  --bg-secondary: var(--app-surface);
+  --bg-tertiary: var(--app-surface-hover);
+  --text-primary: var(--app-text);
+  --text-secondary: var(--app-text-muted);
+  --text-muted: var(--app-text-subtle);
+  --glass-bg: var(--app-glass-bg);
+  --glass-border: var(--app-border);
+  --glass-shadow: var(--app-glass-shadow);
+  --stock-bg-primary: var(--app-bg);
+  --stock-bg-secondary: var(--app-surface);
+  --stock-card-bg: var(--app-glass-bg);
+  --stock-glass-border: var(--app-border);
+  --stock-text-primary: var(--app-text);
+  --stock-text-secondary: var(--app-text-muted);
+  --stock-text-tertiary: var(--app-text-subtle);
+  --cyber-900: var(--app-bg);
+}
+
+/* Theme compatibility for older pages that still use hardcoded dark Tailwind utilities. */
+:root[data-theme='light'] :where(.bg-slate-950, .bg-slate-900, .bg-slate-800, .bg-black) {
+  background-color: #ffffff !important;
+}
+
+:root[data-theme='light'] :where(.bg-slate-900\/75, .bg-slate-900\/70, .bg-slate-900\/60, .bg-slate-900\/50, .bg-slate-800\/80, .bg-slate-800\/70, .bg-slate-800\/60, .bg-black\/40, .bg-black\/30, .bg-black\/25, .bg-white\/5, .bg-white\/\[0\.04\], .bg-white\/\[0\.07\]) {
+  background-color: #f8fafc !important;
+}
+
+:root[data-theme='light'] :where(.text-white, .text-slate-100, .text-slate-200, .text-slate-300) {
+  color: #0f172a !important;
+}
+
+:root[data-theme='light'] :where(.text-slate-400, .text-slate-500, .text-slate-600) {
+  color: #475569 !important;
+}
+
+:root[data-theme='light'] :where(.placeholder\:text-slate-600)::placeholder,
+:root[data-theme='light'] :where(.placeholder-slate-500)::placeholder {
+  color: #64748b !important;
+}
+
+:root[data-theme='light'] :where(.border-white\/5, .border-white\/10, .border-white\/15, .border-white\/20) {
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+:root[data-theme='light'] :where(.shadow-black\/25, .shadow-black\/30) {
+  --tw-shadow-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+:root[data-theme='light'] :where(.bg-gradient-to-r.text-white, .bg-gradient-to-br.text-white, .bg-emerald-500.text-white, .bg-accent-600.text-white, .bg-accent-500.text-white, .bg-fuchsia-600.text-white, .bg-rose-600.text-white) {
+  color: #ffffff !important;
 }
 
 *,
