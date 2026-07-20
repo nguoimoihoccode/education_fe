@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
   Settings,
   Bell,
@@ -32,31 +33,62 @@ import {
   Check,
   HardDrive,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { getAiSettings, updateAiSettings, testAiSettings } from '@/api/ai.api';
+import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore, type SettingsState } from '@/store/settings.store';
+import type { AiProviderSettingsView, ConfigSource } from '@/types/ai.types';
 import './Education.css';
 
 /* ================================================================ */
 
-const SETTING_SECTIONS = [
-  { id: 'appearance', label: 'Appearance', icon: Palette },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'learning', label: 'Learning', icon: Brain },
-  { id: 'privacy', label: 'Privacy & Security', icon: Shield },
-  { id: 'accessibility', label: 'Accessibility', icon: Eye },
-  { id: 'data', label: 'Data & Storage', icon: Database },
-  { id: 'advanced', label: 'Advanced', icon: Zap },
-] as const;
+const BASE_SETTING_SECTIONS = [
+  { id: 'appearance' as const, label: 'Appearance', icon: Palette },
+  { id: 'notifications' as const, label: 'Notifications', icon: Bell },
+  { id: 'learning' as const, label: 'Learning', icon: Brain },
+  { id: 'privacy' as const, label: 'Privacy & Security', icon: Shield },
+  { id: 'accessibility' as const, label: 'Accessibility', icon: Eye },
+  { id: 'data' as const, label: 'Data & Storage', icon: Database },
+  { id: 'advanced' as const, label: 'Advanced', icon: Zap },
+];
 
-type SectionId = typeof SETTING_SECTIONS[number]['id'];
+type SectionId = (typeof BASE_SETTING_SECTIONS)[number]['id'] | 'ai-provider';
 type SettingsValues = Omit<SettingsState, 'updateSetting' | 'resetAppearance'>;
+
+const SOURCE_BADGE: Record<ConfigSource, string> = {
+  db: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+  env: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+  default: 'bg-slate-500/15 text-slate-400 border-slate-500/20',
+};
 
 export default function AdvancedSettings() {
   const [activeSection, setActiveSection] = useState<SectionId>('appearance');
   const [hasChanges, setHasChanges] = useState(false);
   const [showSavedToast, setShowSavedToast] = useState(false);
   const savedToastTimeoutRef = useRef<number | null>(null);
+
+  const userRoles = useAuthStore((s) => s.user?.roles ?? []);
+  const canManageAi =
+    userRoles.includes('admin') || userRoles.includes('education_admin');
+
+  const settingSections = [
+    ...BASE_SETTING_SECTIONS,
+    ...(canManageAi
+      ? [{ id: 'ai-provider' as const, label: 'AI Provider', icon: Bot }]
+      : []),
+  ];
+
+  const [aiSettings, setAiSettings] = useState<AiProviderSettingsView | null>(null);
+  const [aiBaseUrl, setAiBaseUrl] = useState('');
+  const [aiApiKey, setAiApiKey] = useState('');
+  const [aiModel, setAiModel] = useState('');
+  const [aiMaxTokens, setAiMaxTokens] = useState(2048);
+  const [aiTemperature, setAiTemperature] = useState(0.7);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiSaving, setAiSaving] = useState(false);
+  const [aiTesting, setAiTesting] = useState(false);
 
   const s = useSettingsStore();
 
@@ -123,6 +155,98 @@ export default function AdvancedSettings() {
     };
   }, []);
 
+  const applyAiSettings = (view: AiProviderSettingsView) => {
+    setAiSettings(view);
+    setAiBaseUrl(view.baseUrl ?? '');
+    setAiApiKey('');
+    setAiModel(view.model ?? '');
+    setAiMaxTokens(view.maxTokens ?? 2048);
+    setAiTemperature(view.temperature ?? 0.7);
+  };
+
+  useEffect(() => {
+    if (activeSection !== 'ai-provider' || !canManageAi) return;
+    let cancelled = false;
+    setAiLoading(true);
+    getAiSettings()
+      .then((view) => {
+        if (!cancelled) applyAiSettings(view);
+      })
+      .catch(() => {
+        if (!cancelled) toast.error('Failed to load AI settings');
+      })
+      .finally(() => {
+        if (!cancelled) setAiLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeSection, canManageAi]);
+
+  useEffect(() => {
+    if (!canManageAi && activeSection === 'ai-provider') {
+      setActiveSection('appearance');
+    }
+  }, [canManageAi, activeSection]);
+
+  const handleSaveAi = async () => {
+    setAiSaving(true);
+    try {
+      const body: Parameters<typeof updateAiSettings>[0] = {
+        baseUrl: aiBaseUrl,
+        model: aiModel,
+        maxTokens: Number(aiMaxTokens),
+        temperature: Number(aiTemperature),
+      };
+      if (aiApiKey.trim()) body.apiKey = aiApiKey.trim();
+      const view = await updateAiSettings(body);
+      applyAiSettings(view);
+      toast.success('AI settings saved');
+      setShowSavedToast(true);
+      if (savedToastTimeoutRef.current !== null) {
+        window.clearTimeout(savedToastTimeoutRef.current);
+      }
+      savedToastTimeoutRef.current = window.setTimeout(() => {
+        setShowSavedToast(false);
+        savedToastTimeoutRef.current = null;
+      }, 2500);
+    } catch {
+      toast.error('Failed to save AI settings');
+    } finally {
+      setAiSaving(false);
+    }
+  };
+
+  const handleTestAi = async () => {
+    setAiTesting(true);
+    try {
+      const result = await testAiSettings();
+      if (result.ok) {
+        toast.success(`Connection OK · ${result.latencyMs}ms`);
+      } else {
+        toast.error('Connection test failed');
+      }
+    } catch {
+      toast.error('Connection test failed');
+    } finally {
+      setAiTesting(false);
+    }
+  };
+
+  const handleClearAiKey = async () => {
+    if (!window.confirm('Clear the stored API key? This cannot be undone.')) return;
+    setAiSaving(true);
+    try {
+      const view = await updateAiSettings({ clearApiKey: true });
+      applyAiSettings(view);
+      toast.success('API key cleared');
+    } catch {
+      toast.error('Failed to clear API key');
+    } finally {
+      setAiSaving(false);
+    }
+  };
+
   const handleReset = () => {
     s.resetAppearance();
     setHasChanges(false);
@@ -188,7 +312,7 @@ export default function AdvancedSettings() {
           {/* Left: Section Navigation */}
           <nav className="lg:col-span-3">
             <div className="bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-3xl p-3 space-y-1 lg:sticky lg:top-6">
-              {SETTING_SECTIONS.map((sec) => {
+              {settingSections.map((sec) => {
                 const SIcon = sec.icon;
                 return (
                   <button
@@ -440,6 +564,120 @@ export default function AdvancedSettings() {
               </SettingsPanel>
             )}
 
+            {/* ======== AI PROVIDER (admin) ======== */}
+            {activeSection === 'ai-provider' && canManageAi && (
+              <SettingsPanel title="AI Provider" icon={Bot} description="Configure the OpenAI-compatible provider used by the AI tutor">
+                {aiLoading ? (
+                  <div className="flex items-center justify-center gap-2 py-12 text-slate-400 text-sm font-bold">
+                    <Loader2 className="w-4 h-4 animate-spin" /> Loading settings…
+                  </div>
+                ) : (
+                  <>
+                    <SettingRow label="Base URL" description="OpenAI-compatible API base URL" icon={Globe}>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <SourceBadge source={aiSettings?.source.baseUrl} />
+                        <input
+                          type="text"
+                          value={aiBaseUrl}
+                          onChange={(e) => setAiBaseUrl(e.target.value)}
+                          placeholder="https://api.openai.com/v1"
+                          className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                        />
+                      </div>
+                    </SettingRow>
+
+                    <SettingRow label="API Key" description="Provider API key (never shown in full)" icon={Lock}>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <SourceBadge source={aiSettings?.source.apiKey} />
+                        <input
+                          type="password"
+                          value={aiApiKey}
+                          onChange={(e) => setAiApiKey(e.target.value)}
+                          placeholder={
+                            aiSettings?.apiKeyConfigured && aiSettings.apiKeyLast4
+                              ? `••••${aiSettings.apiKeyLast4}`
+                              : 'sk-…'
+                          }
+                          autoComplete="off"
+                          className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                        />
+                      </div>
+                    </SettingRow>
+
+                    <SettingRow label="Model" description="Model id sent to the provider" icon={Bot}>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <SourceBadge source={aiSettings?.source.model} />
+                        <input
+                          type="text"
+                          value={aiModel}
+                          onChange={(e) => setAiModel(e.target.value)}
+                          placeholder="gpt-4o-mini"
+                          className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                        />
+                      </div>
+                    </SettingRow>
+
+                    <SettingRow label="Max Tokens" description="Maximum completion tokens per response" icon={Zap}>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <SourceBadge source={aiSettings?.source.maxTokens} />
+                        <input
+                          type="number"
+                          min={1}
+                          value={aiMaxTokens}
+                          onChange={(e) => setAiMaxTokens(Number(e.target.value))}
+                          className="w-32 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                        />
+                      </div>
+                    </SettingRow>
+
+                    <SettingRow label="Temperature" description="Sampling temperature (0–2)" icon={Sparkles}>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <SourceBadge source={aiSettings?.source.temperature} />
+                        <input
+                          type="number"
+                          min={0}
+                          max={2}
+                          step={0.1}
+                          value={aiTemperature}
+                          onChange={(e) => setAiTemperature(Number(e.target.value))}
+                          className="w-32 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                        />
+                      </div>
+                    </SettingRow>
+
+                    <div className="flex flex-wrap items-center gap-2 pt-6">
+                      <button
+                        type="button"
+                        onClick={handleSaveAi}
+                        disabled={aiSaving || aiTesting}
+                        className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white text-xs font-bold shadow-[0_0_15px_rgba(139,92,246,0.25)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                      >
+                        {aiSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleTestAi}
+                        disabled={aiSaving || aiTesting}
+                        className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                      >
+                        {aiTesting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wifi className="w-3 h-3" />}
+                        Test connection
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleClearAiKey}
+                        disabled={aiSaving || aiTesting || !aiSettings?.apiKeyConfigured}
+                        className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold hover:bg-rose-500/20 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                      >
+                        <Trash2 className="w-3 h-3" /> Clear API key
+                      </button>
+                    </div>
+                  </>
+                )}
+              </SettingsPanel>
+            )}
+
           </div>
         </div>
       </div>
@@ -515,5 +753,14 @@ function ToggleRow({ label, description, icon: Icon, checked, onChange }: {
         <span className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
       </button>
     </div>
+  );
+}
+
+function SourceBadge({ source }: { source?: ConfigSource }) {
+  if (!source) return null;
+  return (
+    <span className={`px-2 py-0.5 rounded-md border text-[9px] font-bold uppercase tracking-wider ${SOURCE_BADGE[source]}`}>
+      {source}
+    </span>
   );
 }
