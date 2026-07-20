@@ -13,12 +13,12 @@ const FeaturesChess = lazy(() => import('./components/FeaturesChess'));
 
 const LandingPageNew = () => {
   return (
-    <div className="landing-page-root bg-black min-h-screen">
+    <div className="landing-page-root min-h-screen">
       <div className="relative z-10">
         <Navbar />
         <Hero />
         <LearningPreview />
-        <div className="bg-black">
+        <div>
           <StartSection />
           <Suspense fallback={<div className="h-96" aria-hidden="true" />}>
             <FeaturesChess />

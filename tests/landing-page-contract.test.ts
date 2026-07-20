@@ -45,3 +45,28 @@ test('landing hero has an internal visual fallback for the video', () => {
   assert.match(hero, /poster=\{heroFallbackImage\}/);
   assert.match(hero, /<img[\s\S]+heroFallbackImage/);
 });
+
+test('landing root uses app background token in CSS', () => {
+  const css = readSource('src/pages/landing/Landing.css');
+  assert.match(css, /\.landing-page-root\s*\{[^}]*background(?:-color)?:\s*var\(--app-bg\)/s);
+});
+
+test('landing liquid-glass uses app surface or border tokens', () => {
+  const css = readSource('src/pages/landing/Landing.css');
+  assert.match(css, /\.liquid-glass\s*\{[\s\S]*?var\(--app-(?:surface|border|glass)/);
+});
+
+test('landing hero ambient uses app primary/accent tokens', () => {
+  const hero = readSource('src/pages/landing/components/Hero.tsx');
+  const css = readSource('src/pages/landing/Landing.css');
+  const combined = hero + '\n' + css;
+  assert.match(combined, /landing-hero-bg|--app-primary/);
+  assert.doesNotMatch(hero, /#020617/);
+});
+
+test('learning preview is not a light mint strip', () => {
+  const preview = readSource('src/pages/landing/components/LearningPreview.tsx');
+  assert.doesNotMatch(preview, /from-slate-50 via-emerald-50 to-amber-50/);
+  assert.doesNotMatch(preview, /text-slate-950/);
+  assert.match(preview, /--app-|landing-preview/);
+});
