@@ -1,6 +1,7 @@
 import {
   LayoutDashboard, Star, Briefcase, BarChart3, Settings, Brain,
   GraduationCap, Bot, Trophy, Users, Crown, Compass, Presentation,
+  CircleHelp,
 } from 'lucide-react';
 
 export interface NavItem {
@@ -27,6 +28,7 @@ export const learningNavSections: NavSection[] = [
         matcher: ({ pathname, search }) => pathname === '/education' && search !== '?view=courses',
       },
       { icon: <Brain size={20} />, label: 'Coach', to: '/learning-coach' },
+      { icon: <Bot size={20} />, label: 'AI Tutor', to: '/ai-tutor' },
       {
         icon: <GraduationCap size={20} />,
         label: 'Khóa học',
@@ -34,7 +36,7 @@ export const learningNavSections: NavSection[] = [
         matcher: ({ pathname, search }) => pathname === '/education' && search === '?view=courses',
       },
       { icon: <Star size={20} />, label: 'Flashcards', to: '/flashcards' },
-      { icon: <Bot size={20} />, label: 'Quiz', to: '/quiz' },
+      { icon: <CircleHelp size={20} />, label: 'Quiz', to: '/quiz' },
       { icon: <Presentation size={20} />, label: 'Slides', to: '/education/slides' },
       { icon: <Briefcase size={20} />, label: 'Tài liệu', to: '/flashcards/document-import' },
     ],
