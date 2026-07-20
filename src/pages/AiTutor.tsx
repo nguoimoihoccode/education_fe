@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   Send,
   Bot,
@@ -19,9 +19,17 @@ import {
   Check,
   ChevronRight,
   RotateCcw,
+  Loader2,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
-import { apiClient } from '@/api/client';
+import {
+  listConversations,
+  createConversation,
+  getConversation,
+  deleteConversation,
+  sendMessage,
+} from '@/api/ai.api';
+import type { AiMessage, AiConversationSummary, SendMessageResponse } from '@/types/ai.types';
 import './Education.css';
 
 /* ============ Types ============ */
@@ -48,6 +56,24 @@ const SUGGESTED_PROMPTS = [
   { icon: GraduationCap, label: 'Learning plan', prompt: 'Create a 30-day study plan for learning Spanish from beginner level.' },
   { icon: Lightbulb, label: 'Study tips', prompt: 'What are the most effective techniques for memorizing vocabulary?' },
 ];
+
+const mapApiMessage = (msg: AiMessage): ChatMessage => ({
+  id: msg.id,
+  role: msg.role,
+  content: msg.content,
+  timestamp: new Date(msg.createdAt),
+});
+
+const mapSummaryToConversation = (
+  summary: AiConversationSummary,
+  messages: ChatMessage[] = [],
+): Conversation => ({
+  id: summary.id,
+  title: summary.title,
+  messages,
+  createdAt: new Date(summary.createdAt),
+  updatedAt: new Date(summary.updatedAt),
+});
 
 const renderSafeMessageContent = (content: string) => {
   const segments = content.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
@@ -83,22 +109,19 @@ const renderSafeMessageContent = (content: string) => {
 
 export default function AiTutor() {
   const { user } = useAuthStore();
-  const [conversations, setConversations] = useState<Conversation[]>([
-    {
-      id: 'default',
-      title: 'New Chat',
-      messages: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ]);
-  const [activeConvId, setActiveConvId] = useState('default');
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const loadedConvIds = useRef<Set<string>>(new Set());
+  const skipNextDetailLoad = useRef(false);
 
   const activeConv = conversations.find((c) => c.id === activeConvId) || conversations[0];
   const messages = useMemo(() => activeConv?.messages || [], [activeConv]);
@@ -115,120 +138,249 @@ export default function AiTutor() {
     }
   }, [input]);
 
-  const generateId = () => Math.random().toString(36).substr(2, 9);
+  // Initial load: list conversations, create if empty, select first + load messages
+  useEffect(() => {
+    let cancelled = false;
 
-  const simulateAIResponse = async (userMsg: string): Promise<string> => {
-    // Try real API first, fallback to simulated
-    try {
-      const response = await apiClient.post('/ai/chat', { message: userMsg });
-      const reply = response.data.reply || response.data.message || response.data.content;
-      if (typeof reply !== 'string' || !reply.trim()) {
-        throw new Error('AI tutor returned an invalid response');
-      }
-      return reply;
-    } catch {
-      if (!import.meta.env.DEV) {
-        throw new Error('AI tutor service unavailable');
-      }
+    const load = async () => {
+      setIsLoading(true);
+      setLoadError(null);
+      try {
+        let list = await listConversations();
+        if (cancelled) return;
 
-      // Simulate AI delay & response
-      await new Promise((r) => setTimeout(r, 1200 + Math.random() * 1500));
-      const responses: Record<string, string> = {
-        grammar: `Great question! Let me break this down:\n\n**Present Perfect** (have/has + past participle)\n- Used for experiences, changes, and unfinished time periods\n- *"I have visited Paris three times."*\n\n**Past Simple** (verb + -ed or irregular)\n- Used for completed actions at a specific time\n- *"I visited Paris last summer."*\n\n💡 **Key difference**: Present perfect connects the past to now, while past simple is purely about the past.\n\nWant me to quiz you on this?`,
-        vocabulary: `Here are 10 advanced business vocabulary words:\n\n1. **Synergy** — Combined effort greater than individual parts\n2. **Leverage** — To use something to maximum advantage\n3. **Benchmark** — A standard for comparison\n4. **Scalable** — Capable of growing efficiently\n5. **Stakeholder** — Anyone with interest in a project\n6. **Paradigm** — A model or pattern of thinking\n7. **Disruption** — Innovation that changes the market\n8. **Agile** — Quick and flexible methodology\n9. **ROI** — Return on Investment\n10. **KPI** — Key Performance Indicator\n\n📝 Would you like example sentences for any of these?`,
-        default: `That's an excellent question! Let me help you with that.\n\nHere's what I'd suggest:\n\n1. **Start with the basics** — Make sure your foundation is solid\n2. **Practice regularly** — Consistency beats intensity\n3. **Use spaced repetition** — Review at increasing intervals\n4. **Immerse yourself** — Surround yourself with the language\n\n🎯 The key is to combine multiple learning strategies together.\n\nWould you like me to elaborate on any of these points or explore something specific?`,
-      };
-      const key = userMsg.toLowerCase().includes('grammar') ? 'grammar'
-        : userMsg.toLowerCase().includes('vocab') ? 'vocabulary'
-        : 'default';
-      return responses[key];
+        if (list.length === 0) {
+          const created = await createConversation();
+          if (cancelled) return;
+          list = [created];
+        }
+
+        const mapped = list.map((s) => mapSummaryToConversation(s));
+        setConversations(mapped);
+
+        const firstId = list[0].id;
+        skipNextDetailLoad.current = true;
+        setActiveConvId(firstId);
+
+        setIsLoadingMessages(true);
+        try {
+          const detail = await getConversation(firstId);
+          if (cancelled) return;
+          const msgs = detail.messages.map(mapApiMessage);
+          loadedConvIds.current.add(firstId);
+          setConversations((prev) =>
+            prev.map((c) =>
+              c.id === firstId
+                ? {
+                    ...c,
+                    title: detail.title,
+                    messages: msgs,
+                    updatedAt: new Date(detail.updatedAt),
+                  }
+                : c,
+            ),
+          );
+        } catch {
+          if (!cancelled) {
+            setLoadError('Failed to load conversation messages.');
+          }
+        } finally {
+          if (!cancelled) setIsLoadingMessages(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setConversations([]);
+          setActiveConvId(null);
+          setLoadError('Failed to load conversations. Please try again.');
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Load full messages when selecting a conversation (skip if already loaded or just created)
+  useEffect(() => {
+    if (!activeConvId || isLoading) return;
+    if (skipNextDetailLoad.current) {
+      skipNextDetailLoad.current = false;
+      return;
     }
+    if (loadedConvIds.current.has(activeConvId)) return;
+
+    let cancelled = false;
+
+    const loadDetail = async () => {
+      setIsLoadingMessages(true);
+      setLoadError(null);
+      try {
+        const detail = await getConversation(activeConvId);
+        if (cancelled) return;
+        const msgs = detail.messages.map(mapApiMessage);
+        loadedConvIds.current.add(activeConvId);
+        setConversations((prev) =>
+          prev.map((c) =>
+            c.id === activeConvId
+              ? {
+                  ...c,
+                  title: detail.title,
+                  messages: msgs,
+                  updatedAt: new Date(detail.updatedAt),
+                }
+              : c,
+          ),
+        );
+      } catch {
+        if (!cancelled) {
+          setLoadError('Failed to load conversation messages.');
+        }
+      } finally {
+        if (!cancelled) setIsLoadingMessages(false);
+      }
+    };
+
+    loadDetail();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeConvId, isLoading]);
+
+  const handleSelectConv = useCallback((id: string) => {
+    if (id === activeConvId) return;
+    setActiveConvId(id);
+  }, [activeConvId]);
+
+  const mockSendMessage = async (
+    conversationId: string,
+    message: string,
+  ): Promise<SendMessageResponse> => {
+    await new Promise((r) => setTimeout(r, 800 + Math.random() * 700));
+    const now = new Date().toISOString();
+    return {
+      userMessage: {
+        id: `mock-user-${Date.now()}`,
+        role: 'user',
+        content: message,
+        createdAt: now,
+      },
+      assistantMessage: {
+        id: `mock-asst-${Date.now()}`,
+        role: 'assistant',
+        content:
+          'This is a mock AI reply (VITE_AI_MOCK=1). Connect a real provider for live answers.',
+        createdAt: now,
+      },
+      conversation: {
+        id: conversationId,
+        title: message.slice(0, 40) + (message.length > 40 ? '...' : ''),
+        updatedAt: now,
+      },
+    };
   };
 
   const handleSend = async () => {
     const trimmed = input.trim();
-    if (!trimmed || isTyping) return;
+    if (!trimmed || isTyping || !activeConvId) return;
 
-    const userMessage: ChatMessage = {
-      id: generateId(),
-      role: 'user',
-      content: trimmed,
-      timestamp: new Date(),
-    };
-
-    // Update conversation
-    setConversations((prev) =>
-      prev.map((c) =>
-        c.id === activeConvId
-          ? {
-              ...c,
-              messages: [...c.messages, userMessage],
-              title: c.messages.length === 0 ? trimmed.slice(0, 40) + (trimmed.length > 40 ? '...' : '') : c.title,
-              updatedAt: new Date(),
-            }
-          : c
-      )
-    );
     setInput('');
     setIsTyping(true);
 
     try {
-      const reply = await simulateAIResponse(trimmed);
-      const assistantMessage: ChatMessage = {
-        id: generateId(),
-        role: 'assistant',
-        content: reply,
-        timestamp: new Date(),
-      };
+      const reply =
+        import.meta.env.VITE_AI_MOCK === '1'
+          ? await mockSendMessage(activeConvId, trimmed)
+          : await sendMessage(activeConvId, trimmed);
+
+      const userMsg = mapApiMessage(reply.userMessage);
+      const assistantMsg = mapApiMessage(reply.assistantMessage);
+
       setConversations((prev) =>
         prev.map((c) =>
           c.id === activeConvId
-            ? { ...c, messages: [...c.messages, assistantMessage], updatedAt: new Date() }
-            : c
-        )
+            ? {
+                ...c,
+                messages: [...c.messages, userMsg, assistantMsg],
+                title: reply.conversation.title || c.title,
+                updatedAt: new Date(reply.conversation.updatedAt),
+              }
+            : c,
+        ),
       );
+      loadedConvIds.current.add(activeConvId);
     } catch {
       const errorMessage: ChatMessage = {
-        id: generateId(),
+        id: `err-${Date.now()}`,
         role: 'assistant',
         content: 'Sorry, I encountered an error. Please try again.',
         timestamp: new Date(),
       };
       setConversations((prev) =>
         prev.map((c) =>
-          c.id === activeConvId ? { ...c, messages: [...c.messages, errorMessage] } : c
-        )
+          c.id === activeConvId
+            ? {
+                ...c,
+                messages: [
+                  ...c.messages,
+                  {
+                    id: `user-${Date.now()}`,
+                    role: 'user',
+                    content: trimmed,
+                    timestamp: new Date(),
+                  },
+                  errorMessage,
+                ],
+              }
+            : c,
+        ),
       );
     } finally {
       setIsTyping(false);
     }
   };
 
-  const handleNewChat = () => {
-    const newConv: Conversation = {
-      id: generateId(),
-      title: 'New Chat',
-      messages: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    setConversations((prev) => [newConv, ...prev]);
-    setActiveConvId(newConv.id);
+  const handleNewChat = async () => {
+    try {
+      const created = await createConversation();
+      const conv = mapSummaryToConversation(created, []);
+      loadedConvIds.current.add(created.id);
+      skipNextDetailLoad.current = true;
+      setConversations((prev) => [conv, ...prev]);
+      setActiveConvId(created.id);
+      setLoadError(null);
+    } catch {
+      setLoadError('Failed to create a new conversation.');
+    }
   };
 
-  const handleDeleteConv = (id: string) => {
-    setConversations((prev) => {
-      const filtered = prev.filter((c) => c.id !== id);
-      if (filtered.length === 0) {
-        const newConv: Conversation = {
-          id: generateId(), title: 'New Chat', messages: [], createdAt: new Date(), updatedAt: new Date(),
-        };
-        setActiveConvId(newConv.id);
-        return [newConv];
+  const handleDeleteConv = async (id: string) => {
+    try {
+      await deleteConversation(id);
+      loadedConvIds.current.delete(id);
+
+      const remaining = conversations.filter((c) => c.id !== id);
+
+      if (remaining.length === 0) {
+        const created = await createConversation();
+        const conv = mapSummaryToConversation(created, []);
+        loadedConvIds.current.add(created.id);
+        skipNextDetailLoad.current = true;
+        setConversations([conv]);
+        setActiveConvId(created.id);
+        return;
       }
-      if (activeConvId === id) setActiveConvId(filtered[0].id);
-      return filtered;
-    });
+
+      setConversations(remaining);
+      if (activeConvId === id) {
+        setActiveConvId(remaining[0].id);
+      }
+    } catch {
+      setLoadError('Failed to delete conversation.');
+    }
   };
 
   const handleCopy = (text: string, id: string) => {
@@ -260,7 +412,8 @@ export default function AiTutor() {
           <div className="p-4">
             <button
               onClick={handleNewChat}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(139,92,246,0.2)]"
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(139,92,246,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="w-4 h-4" />
               New Chat
@@ -269,26 +422,35 @@ export default function AiTutor() {
 
           {/* Conversation List */}
           <div className="flex-1 overflow-y-auto px-3 space-y-1">
-            {conversations.map((conv) => (
-              <button
-                key={conv.id}
-                onClick={() => setActiveConvId(conv.id)}
-                className={`group w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all text-sm ${
-                  activeConvId === conv.id
-                    ? 'bg-accent-600/15 text-white border border-accent-500/20'
-                    : 'text-slate-400 hover:bg-white/5 hover:text-white border border-transparent'
-                }`}
-              >
-                <MessageSquare className="w-4 h-4 flex-shrink-0" />
-                <span className="flex-1 truncate font-medium">{conv.title}</span>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8 text-slate-500">
+                <Loader2 className="w-5 h-5 animate-spin" />
+              </div>
+            ) : (
+              conversations.map((conv) => (
                 <button
-                  onClick={(e) => { e.stopPropagation(); handleDeleteConv(conv.id); }}
-                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded-lg transition-all"
+                  key={conv.id}
+                  onClick={() => handleSelectConv(conv.id)}
+                  className={`group w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all text-sm ${
+                    activeConvId === conv.id
+                      ? 'bg-accent-600/15 text-white border border-accent-500/20'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-white border border-transparent'
+                  }`}
                 >
-                  <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                  <MessageSquare className="w-4 h-4 flex-shrink-0" />
+                  <span className="flex-1 truncate font-medium">{conv.title}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteConv(conv.id);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded-lg transition-all"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                  </button>
                 </button>
-              </button>
-            ))}
+              ))
+            )}
           </div>
 
           {/* Sidebar Footer */}
@@ -323,17 +485,29 @@ export default function AiTutor() {
               </div>
             </div>
             <button
-              onClick={() => handleDeleteConv(activeConvId)}
-              className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-rose-400 transition-all"
+              onClick={() => activeConvId && handleDeleteConv(activeConvId)}
+              disabled={!activeConvId || isLoading}
+              className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-rose-400 transition-all disabled:opacity-30"
               title="Clear chat"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
           </header>
 
+          {loadError && (
+            <div className="px-6 py-2 bg-rose-500/10 border-b border-rose-500/20 text-rose-300 text-xs text-center">
+              {loadError}
+            </div>
+          )}
+
           {/* Messages */}
           <div className="flex-1 overflow-y-auto">
-            {messages.length === 0 ? (
+            {isLoading || isLoadingMessages ? (
+              <div className="flex flex-col items-center justify-center h-full gap-3 text-slate-400">
+                <Loader2 className="w-8 h-8 animate-spin text-accent-400" />
+                <span className="text-sm">Loading conversations...</span>
+              </div>
+            ) : messages.length === 0 ? (
               /* Empty State */
               <div className="flex flex-col items-center justify-center h-full px-6 py-12">
                 <div className="relative mb-8">
@@ -357,7 +531,10 @@ export default function AiTutor() {
                   {SUGGESTED_PROMPTS.map((prompt, i) => (
                     <button
                       key={i}
-                      onClick={() => { setInput(prompt.prompt); inputRef.current?.focus(); }}
+                      onClick={() => {
+                        setInput(prompt.prompt);
+                        inputRef.current?.focus();
+                      }}
                       className="group p-4 rounded-2xl bg-slate-800/60 border border-white/5 hover:border-accent-500/30 hover:bg-slate-800/80 text-left transition-all duration-200 hover:-translate-y-0.5"
                     >
                       <div className="flex items-center gap-3 mb-2">
@@ -379,11 +556,13 @@ export default function AiTutor() {
                     className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''} group`}
                   >
                     {/* Avatar */}
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${
-                      msg.role === 'assistant'
-                        ? 'bg-gradient-to-br from-accent-600 to-fuchsia-600'
-                        : 'bg-gradient-to-br from-emerald-500 to-teal-600'
-                    }`}>
+                    <div
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${
+                        msg.role === 'assistant'
+                          ? 'bg-gradient-to-br from-accent-600 to-fuchsia-600'
+                          : 'bg-gradient-to-br from-emerald-500 to-teal-600'
+                      }`}
+                    >
                       {msg.role === 'assistant' ? (
                         <Bot className="w-5 h-5 text-white" />
                       ) : (
@@ -414,7 +593,11 @@ export default function AiTutor() {
                               className="p-1 rounded-md hover:bg-white/5 text-slate-600 hover:text-slate-400 opacity-0 group-hover:opacity-100 transition-all"
                               title="Copy"
                             >
-                              {copiedId === msg.id ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                              {copiedId === msg.id ? (
+                                <Check className="w-3 h-3 text-emerald-400" />
+                              ) : (
+                                <Copy className="w-3 h-3" />
+                              )}
                             </button>
                             <button
                               className="p-1 rounded-md hover:bg-white/5 text-slate-600 hover:text-slate-400 opacity-0 group-hover:opacity-100 transition-all"
@@ -462,12 +645,13 @@ export default function AiTutor() {
                     onKeyDown={handleKeyDown}
                     placeholder="Ask your AI tutor anything..."
                     rows={1}
-                    className="w-full px-5 py-4 pr-14 rounded-2xl bg-slate-800/80 border border-white/10 text-white placeholder-slate-500 text-sm focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none"
+                    disabled={isTyping || isLoading || !activeConvId}
+                    className="w-full px-5 py-4 pr-14 rounded-2xl bg-slate-800/80 border border-white/10 text-white placeholder-slate-500 text-sm focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none disabled:opacity-50"
                     style={{ maxHeight: '160px' }}
                   />
                   <button
                     onClick={handleSend}
-                    disabled={!input.trim() || isTyping}
+                    disabled={!input.trim() || isTyping || isLoading || !activeConvId}
                     className="absolute right-3 bottom-3 w-10 h-10 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg"
                   >
                     <Send className="w-4 h-4" />
