@@ -20,7 +20,7 @@
   --app-border-strong: rgba(255, 255, 255, 0.22);
   --app-text: #ffffff;
   --app-text-muted: #d4d4d4;
-  --app-text-subtle: #a3a3a3;
+  --app-text-subtle: #c4c4c4;
   --app-primary: #10b981;
   --app-primary-hover: #059669;
   --app-accent: #8b5cf6;
@@ -35,8 +35,8 @@
   --app-motion-slow: 300ms;
 
   /* Learning Palette */
-  --color-primary: var(--app-warning);
-  --color-primary-dark: #d97706;
+  --color-primary: var(--app-primary);
+  --color-primary-dark: var(--app-primary-hover);
   --color-secondary: var(--app-accent);
   --color-success: var(--app-primary);
   --color-success-light: #34d399;
@@ -104,6 +104,12 @@
   --app-text: #0f172a;
   --app-text-muted: #475569;
   --app-text-subtle: #64748b;
+  --app-primary: #059669;
+  --app-primary-hover: #047857;
+  --app-accent: #7c3aed;
+  --app-warning: #d97706;
+  --app-danger: #dc2626;
+  --app-focus: #0891b2;
   --app-glass-bg: rgba(255, 255, 255, 0.86);
   --app-glass-border: var(--app-border);
   --app-glass-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
@@ -126,38 +132,20 @@
   --cyber-900: var(--app-bg);
 }
 
-/* Theme compatibility for older pages that still use hardcoded dark Tailwind utilities. */
-:root[data-theme='light'] :where(.bg-slate-950, .bg-slate-900, .bg-slate-800, .bg-black) {
-  background-color: #ffffff !important;
+/* Semantic surfaces for shell / new code */
+.app-bg { background-color: var(--app-bg); color: var(--app-text); }
+.app-surface {
+  background-color: var(--app-surface);
+  border: 1px solid var(--app-border);
+  color: var(--app-text);
 }
-
-:root[data-theme='light'] :where(.bg-slate-900\/75, .bg-slate-900\/70, .bg-slate-900\/60, .bg-slate-900\/50, .bg-slate-800\/80, .bg-slate-800\/70, .bg-slate-800\/60, .bg-black\/40, .bg-black\/30, .bg-black\/25, .bg-white\/5, .bg-white\/\[0\.04\], .bg-white\/\[0\.07\]) {
-  background-color: #f8fafc !important;
-}
-
-:root[data-theme='light'] :where(.text-white, .text-slate-100, .text-slate-200, .text-slate-300) {
-  color: #0f172a !important;
-}
-
-:root[data-theme='light'] :where(.text-slate-400, .text-slate-500, .text-slate-600) {
-  color: #475569 !important;
-}
-
-:root[data-theme='light'] :where(.placeholder\:text-slate-600)::placeholder,
-:root[data-theme='light'] :where(.placeholder-slate-500)::placeholder {
-  color: #64748b !important;
-}
-
-:root[data-theme='light'] :where(.border-white\/5, .border-white\/10, .border-white\/15, .border-white\/20) {
-  border-color: rgba(15, 23, 42, 0.12) !important;
-}
-
-:root[data-theme='light'] :where(.shadow-black\/25, .shadow-black\/30) {
-  --tw-shadow-color: rgba(15, 23, 42, 0.12) !important;
-}
-
-:root[data-theme='light'] :where(.bg-gradient-to-r.text-white, .bg-gradient-to-br.text-white, .bg-emerald-500.text-white, .bg-accent-600.text-white, .bg-accent-500.text-white, .bg-fuchsia-600.text-white, .bg-rose-600.text-white) {
-  color: #ffffff !important;
+.app-text { color: var(--app-text); }
+.app-text-muted { color: var(--app-text-muted); }
+.app-text-subtle { color: var(--app-text-subtle); }
+.app-border { border-color: var(--app-border); }
+.app-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--app-bg), 0 0 0 4px var(--app-focus);
 }
 
 *,
@@ -1521,6 +1509,15 @@ button svg,
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+:root[data-reduced-motion='true'] *,
+:root[data-reduced-motion='true'] *::before,
+:root[data-reduced-motion='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 /* Image loading optimization */

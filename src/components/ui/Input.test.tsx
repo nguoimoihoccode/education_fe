@@ -24,4 +24,15 @@ describe('Input', () => {
     expect(input).toHaveAttribute('aria-describedby', 'password-message');
     expect(message).toHaveAttribute('id', 'password-message');
   });
+
+  it('uses app focus ring instead of neon default', () => {
+    render(<Input id="name" label="Tên" />);
+
+    const input = screen.getByLabelText('Tên');
+    const className = input.className;
+
+    expect(className).toContain('focus-visible:ring-[var(--app-focus)]');
+    expect(className).not.toContain('focus-visible:ring-neon-cyan');
+    expect(className).not.toContain('focus:border-neon-cyan');
+  });
 });

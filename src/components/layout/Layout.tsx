@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { ROUTES } from '@/config/routes';
 import { useAuthStore } from '@/store/auth.store';
 import '@/styles/education-shell.css';
 import { DesktopSidebar, MobileSidebar } from './Sidebar';
@@ -91,15 +92,29 @@ export const Layout = ({ children }: LayoutProps) => {
         </main>
 
         {/* Footer */}
-        <footer className="py-4 px-3 md:px-4 lg:px-6 stock-header-glass sticky bottom-0 z-10"
-          style={{ borderTop: '1px solid var(--stock-glass-border)' }}>
+        <footer
+          className="py-4 px-3 md:px-4 lg:px-6 stock-header-glass"
+          style={{ borderTop: '1px solid var(--stock-glass-border)' }}
+        >
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
             <p className="text-sm" style={{ color: 'var(--stock-text-tertiary)' }}>
               © 2026 <span className="font-semibold stock-gradient-text">EduPro</span>. Nền tảng học tập tập trung cho người học.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-sm font-medium transition-colors hover:text-green-400" style={{ color: 'var(--stock-text-tertiary)' }}>Điều khoản</a>
-              <a href="#" className="text-sm font-medium transition-colors hover:text-green-400" style={{ color: 'var(--stock-text-tertiary)' }}>Hỗ trợ</a>
+              <Link
+                to={ROUTES.SETTINGS}
+                className="text-sm font-medium transition-colors hover:text-green-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-focus)] rounded"
+                style={{ color: 'var(--stock-text-tertiary)' }}
+              >
+                Cài đặt
+              </Link>
+              <Link
+                to={ROUTES.SESSIONS}
+                className="text-sm font-medium transition-colors hover:text-green-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-focus)] rounded"
+                style={{ color: 'var(--stock-text-tertiary)' }}
+              >
+                Bảo mật
+              </Link>
             </div>
           </div>
         </footer>

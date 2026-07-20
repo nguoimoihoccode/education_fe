@@ -45,6 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       'font-semibold rounded-xl',
       'transition-colors transition-transform duration-200 motion-reduce:transition-none',
       'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+      'focus-visible:ring-offset-[var(--app-bg)]',
       'disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none',
       'relative overflow-hidden',
       // Cursor
@@ -62,7 +63,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         'shadow-lg shadow-accent-900/25',
         'hover:from-accent-500 hover:to-emerald-500 hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
         'active:translate-y-0',
-        'focus-visible:ring-accent-400'
+        'focus-visible:ring-[var(--app-focus)]'
       ),
       secondary: cn(
         'bg-slate-800/70 backdrop-blur-md',
@@ -91,7 +92,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         'shadow-lg shadow-emerald-950/25',
         'hover:from-emerald-400 hover:to-teal-500 hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
         'active:translate-y-0',
-        'focus-visible:ring-emerald-400'
+        'focus-visible:ring-[var(--app-focus)]'
       ),
     };
 

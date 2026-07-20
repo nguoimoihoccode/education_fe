@@ -1,7 +1,7 @@
 :root {
-  --stock-primary-400: #10b981;
-  --stock-primary-500: #10b981;
-  --stock-primary-600: #059669;
+  --stock-primary-400: #34d399;
+  --stock-primary-500: var(--app-primary);
+  --stock-primary-600: var(--app-primary-hover);
   --stock-text-primary: var(--app-text);
   --stock-text-secondary: var(--app-text-muted);
   --stock-text-tertiary: var(--app-text-subtle);
@@ -19,9 +19,9 @@
 }
 
 :root[data-theme='light'] {
-  --stock-primary-400: #059669;
-  --stock-primary-500: #10b981;
-  --stock-primary-600: #047857;
+  --stock-primary-400: #34d399;
+  --stock-primary-500: var(--app-primary);
+  --stock-primary-600: var(--app-primary-hover);
   --stock-accent-rose: #e11d48;
   --shell-panel-bg: rgba(255, 255, 255, 0.92);
   --shell-panel-muted-bg: rgba(248, 250, 252, 0.9);
@@ -266,4 +266,24 @@
   50% {
     opacity: 0.5;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .ambient-background .orb {
+    opacity: 0.04;
+  }
+}
+
+:root[data-reduced-motion='true'] .orb {
+  animation: none !important;
+  transform: none !important;
+}
+
+:root[data-reduced-motion='true'] .ambient-background .orb {
+  opacity: 0.04;
 }

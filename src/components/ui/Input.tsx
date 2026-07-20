@@ -8,7 +8,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   helperText?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  neonColor?: 'pink' | 'cyan' | 'purple' | 'green';
+  neonColor?: 'pink' | 'cyan' | 'purple' | 'green' | 'app';
 }
 
 /**
@@ -33,7 +33,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       helperText,
       leftIcon,
       rightIcon,
-      neonColor = 'cyan',
+      neonColor = 'app',
       type = 'text',
       ...props
     },
@@ -66,6 +66,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         shadow: 'focus:shadow-neon-green',
         ring: 'focus-visible:ring-trade-up',
       },
+      app: {
+        border: 'focus:border-[var(--app-primary)]',
+        shadow: 'focus:shadow-[0_0_0_3px_rgba(16,185,129,0.25)]',
+        ring: 'focus-visible:ring-[var(--app-focus)]',
+      },
     };
 
     const currentInputType = type === 'password' && showPassword ? 'text' : type;
@@ -74,7 +79,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="w-full">
         {/* Label */}
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-gray-300 mb-2">
+          <label htmlFor={inputId} className="block text-sm font-medium text-[var(--app-text-muted)] mb-2">
             {label}
           </label>
         )}
@@ -98,10 +103,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             className={cn(
               // Base styles
               'w-full rounded-xl',
-              'bg-cyber-800/50 backdrop-blur-md',
-              'border border-white/10',
-              'text-white placeholder:text-gray-500',
-              'transition-all duration-400 motion-reduce:transition-none',
+              'bg-[var(--app-surface)] backdrop-blur-md',
+              'border border-[var(--app-border)]',
+              'text-[var(--app-text)] placeholder:text-[var(--app-text-subtle)]',
+              'transition-colors duration-200 motion-reduce:transition-none',
               // Padding - compact size
               leftIcon ? 'pl-10' : 'pl-3.5',
               (rightIcon || type === 'password') ? 'pr-10' : 'pr-3.5',
@@ -111,9 +116,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               neonColors[neonColor].border,
               neonColors[neonColor].shadow,
               neonColors[neonColor].ring,
-              'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-cyber-900',
+              'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-bg)]',
               // Error state
-              error && 'border-neon-red focus:border-neon-red',
+              error && 'border-[var(--app-danger)] focus:border-[var(--app-danger)]',
               // Disabled state
               'disabled:opacity-50 disabled:cursor-not-allowed',
               className
@@ -178,8 +183,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             )
           )}
 
-          {/* Animated border glow */}
-          {isFocused && !error && (
+          {/* Animated border glow — only for non-app neon colors */}
+          {isFocused && !error && neonColor !== 'app' && (
             <div
               className={cn(
                 'absolute inset-0 rounded-xl pointer-events-none',
@@ -198,7 +203,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <div className="mt-2 flex items-start gap-1">
             {error && (
               <svg
-                className="w-4 h-4 text-neon-red flex-shrink-0 mt-0.5"
+                className="w-4 h-4 text-[var(--app-danger)] flex-shrink-0 mt-0.5"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 aria-hidden="true"
@@ -214,7 +219,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               id={messageId}
               className={cn(
                 'text-sm',
-                error ? 'text-neon-red' : 'text-gray-400'
+                error ? 'text-[var(--app-danger)]' : 'text-gray-400'
               )}
             >
               {error || helperText}
