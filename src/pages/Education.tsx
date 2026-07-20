@@ -83,7 +83,7 @@ export default function Education() {
           </div>
 
           <div className="edu-search">
-            <Search className="h-5 w-5 text-slate-400" />
+            <Search className="h-5 w-5 text-[var(--app-text-subtle)]" />
             <input
               type="text"
               placeholder="Tìm khóa học, ngôn ngữ..."
@@ -111,7 +111,7 @@ export default function Education() {
             <section className="today-plan-error">
               <h2>Không tải được kế hoạch hôm nay</h2>
               <p>Thử lại để EduPro tạo checklist học tập mới nhất cho bạn.</p>
-              <button type="button" onClick={() => refetchTodayPlan()}>
+              <button type="button" className="edu-primary-action" onClick={() => refetchTodayPlan()}>
                 <RefreshCw className="h-4 w-4" />
                 Thử lại
               </button>

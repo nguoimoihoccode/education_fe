@@ -98,10 +98,10 @@
 
 .education-path-page {
     background:
-        radial-gradient(circle at 15% 0%, rgba(16, 185, 129, 0.14), transparent 28rem),
-        radial-gradient(circle at 85% 10%, rgba(139, 92, 246, 0.12), transparent 30rem),
-        linear-gradient(180deg, #eefaf4 0%, #f8fafc 32%, #eef2ff 100%);
-    color: #0f172a;
+        radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--app-primary) 18%, transparent), transparent 28rem),
+        radial-gradient(circle at 85% 10%, color-mix(in srgb, var(--app-accent) 14%, transparent), transparent 30rem),
+        var(--app-bg);
+    color: var(--app-text);
 }
 
 .education-path-page .dashboard-wrapper {
@@ -113,7 +113,7 @@
 .edu-learning-grid,
 .edu-path-toolbar,
 .edu-course-library {
-    color: #0f172a;
+    color: var(--app-text);
 }
 
 .edu-path-hero {
@@ -125,7 +125,7 @@
 }
 
 .edu-kicker {
-    color: #047857;
+    color: var(--app-primary);
     font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0.16em;
@@ -133,7 +133,7 @@
 }
 
 .edu-path-hero h1 {
-    color: #0f172a;
+    color: var(--app-text);
     font-size: clamp(2rem, 4vw, 3.4rem);
     line-height: 1.05;
     font-weight: 900;
@@ -141,7 +141,7 @@
 }
 
 .edu-path-hero p {
-    color: #475569;
+    color: var(--app-text-muted);
     max-width: 44rem;
     margin-top: 0.8rem;
     line-height: 1.7;
@@ -149,19 +149,19 @@
 
 .edu-search {
     min-width: min(100%, 360px);
-    background: rgba(255, 255, 255, 0.82);
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 1rem;
     padding: 0.85rem 1rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    box-shadow: var(--app-glass-shadow);
 }
 
 .edu-search input {
     flex: 1;
-    color: #0f172a;
+    color: var(--app-text);
     background: transparent;
     border: 0;
     outline: 0;
@@ -169,8 +169,8 @@
 }
 
 .edu-search:focus-within {
-    border-color: rgba(16, 185, 129, 0.45);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.16), 0 18px 45px rgba(15, 23, 42, 0.08);
+    border-color: color-mix(in srgb, var(--app-primary) 45%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-focus) 40%, transparent), var(--app-glass-shadow);
 }
 
 .edu-learning-grid {
@@ -184,10 +184,10 @@
 .edu-study-today,
 .education-learning-path,
 .edu-course-library {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 1.5rem;
-    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.09);
+    box-shadow: var(--app-glass-shadow);
 }
 
 .edu-next-lesson {
@@ -197,8 +197,8 @@
     flex-direction: column;
     justify-content: space-between;
     background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(236, 253, 245, 0.9)),
-        radial-gradient(circle at right top, rgba(16, 185, 129, 0.18), transparent 18rem);
+        linear-gradient(135deg, var(--app-surface), color-mix(in srgb, var(--app-primary) 8%, var(--app-surface))),
+        radial-gradient(circle at right top, color-mix(in srgb, var(--app-primary) 18%, transparent), transparent 18rem);
 }
 
 .edu-card-label {
@@ -206,8 +206,8 @@
     align-items: center;
     gap: 0.5rem;
     width: fit-content;
-    color: #047857;
-    background: #d1fae5;
+    color: var(--app-primary);
+    background: color-mix(in srgb, var(--app-primary) 16%, transparent);
     border-radius: 999px;
     padding: 0.45rem 0.85rem;
     font-size: 0.78rem;
@@ -215,7 +215,7 @@
 }
 
 .edu-next-lesson h2 {
-    color: #0f172a;
+    color: var(--app-text);
     font-size: clamp(1.7rem, 3vw, 2.7rem);
     line-height: 1.12;
     font-weight: 900;
@@ -224,7 +224,7 @@
 }
 
 .edu-next-lesson p {
-    color: #475569;
+    color: var(--app-text-muted);
     margin-top: 0.9rem;
     line-height: 1.7;
     max-width: 38rem;
@@ -241,10 +241,10 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    color: #334155;
+    color: var(--app-text);
     font-weight: 700;
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    background: color-mix(in srgb, var(--app-surface) 72%, transparent);
+    border: 1px solid var(--app-border);
     border-radius: 999px;
     padding: 0.45rem 0.8rem;
     font-size: 0.8rem;
@@ -257,12 +257,22 @@
     gap: 0.55rem;
     width: fit-content;
     margin-top: 1.5rem;
-    background: #047857;
-    color: white;
+    min-height: 44px;
+    background: var(--app-primary);
+    color: #ffffff;
     border-radius: 0.95rem;
     padding: 0.85rem 1.15rem;
     font-weight: 800;
-    box-shadow: 0 16px 34px rgba(4, 120, 87, 0.22);
+    box-shadow: 0 16px 34px color-mix(in srgb, var(--app-primary) 22%, transparent);
+}
+
+.edu-primary-action:hover {
+    background: var(--app-primary-hover);
+}
+
+.edu-primary-action:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--app-bg), 0 0 0 4px var(--app-focus);
 }
 
 .edu-study-today {
@@ -277,16 +287,16 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: 0.85rem;
-    background: #f8fafc;
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 1.1rem;
     padding: 1rem;
-    color: #0f172a;
+    color: var(--app-text);
     transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .edu-study-card:hover {
-    background: #eef2ff;
+    background: color-mix(in srgb, var(--app-accent) 10%, var(--app-surface));
     transform: translateY(-2px);
 }
 
@@ -297,24 +307,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #6d28d9;
-    background: #ede9fe;
+    color: var(--app-accent);
+    background: color-mix(in srgb, var(--app-accent) 16%, transparent);
 }
 
 .edu-study-card h3 {
-    color: #0f172a;
+    color: var(--app-text);
     font-weight: 850;
     font-size: 0.95rem;
 }
 
 .edu-study-card p {
-    color: #64748b;
+    color: var(--app-text-muted);
     font-size: 0.8rem;
     margin-top: 0.2rem;
 }
 
 .edu-study-card > span {
-    color: #334155;
+    color: var(--app-text-muted);
     font-weight: 900;
     font-size: 0.76rem;
     text-transform: uppercase;
@@ -330,13 +340,11 @@
 .today-plan-hero,
 .today-plan-empty,
 .today-plan-error {
-    background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(236, 253, 245, 0.9)),
-        radial-gradient(circle at right top, rgba(16, 185, 129, 0.18), transparent 18rem);
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 1.5rem;
-    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.09);
-    color: #0f172a;
+    box-shadow: var(--app-glass-shadow);
+    color: var(--app-text);
 }
 
 .today-plan-hero {
@@ -350,7 +358,7 @@
 .today-plan-hero h2,
 .today-plan-empty h2,
 .today-plan-error h2 {
-    color: #0f172a;
+    color: var(--app-text);
     font-size: clamp(1.7rem, 3vw, 2.7rem);
     line-height: 1.12;
     font-weight: 900;
@@ -360,7 +368,7 @@
 .today-plan-hero p,
 .today-plan-empty p,
 .today-plan-error p {
-    color: #475569;
+    color: var(--app-text-muted);
     margin-top: 0.9rem;
     line-height: 1.7;
     max-width: 42rem;
@@ -375,19 +383,19 @@
     align-items: center;
     justify-content: center;
     background:
-        radial-gradient(circle at center, white 0 58%, transparent 59%),
-        conic-gradient(#059669 0 var(--today-progress, 0%), #d1fae5 var(--today-progress, 0%) 100%);
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08), 0 18px 45px rgba(4, 120, 87, 0.14);
+        radial-gradient(circle at center, var(--app-surface) 0 58%, transparent 59%),
+        conic-gradient(var(--app-primary) 0 var(--today-progress, 0%), color-mix(in srgb, var(--app-primary) 18%, transparent) var(--today-progress, 0%) 100%);
+    box-shadow: inset 0 0 0 1px var(--app-border), 0 18px 45px color-mix(in srgb, var(--app-primary) 14%, transparent);
 }
 
 .today-plan-progress strong {
-    color: #047857;
+    color: var(--app-primary);
     font-size: 2rem;
     font-weight: 950;
 }
 
 .today-plan-progress span {
-    color: #64748b;
+    color: var(--app-text-muted);
     font-size: 0.72rem;
     font-weight: 900;
     letter-spacing: 0.12em;
@@ -405,35 +413,41 @@
     grid-template-columns: auto minmax(0, 1fr);
     gap: 0.85rem;
     align-items: flex-start;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    min-height: 44px;
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 1.25rem;
     padding: 1rem;
-    color: #0f172a;
-    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
+    color: var(--app-text);
+    box-shadow: var(--app-glass-shadow);
     transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .today-plan-task:hover {
-    background: #f8fafc;
-    border-color: rgba(16, 185, 129, 0.28);
+    background: color-mix(in srgb, var(--app-primary) 8%, var(--app-surface));
+    border-color: color-mix(in srgb, var(--app-primary) 28%, transparent);
     transform: translateY(-2px);
 }
 
 .today-plan-task.completed {
-    background: #ecfdf5;
-    border-color: rgba(16, 185, 129, 0.3);
+    background: color-mix(in srgb, var(--app-primary) 12%, var(--app-surface));
+    border-color: color-mix(in srgb, var(--app-primary) 30%, transparent);
     opacity: 0.82;
 }
 
+.today-plan-task:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--app-bg), 0 0 0 4px var(--app-focus);
+}
+
 .today-plan-task h3 {
-    color: #0f172a;
+    color: var(--app-text);
     font-size: 0.98rem;
     font-weight: 900;
 }
 
 .today-plan-task p {
-    color: #64748b;
+    color: var(--app-text-muted);
     font-size: 0.82rem;
     line-height: 1.55;
     margin-top: 0.3rem;
@@ -441,7 +455,7 @@
 
 .today-plan-task > span {
     grid-column: 2;
-    color: #047857;
+    color: var(--app-primary);
     font-size: 0.72rem;
     font-weight: 900;
     letter-spacing: 0.08em;
@@ -466,12 +480,22 @@
     justify-content: center;
     gap: 0.5rem;
     margin-top: 1.2rem;
+    min-height: 44px;
     border: 0;
     border-radius: 0.95rem;
-    background: #047857;
-    color: white;
+    background: var(--app-primary);
+    color: #ffffff;
     padding: 0.8rem 1.1rem;
     font-weight: 900;
+}
+
+.today-plan-error button:hover {
+    background: var(--app-primary-hover);
+}
+
+.today-plan-error button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--app-bg), 0 0 0 4px var(--app-focus);
 }
 
 .edu-path-toolbar {
@@ -484,14 +508,14 @@
 
 .edu-path-toolbar h2,
 .edu-course-library h2 {
-    color: #0f172a;
+    color: var(--app-text);
     font-size: 1.6rem;
     font-weight: 900;
 }
 
 .edu-path-toolbar p,
 .edu-course-library p {
-    color: #64748b;
+    color: var(--app-text-muted);
     margin-top: 0.35rem;
     font-size: 0.9rem;
 }
@@ -510,7 +534,7 @@
     top: 2.5rem;
     bottom: 2.5rem;
     width: 2px;
-    background: linear-gradient(180deg, #10b981, #a78bfa);
+    background: linear-gradient(180deg, var(--app-primary), var(--app-accent));
     opacity: 0.28;
 }
 
@@ -520,17 +544,17 @@
     grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 1rem;
     align-items: center;
-    color: #0f172a;
-    background: #f8fafc;
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    color: var(--app-text);
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 1.2rem;
     padding: 1rem;
     z-index: 1;
 }
 
 .path-node.active {
-    background: #ecfdf5;
-    border-color: rgba(16, 185, 129, 0.28);
+    background: color-mix(in srgb, var(--app-primary) 12%, var(--app-surface));
+    border-color: color-mix(in srgb, var(--app-primary) 28%, transparent);
 }
 
 .path-node-index {
@@ -540,16 +564,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    background: #64748b;
+    color: #ffffff;
+    background: var(--app-text-muted);
 }
 
 .path-node.active .path-node-index {
-    background: #059669;
+    background: var(--app-primary);
 }
 
 .path-node-step {
-    color: #64748b;
+    color: var(--app-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.12em;
     font-size: 0.72rem;
@@ -557,19 +581,19 @@
 }
 
 .path-node h3 {
-    color: #0f172a;
+    color: var(--app-text);
     font-weight: 850;
     margin-top: 0.2rem;
 }
 
 .path-node p:not(.path-node-step) {
-    color: #64748b;
+    color: var(--app-text-muted);
     font-size: 0.86rem;
     margin-top: 0.25rem;
 }
 
 .path-node > span {
-    color: #047857;
+    color: var(--app-primary);
     font-weight: 900;
     font-size: 0.85rem;
 }
@@ -581,12 +605,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #64748b;
+    color: var(--app-text-muted);
     text-align: center;
 }
 
 .edu-empty-path p {
-    color: #334155;
+    color: var(--app-text);
     font-weight: 800;
 }
 
@@ -615,8 +639,8 @@
 }
 
 .edu-mini-stats span {
-    background: #f1f5f9;
-    color: #475569;
+    background: color-mix(in srgb, var(--app-surface) 90%, var(--app-text));
+    color: var(--app-text-muted);
     border-radius: 999px;
     padding: 0.45rem 0.75rem;
     font-size: 0.78rem;
@@ -633,9 +657,9 @@
     display: flex;
     align-items: center;
     gap: 0.85rem;
-    color: #0f172a;
-    background: #f8fafc;
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    color: var(--app-text);
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
     border-radius: 1rem;
     padding: 0.9rem;
 }
@@ -647,12 +671,12 @@
     align-items: center;
     justify-content: center;
     border-radius: 0.9rem;
-    background: white;
+    background: color-mix(in srgb, var(--app-surface) 80%, var(--app-text));
     font-size: 1.5rem;
 }
 
 .edu-course-card p {
-    color: #64748b;
+    color: var(--app-text-muted);
     font-size: 0.72rem;
     font-weight: 900;
     text-transform: uppercase;
@@ -660,14 +684,14 @@
 }
 
 .edu-course-card h3 {
-    color: #0f172a;
+    color: var(--app-text);
     font-size: 0.95rem;
     font-weight: 850;
     margin-top: 0.15rem;
 }
 
 .edu-course-card span {
-    color: #64748b;
+    color: var(--app-text-muted);
     font-size: 0.8rem;
 }
 
@@ -1009,19 +1033,18 @@
     gap: 0.5rem;
     padding: 0.6rem 1.25rem;
     border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--edu-border);
-    color: var(--text-secondary);
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+    color: var(--app-text-muted);
     font-size: 0.875rem;
     font-weight: 600;
     transition: all 0.2s ease;
 }
 
 .btn-back:hover {
-    background: rgba(255, 255, 255, 0.08);
-    /* Stock hover style */
-    color: white;
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--app-surface-hover);
+    color: var(--app-text);
+    border-color: var(--app-border-strong);
 }
 
 /* Search Bar (Matched Stock) */
@@ -1081,12 +1104,12 @@
 .lesson-content {
     font-size: 1.125rem;
     line-height: 1.8;
-    color: #cbd5e1;
+    color: var(--app-text-muted);
 }
 
 .lesson-content h1,
 .lesson-content h2 {
-    color: white;
+    color: var(--app-text);
     font-weight: 700;
     margin-top: 2.5rem;
     margin-bottom: 1rem;
@@ -1123,22 +1146,22 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border: 1px solid var(--edu-border);
-    background: rgba(255, 255, 255, 0.03);
-    color: var(--text-secondary);
+    border: 1px solid var(--app-border);
+    background: color-mix(in srgb, var(--app-surface) 90%, transparent);
+    color: var(--app-text-muted);
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .chip:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: white;
+    background: color-mix(in srgb, var(--app-primary) 10%, var(--app-surface));
+    color: var(--app-text);
 }
 
 .chip.active {
-    background: var(--edu-highlight);
-    border-color: rgba(139, 92, 246, 0.3);
-    color: #a78bfa;
+    background: color-mix(in srgb, var(--app-primary) 16%, transparent);
+    border-color: color-mix(in srgb, var(--app-primary) 30%, transparent);
+    color: var(--app-primary);
 }
 
 /* Interactive Elements (Exercises) */
@@ -1373,4 +1396,268 @@
 :root[data-theme='light'] video,
 :root[data-theme='light'] iframe {
     filter: invert(1) hue-rotate(180deg);
+}
+
+/* ============================================
+   Lesson view — Dark Learning semantic surfaces
+   ============================================ */
+
+.lesson-page {
+  background: var(--app-bg);
+  color: var(--app-text);
+  min-height: 100%;
+  position: relative;
+}
+
+.lesson-panel {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 1.5rem;
+  box-shadow: var(--app-glass-shadow);
+  color: var(--app-text);
+  position: relative;
+  overflow: hidden;
+  min-height: 500px;
+  padding: 2rem;
+}
+
+@media (min-width: 768px) {
+  .lesson-panel {
+    padding: 3rem;
+  }
+}
+
+.lesson-tabs {
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 1rem;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-glass-shadow);
+}
+
+.lesson-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  border: 0;
+  background: transparent;
+  color: var(--app-text-muted);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--app-motion-base) ease, color var(--app-motion-base) ease;
+}
+
+.lesson-tab:hover {
+  color: var(--app-text);
+  background: var(--app-surface-hover);
+}
+
+.lesson-tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--app-bg), 0 0 0 4px var(--app-focus);
+}
+
+.lesson-tab-active {
+  background: color-mix(in srgb, var(--app-primary) 22%, transparent);
+  color: var(--app-text);
+  box-shadow: none;
+}
+
+.lesson-muted {
+  color: var(--app-text-muted);
+}
+
+.lesson-title {
+  color: var(--app-text);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.lesson-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.lesson-flashcard {
+  position: relative;
+  height: 16rem;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  perspective: 1000px;
+  border-radius: 1.5rem;
+}
+
+.lesson-flashcard:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--app-bg), 0 0 0 4px var(--app-focus);
+}
+
+.lesson-flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.lesson-flashcard.is-flipped .lesson-flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.lesson-flashcard-face,
+.lesson-flashcard-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.lesson-flashcard-back {
+  transform: rotateY(180deg);
+  background: color-mix(in srgb, var(--app-accent) 18%, var(--app-surface));
+  border-color: color-mix(in srgb, var(--app-accent) 35%, transparent);
+}
+
+.lesson-exercise-card {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: none;
+  color: var(--app-text);
+}
+
+.lesson-option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface-hover);
+  color: var(--app-text);
+  cursor: pointer;
+  font: inherit;
+  transition: border-color var(--app-motion-base) ease, background-color var(--app-motion-base) ease;
+}
+
+.lesson-option:hover {
+  border-color: color-mix(in srgb, var(--app-primary) 40%, transparent);
+}
+
+.lesson-option:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--app-bg), 0 0 0 4px var(--app-focus);
+}
+
+.lesson-option-selected {
+  background: color-mix(in srgb, var(--app-primary) 14%, var(--app-surface));
+  border-color: var(--app-primary);
+  color: var(--app-text);
+}
+
+.lesson-input {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 1rem;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface-hover);
+  color: var(--app-text);
+  padding: 1rem 1.5rem;
+  font-size: 1.125rem;
+  font-family: ui-monospace, monospace;
+}
+
+.lesson-input::placeholder {
+  color: var(--app-text-subtle);
+}
+
+.lesson-input:focus,
+.lesson-input:focus-visible {
+  outline: none;
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-focus) 40%, transparent);
+}
+
+.lesson-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding: 0.85rem 1.75rem;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--app-primary);
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color var(--app-motion-base) ease;
+}
+
+.lesson-primary-btn:hover:not(:disabled) {
+  background: var(--app-primary-hover);
+}
+
+.lesson-primary-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--app-bg), 0 0 0 4px var(--app-focus);
+}
+
+.lesson-primary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lesson-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--app-border);
+  background: transparent;
+  color: var(--app-text);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.lesson-secondary-btn:hover {
+  background: var(--app-surface-hover);
+}
+
+.lesson-secondary-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--app-bg), 0 0 0 4px var(--app-focus);
 }
