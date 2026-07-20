@@ -55,15 +55,15 @@ const CtaFooter = () => {
               © 2026 EduPro Learning Platform. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <Link to="/coming-soon" className="text-white/60 text-xs font-body hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
-                Chính sách bảo mật
+              <Link to="/education" className="text-white/60 text-xs font-body hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
+                Học ngay
               </Link>
-              <Link to="/coming-soon" className="text-white/60 text-xs font-body hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
-                Điều khoản
+              <Link to="/premium" className="text-white/60 text-xs font-body hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
+                Premium
               </Link>
-              <Link to="/coming-soon" className="text-white/60 text-xs font-body hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
+              <a href="mailto:support@edupro.local" className="text-white/60 text-xs font-body hover:text-white/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 rounded-full px-1 py-1">
                 Liên hệ
-              </Link>
+              </a>
             </div>
           </div>
         </div>
