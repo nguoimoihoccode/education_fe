@@ -60,9 +60,9 @@ export default function DocumentImportPage() {
     onSuccess: (previewData) => {
       setPreview(previewData);
       setStep('preview');
-      toast.success(`Generated ${previewData.totalFlashcards} preview cards`);
+      toast.success(`Đã tạo ${previewData.totalFlashcards} thẻ xem trước`);
     },
-    onError: () => toast.error('Failed to preview document'),
+    onError: () => toast.error('Không thể xem trước tài liệu'),
   });
 
   const importMutation = useMutation({
@@ -96,9 +96,9 @@ export default function DocumentImportPage() {
       setStep('complete');
       queryClient.invalidateQueries({ queryKey: ['flashcardStats'] });
       queryClient.invalidateQueries({ queryKey: ['flashcardDecks'] });
-      toast.success(`Successfully imported ${result.imported} flashcards!`);
+      toast.success(`Đã import ${result.imported} thẻ thành công!`);
     },
-    onError: () => toast.error('Failed to import flashcards'),
+    onError: () => toast.error('Không thể import flashcards'),
   });
 
   const handleFileSelect = async (files: File[]) => {
@@ -139,9 +139,9 @@ export default function DocumentImportPage() {
 
   // Step indicator data
   const steps = [
-    { key: 'upload', label: 'Upload', icon: FileText },
-    { key: 'preview', label: 'Preview', icon: Brain },
-    { key: 'complete', label: 'Complete', icon: CheckCircle },
+    { key: 'upload', label: 'Tải lên', icon: FileText },
+    { key: 'preview', label: 'Xem trước', icon: Brain },
+    { key: 'complete', label: 'Hoàn tất', icon: CheckCircle },
   ] as const;
 
   return (
@@ -166,10 +166,10 @@ export default function DocumentImportPage() {
             <div>
               <h1 className="text-3xl md:text-4xl font-black font-headline text-white mb-1 flex items-center gap-3">
                 <Wand2 className="w-8 h-8 text-accent-400" />
-                Document Import AI
+                Import tài liệu AI
               </h1>
               <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">
-                Transform documents into flashcards with AI
+                Chuyển tài liệu thành flashcards bằng AI
               </p>
             </div>
           </div>
@@ -179,7 +179,7 @@ export default function DocumentImportPage() {
             className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold transition-all text-sm tracking-wider uppercase"
           >
             <Settings className="w-4 h-4 text-accent-400" />
-            Advanced
+            Nâng cao
             {showAdvancedOptions ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
         </header>
@@ -226,13 +226,13 @@ export default function DocumentImportPage() {
           <div className="bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 mb-10 shadow-2xl">
             <h3 className="text-lg font-black font-headline text-white mb-6 flex items-center gap-3">
               <Info className="w-5 h-5 text-accent-400" />
-              Import Settings
+              Cài đặt import
             </h3>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
-                  Max Cards
+                  Số thẻ tối đa
                 </label>
                 <input
                   type="number"
@@ -248,7 +248,7 @@ export default function DocumentImportPage() {
 
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
-                  Difficulty Level
+                  Độ khó
                 </label>
                 <select
                   value={importOptions.difficulty}
@@ -260,10 +260,10 @@ export default function DocumentImportPage() {
                   }
                   className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-bold focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all appearance-none cursor-pointer"
                 >
-                  <option value="auto" className="bg-slate-800">🤖  Auto Detect</option>
-                  <option value="easy" className="bg-slate-800">🟢  Easy</option>
-                  <option value="medium" className="bg-slate-800">🟡  Medium</option>
-                  <option value="hard" className="bg-slate-800">🔴  Hard</option>
+                  <option value="auto" className="bg-slate-800">🤖  Tự nhận diện</option>
+                  <option value="easy" className="bg-slate-800">🟢  Dễ</option>
+                  <option value="medium" className="bg-slate-800">🟡  Trung bình</option>
+                  <option value="hard" className="bg-slate-800">🔴  Khó</option>
                 </select>
               </div>
 
@@ -278,8 +278,8 @@ export default function DocumentImportPage() {
                     className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                   />
                   <div>
-                    <div className="text-sm font-bold text-white">Include Examples</div>
-                    <div className="text-xs text-slate-500">AI generates usage examples</div>
+                    <div className="text-sm font-bold text-white">Kèm ví dụ</div>
+                    <div className="text-xs text-slate-500">AI tạo ví dụ sử dụng</div>
                   </div>
                 </label>
 
@@ -293,8 +293,8 @@ export default function DocumentImportPage() {
                     className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                   />
                   <div>
-                    <div className="text-sm font-bold text-white">Include Pronunciation</div>
-                    <div className="text-xs text-slate-500">Auto-generate phonetics</div>
+                    <div className="text-sm font-bold text-white">Kèm phát âm</div>
+                    <div className="text-xs text-slate-500">Tự tạo phiên âm</div>
                   </div>
                 </label>
               </div>
@@ -309,22 +309,22 @@ export default function DocumentImportPage() {
             <div className="grid md:grid-cols-3 gap-5">
               <InfoCard
                 icon={FileText}
-                title="Multiple Formats"
-                description="Supports PDF, DOC, DOCX, TXT, JSON, CSV, MD, HTML files"
+                title="Nhiều định dạng"
+                description="Hỗ trợ PDF, DOC, DOCX, TXT, JSON, CSV, MD, HTML"
                 color="violet"
                 accent="from-accent-500 to-indigo-500"
               />
               <InfoCard
                 icon={Brain}
-                title="AI-Powered Parsing"
-                description="Smart content extraction and flashcard generation"
+                title="Phân tích bằng AI"
+                description="Trích xuất nội dung và tạo flashcard thông minh"
                 color="fuchsia"
                 accent="from-fuchsia-500 to-pink-500"
               />
               <InfoCard
                 icon={Zap}
-                title="Preview & Edit"
-                description="Review, edit and select cards before importing"
+                title="Xem trước & chỉnh"
+                description="Duyệt, sửa và chọn thẻ trước khi import"
                 color="emerald"
                 accent="from-emerald-500 to-teal-500"
               />
@@ -345,9 +345,9 @@ export default function DocumentImportPage() {
                   <Loader2 className="w-10 h-10 text-accent-400 animate-spin" />
                   <div className="absolute inset-0 rounded-full border border-accent-400/30 animate-ping" />
                 </div>
-                <h3 className="text-2xl font-black font-headline text-white mb-2">AI is Processing...</h3>
+                <h3 className="text-2xl font-black font-headline text-white mb-2">AI đang xử lý...</h3>
                 <p className="text-slate-400 text-sm max-w-md mx-auto">
-                  Our AI engine is analyzing your document, extracting key concepts, and generating flashcards. This may take a moment for large files.
+                  AI đang phân tích tài liệu, trích xuất khái niệm chính và tạo flashcards. File lớn có thể mất thêm chút thời gian.
                 </p>
 
                 {/* Animated progress bar */}
@@ -356,9 +356,9 @@ export default function DocumentImportPage() {
                     <div className="h-full bg-gradient-to-r from-accent-500 to-fuchsia-500 rounded-full animate-pulse w-2/3" />
                   </div>
                   <div className="flex justify-between mt-2 text-xs text-slate-500 font-bold tracking-widest uppercase">
-                    <span>Parsing</span>
-                    <span>Analyzing</span>
-                    <span>Generating</span>
+                    <span>Đọc file</span>
+                    <span>Phân tích</span>
+                    <span>Tạo thẻ</span>
                   </div>
                 </div>
               </div>
@@ -386,25 +386,25 @@ export default function DocumentImportPage() {
               </div>
 
               <h2 className="text-4xl font-black font-headline text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400 mb-2">
-                Import Complete!
+                Import hoàn tất!
               </h2>
               <p className="text-slate-400 text-lg mb-10">
-                Your flashcards have been successfully imported
+                Flashcards của bạn đã được import thành công
               </p>
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 mb-10">
                 <div className="bg-black/20 rounded-2xl p-5 border border-white/5">
                   <div className="text-4xl font-black font-mono text-emerald-400">{importResult.imported}</div>
-                  <div className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mt-1">Imported</div>
+                  <div className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mt-1">Đã import</div>
                 </div>
                 <div className="bg-black/20 rounded-2xl p-5 border border-white/5">
                   <div className="text-4xl font-black font-mono text-amber-400">{importResult.skipped}</div>
-                  <div className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mt-1">Skipped</div>
+                  <div className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mt-1">Bỏ qua</div>
                 </div>
                 <div className="bg-black/20 rounded-2xl p-5 border border-white/5">
                   <div className="text-4xl font-black font-mono text-accent-400">{importResult.timeSpent}s</div>
-                  <div className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mt-1">Time Spent</div>
+                  <div className="text-[10px] font-bold tracking-widest uppercase text-slate-500 mt-1">Thời gian</div>
                 </div>
               </div>
 
@@ -414,18 +414,18 @@ export default function DocumentImportPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <AlertCircle className="w-5 h-5 text-rose-400" />
                     <span className="text-sm font-bold text-rose-400 tracking-wider uppercase">
-                      {importResult.errors.length} Errors
+                      {importResult.errors.length} lỗi
                     </span>
                   </div>
                   <div className="space-y-1.5">
                     {importResult.errors.slice(0, 3).map((error, index) => (
                       <div key={index} className="text-xs text-rose-300 font-mono">
-                        Line {error.line}: {error.message}
+                        Dòng {error.line}: {error.message}
                       </div>
                     ))}
                     {importResult.errors.length > 3 && (
                       <div className="text-xs text-rose-400 font-bold mt-2">
-                        ...and {importResult.errors.length - 3} more
+                        ...và {importResult.errors.length - 3} lỗi khác
                       </div>
                     )}
                   </div>
@@ -439,14 +439,14 @@ export default function DocumentImportPage() {
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all"
                 >
                   <BookOpen className="w-5 h-5" />
-                  View Decks
+                  Xem bộ thẻ
                 </button>
                 <button
                   onClick={handleImportMore}
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all"
                 >
                   <Sparkles className="w-5 h-5 text-fuchsia-400" />
-                  Import More
+                  Import thêm
                 </button>
               </div>
             </div>
