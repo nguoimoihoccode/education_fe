@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   Settings,
@@ -63,15 +63,36 @@ const SOURCE_BADGE: Record<ConfigSource, string> = {
   default: 'bg-slate-500/15 text-slate-400 border-slate-500/20',
 };
 
-export default function AdvancedSettings() {
-  const [activeSection, setActiveSection] = useState<SectionId>('appearance');
-  const [hasChanges, setHasChanges] = useState(false);
-  const [showSavedToast, setShowSavedToast] = useState(false);
-  const savedToastTimeoutRef = useRef<number | null>(null);
+function resolveAiProviderSection(
+  search: string,
+  hash: string,
+  canManageAi: boolean,
+): SectionId | null {
+  if (!canManageAi) return null;
+  const sectionParam = new URLSearchParams(search).get('section');
+  if (sectionParam === 'ai-provider') return 'ai-provider';
+  if (hash === '#ai-provider' || hash === '#ai') return 'ai-provider';
+  return null;
+}
 
+export default function AdvancedSettings() {
+  const location = useLocation();
   const userRoles = useAuthStore((s) => s.user?.roles ?? []);
   const canManageAi =
     userRoles.includes('admin') || userRoles.includes('education_admin');
+
+  const [activeSection, setActiveSection] = useState<SectionId>(() => {
+    return (
+      resolveAiProviderSection(
+        typeof window !== 'undefined' ? window.location.search : '',
+        typeof window !== 'undefined' ? window.location.hash : '',
+        canManageAi,
+      ) ?? 'appearance'
+    );
+  });
+  const [hasChanges, setHasChanges] = useState(false);
+  const [showSavedToast, setShowSavedToast] = useState(false);
+  const savedToastTimeoutRef = useRef<number | null>(null);
 
   const settingSections = [
     ...BASE_SETTING_SECTIONS,
@@ -190,6 +211,15 @@ export default function AdvancedSettings() {
       setActiveSection('appearance');
     }
   }, [canManageAi, activeSection]);
+
+  useEffect(() => {
+    const target = resolveAiProviderSection(
+      location.search,
+      location.hash,
+      canManageAi,
+    );
+    if (target) setActiveSection(target);
+  }, [location.search, location.hash, canManageAi]);
 
   const handleSaveAi = async () => {
     setAiSaving(true);
