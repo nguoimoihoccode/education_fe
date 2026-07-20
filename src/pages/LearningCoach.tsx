@@ -17,13 +17,24 @@ import { QUERY_KEYS } from '@/config/query';
 import type { LearningCoachSummary, TodayPlanTask } from '@/types/education.types';
 
 export default function LearningCoach() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: QUERY_KEYS.LEARNING_COACH,
     queryFn: getLearningCoachSummary,
   });
 
   if (isLoading) return <CoachState label="Coach đang chuẩn bị lộ trình..." />;
-  if (error || !data) return <CoachState label="Không tải được dashboard coach." tone="error" />;
+  if (error || !data) {
+    return (
+      <CoachState
+        label="Không tải được dashboard coach. Kiểm tra kết nối và thử lại."
+        tone="error"
+        onRetry={() => {
+          void refetch();
+        }}
+        retrying={isFetching}
+      />
+    );
+  }
   return <CoachDashboard data={data} />;
 }
 
@@ -184,7 +195,17 @@ function PathStep({ task, index }: { task: TodayPlanTask; index: number }) {
   );
 }
 
-function CoachState({ label, tone = 'loading' }: { label: string; tone?: 'loading' | 'error' }) {
+function CoachState({
+  label,
+  tone = 'loading',
+  onRetry,
+  retrying,
+}: {
+  label: string;
+  tone?: 'loading' | 'error';
+  onRetry?: () => void;
+  retrying?: boolean;
+}) {
   const isError = tone === 'error';
   return (
     <main className="grid min-h-screen place-items-center bg-[#f6f8f3] px-4">
@@ -193,6 +214,16 @@ function CoachState({ label, tone = 'loading' }: { label: string; tone?: 'loadin
           {isError ? <AlertTriangle className="h-7 w-7" /> : <Brain className="h-7 w-7" />}
         </div>
         <p className="text-lg font-black text-slate-900">{label}</p>
+        {isError && onRetry ? (
+          <button
+            type="button"
+            onClick={onRetry}
+            disabled={retrying}
+            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-slate-950 px-5 py-2.5 text-sm font-black text-white transition hover:bg-slate-800 disabled:opacity-60"
+          >
+            {retrying ? 'Đang thử lại…' : 'Thử lại'}
+          </button>
+        ) : null}
       </div>
     </main>
   );

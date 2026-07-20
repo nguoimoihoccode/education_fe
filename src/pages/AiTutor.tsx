@@ -495,8 +495,14 @@ export default function AiTutor() {
           </header>
 
           {loadError && (
-            <div className="px-6 py-2 bg-rose-500/10 border-b border-rose-500/20 text-rose-300 text-xs text-center">
+            <div
+              role="alert"
+              className="px-6 py-3 bg-rose-500/10 border-b border-rose-500/20 text-rose-200 text-sm text-center font-medium"
+            >
               {loadError}
+              <span className="block text-xs text-rose-300/80 mt-1 font-normal">
+                Check your connection or AI provider settings, then retry.
+              </span>
             </div>
           )}
 
@@ -504,8 +510,10 @@ export default function AiTutor() {
           <div className="flex-1 overflow-y-auto">
             {isLoading || isLoadingMessages ? (
               <div className="flex flex-col items-center justify-center h-full gap-3 text-slate-400">
-                <Loader2 className="w-8 h-8 animate-spin text-accent-400" />
-                <span className="text-sm">Loading conversations...</span>
+                <Loader2 className="w-8 h-8 animate-spin text-accent-400" aria-hidden />
+                <span className="text-sm font-medium">
+                  {isLoading ? 'Loading conversations…' : 'Loading messages…'}
+                </span>
               </div>
             ) : messages.length === 0 ? (
               /* Empty State */
