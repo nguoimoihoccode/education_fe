@@ -86,6 +86,7 @@ export default function AdvancedSettings() {
   const [aiModel, setAiModel] = useState('');
   const [aiMaxTokens, setAiMaxTokens] = useState(2048);
   const [aiTemperature, setAiTemperature] = useState(0.7);
+  const [aiSystemRules, setAiSystemRules] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSaving, setAiSaving] = useState(false);
   const [aiTesting, setAiTesting] = useState(false);
@@ -162,6 +163,7 @@ export default function AdvancedSettings() {
     setAiModel(view.model ?? '');
     setAiMaxTokens(view.maxTokens ?? 2048);
     setAiTemperature(view.temperature ?? 0.7);
+    setAiSystemRules(view.systemRules ?? '');
   };
 
   useEffect(() => {
@@ -197,6 +199,7 @@ export default function AdvancedSettings() {
         model: aiModel,
         maxTokens: Number(aiMaxTokens),
         temperature: Number(aiTemperature),
+        systemRules: aiSystemRules,
       };
       if (aiApiKey.trim()) body.apiKey = aiApiKey.trim();
       const view = await updateAiSettings(body);
@@ -242,6 +245,26 @@ export default function AdvancedSettings() {
       toast.success('API key cleared');
     } catch {
       toast.error('Failed to clear API key');
+    } finally {
+      setAiSaving(false);
+    }
+  };
+
+  const handleResetAiRules = async () => {
+    if (
+      !window.confirm(
+        'Reset system rules to the built-in default? Custom rules will be removed.',
+      )
+    ) {
+      return;
+    }
+    setAiSaving(true);
+    try {
+      const view = await updateAiSettings({ clearSystemRules: true });
+      applyAiSettings(view);
+      toast.success('System rules reset to default');
+    } catch {
+      toast.error('Failed to reset system rules');
     } finally {
       setAiSaving(false);
     }
@@ -645,6 +668,32 @@ export default function AdvancedSettings() {
                       </div>
                     </SettingRow>
 
+                    <div className="pt-4 space-y-2">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-bold text-white flex items-center gap-2">
+                            <Brain className="w-4 h-4 text-accent-400" />
+                            System rules
+                          </p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            Prompt rules for every tutor reply (scope, tone, anti-hallucination). Max 8000 chars.
+                          </p>
+                        </div>
+                        <SourceBadge source={aiSettings?.source.systemRules} />
+                      </div>
+                      <textarea
+                        value={aiSystemRules}
+                        onChange={(e) => setAiSystemRules(e.target.value)}
+                        rows={8}
+                        maxLength={8000}
+                        placeholder="You are a practical language tutor..."
+                        className="w-full px-3 py-3 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono leading-relaxed focus:outline-none focus:border-accent-500/50 resize-y min-h-[140px]"
+                      />
+                      <p className="text-[10px] text-slate-500 text-right">
+                        {aiSystemRules.length}/8000
+                      </p>
+                    </div>
+
                     <div className="flex flex-wrap items-center gap-2 pt-6">
                       <button
                         type="button"
@@ -671,6 +720,14 @@ export default function AdvancedSettings() {
                         className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold hover:bg-rose-500/20 transition-all disabled:opacity-50 disabled:pointer-events-none"
                       >
                         <Trash2 className="w-3 h-3" /> Clear API key
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleResetAiRules}
+                        disabled={aiSaving || aiTesting || aiSettings?.source.systemRules === 'default'}
+                        className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-xs font-bold hover:bg-white/10 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                      >
+                        <RotateCcw className="w-3 h-3" /> Reset rules
                       </button>
                     </div>
                   </>

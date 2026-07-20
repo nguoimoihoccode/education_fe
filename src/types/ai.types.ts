@@ -33,6 +33,8 @@ export interface AiProviderSettingsView {
   model: string;
   maxTokens: number;
   temperature: number;
+  /** Effective system rules / prompt used for every tutor chat */
+  systemRules: string;
   apiKeyConfigured: boolean;
   apiKeyLast4: string | null;
   source: {
@@ -41,6 +43,7 @@ export interface AiProviderSettingsView {
     model: ConfigSource;
     maxTokens: ConfigSource;
     temperature: ConfigSource;
+    systemRules: ConfigSource;
   };
   updatedAt: string | null;
 }
@@ -51,9 +54,11 @@ export interface UpdateAiSettingsRequest {
   model?: string;
   maxTokens?: number;
   temperature?: number;
+  systemRules?: string;
   clearApiKey?: boolean;
   clearBaseUrl?: boolean;
   clearModel?: boolean;
   clearMaxTokens?: boolean;
   clearTemperature?: boolean;
+  clearSystemRules?: boolean;
 }
