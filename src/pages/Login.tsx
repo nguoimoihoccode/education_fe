@@ -172,7 +172,10 @@ export const Login = () => {
 
         {/* Support */}
         <p className="login-support">
-          Cần hỗ trợ? <a href="#" className="login-link-accent">Liên hệ Support</a>
+          Cần hỗ trợ?{' '}
+          <a href="mailto:support@edupro.local" className="login-link-accent">
+            Liên hệ Support
+          </a>
         </p>
       </div>
     </div>

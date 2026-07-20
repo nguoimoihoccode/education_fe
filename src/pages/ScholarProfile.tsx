@@ -20,6 +20,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { apiClient } from '@/api/client';
 import './Education.css';
 
@@ -134,10 +135,26 @@ export default function ScholarProfile() {
 
                 {/* Actions */}
                 <div className="flex flex-col gap-2 flex-shrink-0">
-                  <button className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white text-sm font-bold shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:scale-[1.02] active:scale-95 transition-all">
+                  <button
+                    type="button"
+                    onClick={() => toast('Theo dõi học viên sẽ sớm có mặt', { icon: '❤️' })}
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white text-sm font-bold shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:scale-[1.02] active:scale-95 transition-all"
+                    title="Sắp có"
+                  >
                     <Heart className="w-4 h-4" /> Follow
                   </button>
-                  <button className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        toast.success('Đã sao chép link hồ sơ');
+                      } catch {
+                        toast('Chia sẻ hồ sơ sẽ sớm có mặt', { icon: '🔗' });
+                      }
+                    }}
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all"
+                  >
                     <Share2 className="w-4 h-4" /> Share
                   </button>
                 </div>
@@ -193,7 +210,12 @@ export default function ScholarProfile() {
                     <div className="flex items-center gap-1 text-xs text-amber-400 font-bold flex-shrink-0">
                       <Star className="w-3 h-3 fill-current" />{deck.rating}
                     </div>
-                    <button className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-white hover:bg-accent-600 hover:border-accent-600 transition-all flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => toast('Tải bộ thẻ công khai sẽ sớm có mặt', { icon: '📚' })}
+                      className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-white hover:bg-accent-600 hover:border-accent-600 transition-all flex-shrink-0"
+                      title="Sắp có"
+                    >
                       Get
                     </button>
                   </div>

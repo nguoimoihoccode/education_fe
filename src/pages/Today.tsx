@@ -128,6 +128,14 @@ export default function Today() {
             <BookOpen className="mx-auto mb-4 h-10 w-10 text-slate-400" />
             <p>Chưa tạo được kế hoạch học.</p>
             <span>Hãy đăng ký một khóa học hoặc thử lại sau.</span>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+              <Link to="/education" className="edu-primary-action">
+                Đăng ký khóa học
+              </Link>
+              <button type="button" className="edu-primary-action" onClick={() => refetch()}>
+                Thử lại
+              </button>
+            </div>
           </div>
         )}
       </div>

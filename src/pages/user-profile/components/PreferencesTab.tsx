@@ -1,9 +1,14 @@
 import { Bell, Settings } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useSettingsStore } from '@/store/settings.store';
 import { ToggleRow } from './SharedComponents';
 
 export default function PreferencesTab() {
   const s = useSettingsStore();
+
+  const handleUnavailableDangerAction = (label: string) => {
+    toast(`Chưa hỗ trợ ${label}. Liên hệ support@edupro.local`, { icon: '⚠️' });
+  };
 
   return (
     <div className="space-y-8 max-w-2xl">
@@ -55,8 +60,20 @@ export default function PreferencesTab() {
         <h3 className="text-xl font-black font-headline text-rose-400 mb-2">Danger Zone</h3>
         <p className="text-sm text-slate-400 mb-6">These actions are permanent and cannot be undone.</p>
         <div className="flex gap-4">
-          <button className="px-5 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold text-sm hover:bg-rose-500/20 transition-all">Delete All Data</button>
-          <button className="px-5 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold text-sm hover:bg-rose-500/20 transition-all">Delete Account</button>
+          <button
+            type="button"
+            onClick={() => handleUnavailableDangerAction('xóa toàn bộ dữ liệu')}
+            className="px-5 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold text-sm hover:bg-rose-500/20 transition-all"
+          >
+            Delete All Data
+          </button>
+          <button
+            type="button"
+            onClick={() => handleUnavailableDangerAction('xóa tài khoản')}
+            className="px-5 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold text-sm hover:bg-rose-500/20 transition-all"
+          >
+            Delete Account
+          </button>
         </div>
       </div>
     </div>

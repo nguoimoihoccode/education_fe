@@ -491,7 +491,10 @@ export default function Social() {
                 {trendingData.map((topic) => (
                   <button
                     key={topic.tag}
+                    type="button"
+                    onClick={() => toast(`Lọc theo ${topic.tag} sẽ sớm có mặt`, { icon: '🏷️' })}
                     className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-all group"
+                    title="Sắp có"
                   >
                     <div>
                       <p className="text-sm font-bold text-accent-400 group-hover:text-accent-300 transition-colors">{topic.tag}</p>

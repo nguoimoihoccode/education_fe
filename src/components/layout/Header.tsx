@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { Search, Menu, Bell, User, ChevronDown, LogOut, Settings, X, Bot } from 'lucide-react';
 import { getGlobalSearchDestination } from './globalSearch';
 
@@ -97,7 +98,12 @@ export function Header({
                 <div className="px-5 py-4 flex items-center justify-between"
                   style={{ borderBottom: '1px solid var(--stock-glass-border)', background: 'var(--shell-panel-muted-bg)' }}>
                   <h3 className="font-bold" style={{ color: 'var(--stock-text-primary)' }}>Thông báo</h3>
-                  <button className="text-sm font-semibold transition-colors" style={{ color: 'var(--stock-primary-600)' }}>
+                  <button
+                    type="button"
+                    onClick={() => toast('Không có thông báo để đánh dấu', { icon: '🔔' })}
+                    className="text-sm font-semibold transition-colors"
+                    style={{ color: 'var(--stock-primary-600)' }}
+                  >
                     Đánh dấu đã đọc
                   </button>
                 </div>

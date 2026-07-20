@@ -233,6 +233,23 @@ export default function Education() {
                   <BookOpen className="mx-auto mb-4 h-10 w-10 text-slate-400" />
                   <p>Chưa có khóa học phù hợp.</p>
                   <span>Thử đổi bộ lọc hoặc tìm bằng từ khóa khác.</span>
+                  <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                    {(searchQuery || selectedLanguage) && (
+                      <button
+                        type="button"
+                        className="edu-primary-action"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setSelectedLanguage(null);
+                        }}
+                      >
+                        Xóa bộ lọc
+                      </button>
+                    )}
+                    <Link to="/quiz" className="edu-primary-action">
+                      Làm quiz ngắn
+                    </Link>
+                  </div>
                 </div>
               )}
             </>

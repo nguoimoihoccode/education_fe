@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import {
   Trophy,
   Crown,
@@ -154,8 +155,22 @@ export default function Leaderboard() {
         ) : (
           <div className="text-center py-16 mb-8">
             <Trophy className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">No Rankings Yet</h3>
-            <p className="text-slate-400 text-sm">Start learning to appear on the leaderboard!</p>
+            <h3 className="text-xl font-bold text-white mb-2">Chưa có xếp hạng</h3>
+            <p className="text-slate-400 text-sm mb-5">Bắt đầu học để xuất hiện trên bảng xếp hạng!</p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/education"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-600 text-white text-sm font-bold hover:bg-accent-500 transition-all"
+              >
+                Bắt đầu học
+              </Link>
+              <Link
+                to="/quiz"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all"
+              >
+                Làm quiz
+              </Link>
+            </div>
           </div>
         )}
 
@@ -260,8 +275,17 @@ export default function Leaderboard() {
           {!isLoadingLeaderboard && filteredUsers.length === 0 && (
             <div className="text-center py-16">
               <Search className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-              <p className="text-slate-400 font-bold">No learners found</p>
-              <p className="text-slate-500 text-sm mt-1">Try a different search or filter</p>
+              <p className="text-slate-400 font-bold">Không tìm thấy học viên</p>
+              <p className="text-slate-500 text-sm mt-1 mb-4">Thử từ khóa khác hoặc xóa bộ lọc</p>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-all"
+                >
+                  Xóa tìm kiếm
+                </button>
+              )}
             </div>
           )}
 

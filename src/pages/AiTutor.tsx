@@ -21,6 +21,7 @@ import {
   RotateCcw,
   Loader2,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store/auth.store';
 import {
   listConversations,
@@ -608,8 +609,10 @@ export default function AiTutor() {
                               )}
                             </button>
                             <button
+                              type="button"
+                              onClick={() => toast('Đọc to sẽ sớm có mặt', { icon: '🔊' })}
                               className="p-1 rounded-md hover:bg-white/5 text-slate-600 hover:text-slate-400 opacity-0 group-hover:opacity-100 transition-all"
-                              title="Listen"
+                              title="Listen (sắp có)"
                             >
                               <Volume2 className="w-3 h-3" />
                             </button>
