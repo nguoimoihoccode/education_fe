@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
   Crown,
   Zap,
@@ -286,23 +288,32 @@ export default function PremiumUpgrade() {
                   </div>
 
                   {/* CTA Button */}
-                  <button
-                    onClick={() => undefined}
-                    className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all mb-8 ${
-                      plan.id === 'free'
-                        ? 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
-                        : plan.popular
-                        ? 'bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white shadow-[0_0_25px_rgba(139,92,246,0.25)] hover:scale-[1.02] active:scale-95'
-                        : `bg-gradient-to-r ${plan.gradient} text-white shadow-lg hover:scale-[1.02] active:scale-95`
-                    }`}
-                  >
-                    {plan.id === 'free' ? 'Current Plan' : (
-                      <>
-                        <Rocket className="w-4 h-4" />
-                        {plan.id === 'pro' ? 'Start Free Trial' : 'Go Premium'}
-                      </>
-                    )}
-                  </button>
+                  {plan.id === 'free' ? (
+                    <Link
+                      to="/education"
+                      className="w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all mb-8 bg-white/5 border border-white/10 text-white hover:bg-white/10"
+                    >
+                      Continue free
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toast(
+                          'Billing is not enabled yet. Explore AI Tutor and learning tools while we prepare checkout.',
+                          { icon: '✨' },
+                        )
+                      }
+                      className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all mb-8 ${
+                        plan.popular
+                          ? 'bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white shadow-[0_0_25px_rgba(139,92,246,0.25)] hover:scale-[1.02] active:scale-95'
+                          : `bg-gradient-to-r ${plan.gradient} text-white shadow-lg hover:scale-[1.02] active:scale-95`
+                      }`}
+                    >
+                      <Rocket className="w-4 h-4" />
+                      {plan.id === 'pro' ? 'Start Free Trial' : 'Go Premium'}
+                    </button>
+                  )}
 
                   {/* Features */}
                   <div className="flex-1 space-y-3">
@@ -503,14 +514,33 @@ export default function PremiumUpgrade() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-base shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all">
+              <button
+                type="button"
+                onClick={() =>
+                  toast(
+                    'Billing is not enabled yet. Try AI Tutor and Document Import free while we prepare checkout.',
+                    { icon: '✨' },
+                  )
+                }
+                className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-base shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all"
+              >
                 <Rocket className="w-5 h-5" />
                 Start Free Trial
               </button>
-              <button className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-base hover:bg-white/10 transition-all">
-                <MessageCircle className="w-5 h-5" />
-                Talk to Sales
-              </button>
+              <Link
+                to="/ai-tutor"
+                className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-base hover:bg-white/10 transition-all"
+              >
+                <Bot className="w-5 h-5" />
+                Try AI Tutor
+              </Link>
+              <Link
+                to="/flashcards/document-import"
+                className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-base hover:bg-white/10 transition-all"
+              >
+                <BookOpen className="w-5 h-5" />
+                Document Import
+              </Link>
             </div>
 
             <div className="flex items-center justify-center gap-6 mt-8 text-xs text-slate-500 font-bold">
