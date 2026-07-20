@@ -284,7 +284,6 @@ export default function QuizListPage() {
                 <QuizCard
                   key={quiz.id}
                   quiz={quiz}
-                  onStartQuiz={() => {}}
                   onEdit={(quiz) => {
                     openEditModal(quiz);
                   }}
