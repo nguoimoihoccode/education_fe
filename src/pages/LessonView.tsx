@@ -47,7 +47,7 @@ export default function LessonView() {
         const animatedBg = document.querySelector('.animated-bg') as HTMLElement;
         startTimeRef.current = Date.now();
         if (animatedBg) animatedBg.style.display = 'none';
-        document.body.style.background = '#020617';
+        document.body.style.background = 'var(--app-bg)';
         return () => {
             if (animatedBg) animatedBg.style.display = '';
             document.body.style.background = '';
@@ -87,7 +87,7 @@ export default function LessonView() {
     if (!lesson) return <div className="education-container text-center pt-20">Lesson not found</div>;
 
     return (
-        <div className="education-container">
+        <div className="education-container lesson-page">
             <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[100px]"></div>
@@ -99,27 +99,27 @@ export default function LessonView() {
                         <div className="bg-white/10 rounded-full p-1 group-hover:bg-white/20 transition-colors mr-2"><ChevronLeft className="w-4 h-4" /></div>
                         Quay lại khóa học
                     </Link>
-                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-400 flex items-center gap-2 backdrop-blur-md">
+                    <div className="lesson-badge flex items-center gap-2">
                         <Clock className="w-3 h-3 text-pink-400" /> {lesson.estimatedMinutes} min
                     </div>
                 </div>
 
                 <div className="mb-10 text-center relative z-10">
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-accent-500/10 border border-accent-500/20 text-accent-400 text-xs font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+                    <div className="lesson-badge inline-flex items-center gap-2 mb-4">
                         <Sparkles className="w-3 h-3 fill-current" />
                         {lesson.type.replace('_', ' ')}
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 pb-2">
+                    <h1 className="lesson-title text-4xl md:text-5xl mb-4 leading-tight tracking-tight pb-2">
                         {lesson.title}
                     </h1>
-                    <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">{lesson.description}</p>
+                    <p className="lesson-muted text-lg max-w-2xl mx-auto leading-relaxed">{lesson.description}</p>
                     <div className="mt-6 flex flex-wrap justify-center gap-3">
                         {slideDecks[0] && (
-                            <Link to={`/education/slides/${slideDecks[0].id}/present`} className="rounded-full bg-amber-400 px-5 py-3 font-bold text-slate-950 shadow-[0_0_24px_rgba(251,191,36,0.25)]">
+                            <Link to={`/education/slides/${slideDecks[0].id}/present`} className="lesson-primary-btn">
                                 Xem Slides
                             </Link>
                         )}
-                        <Link to={`/education/slides/create?lessonId=${lesson.id}`} className="rounded-full border border-white/15 px-5 py-3 font-bold text-white hover:bg-white/10">
+                        <Link to={`/education/slides/create?lessonId=${lesson.id}`} className="lesson-secondary-btn">
                             Tạo Slides từ bài này
                         </Link>
                     </div>
@@ -127,14 +127,18 @@ export default function LessonView() {
 
                 {/* Glass Tabs */}
                 <div className="flex justify-center mb-10 relative z-10">
-                    <div className="bg-slate-800/80 backdrop-blur-md p-1 rounded-2xl border border-white/10 shadow-xl inline-flex gap-2">
+                    <div className="lesson-tabs">
                         {lessonTabs.map((tab) => {
                             const Icon = tab.icon;
+                            const isActive = activeTab === tab.id;
                             return (
-                                <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`
-                                     flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300
-                                     ${activeTab === tab.id ? 'bg-gradient-to-r from-accent-600 to-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}
-                                 `}>
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setActiveTab(tab.id)}
+                                    aria-pressed={isActive}
+                                    className={isActive ? 'lesson-tab lesson-tab-active' : 'lesson-tab'}
+                                >
                                     <Icon className="w-4 h-4" /> {tab.label}
                                 </button>
                             );
@@ -143,7 +147,7 @@ export default function LessonView() {
                 </div>
 
                 {/* Content Area */}
-                <div className="bg-slate-800/80 backdrop-blur-md border border-white/10 p-8 md:p-12 min-h-[500px] relative overflow-hidden rounded-3xl shadow-2xl">
+                <div className="lesson-panel min-h-[500px] relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-accent-500/10 to-transparent pointer-events-none rounded-tr-3xl"></div>
 
                     {activeTab === 'content' && (
@@ -151,8 +155,13 @@ export default function LessonView() {
                             <ReactMarkdown>{lesson.content || '> *No content available.*'}</ReactMarkdown>
 
                             <div className="mt-16 pt-8 border-t border-white/10 flex flex-col items-center">
-                                <p className="text-slate-400 mb-4 text-sm uppercase tracking-widest">Đã học xong?</p>
-                                <button onClick={() => completeMutation.mutate()} disabled={completeMutation.isPending} className="px-10 py-4 rounded-2xl bg-white text-black font-bold hover:scale-105 transition-transform flex items-center gap-3 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-white/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                                <p className="lesson-muted mb-4 text-sm uppercase tracking-widest">Đã học xong?</p>
+                                <button
+                                    type="button"
+                                    onClick={() => completeMutation.mutate()}
+                                    disabled={completeMutation.isPending}
+                                    className="lesson-primary-btn flex items-center gap-3"
+                                >
                                     <CheckCircle2 className="w-6 h-6" /> {completeMutation.isPending ? 'Đang hoàn thành...' : 'Hoàn thành bài học'}
                                 </button>
                             </div>
@@ -161,7 +170,7 @@ export default function LessonView() {
 
                     {activeTab === 'vocabulary' && (
                         <div className="fade-in-entry relative z-10">
-                            {vocabularies.length === 0 ? <p className="text-slate-500 text-center py-20 italic">Chưa có từ vựng cho bài này.</p> :
+                            {vocabularies.length === 0 ? <p className="lesson-muted text-center py-20 italic">Chưa có từ vựng cho bài này.</p> :
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {vocabularies.map((vocab) => <TuVungCard key={vocab.id} vocab={vocab} />)}
                                 </div>
@@ -187,22 +196,34 @@ export default function LessonView() {
 
 function TuVungCard({ vocab }: { vocab: Vocabulary }) {
     const [flipped, setFlipped] = useState(false);
+    const label = flipped
+        ? `${vocab.meaning}. Lật thẻ từ vựng`
+        : `${vocab.word}. Lật thẻ từ vựng`;
+
     return (
-        <div className={`relative h-64 perspective-1000 cursor-pointer group`} onClick={() => setFlipped(!flipped)}>
-            <div className={`relative w-full h-full transition-transform duration-700 transform-style-3d ${flipped ? 'rotate-y-180' : ''}`}>
-                {/* Front */}
-                <div className="absolute inset-0 backface-hidden bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center text-center shadow-xl group-hover:border-accent-500/50 group-hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all">
+        <button
+            type="button"
+            className={`lesson-flashcard${flipped ? ' is-flipped' : ''}`}
+            aria-pressed={flipped}
+            aria-label={label}
+            onClick={() => setFlipped(!flipped)}
+        >
+            <div className="lesson-flashcard-inner">
+                <div className="lesson-flashcard-face">
                     <span className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-accent-400 to-fuchsia-400 mb-4">{vocab.word}</span>
-                    {vocab.pronunciation && <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-slate-400 text-sm font-mono"><Volume2 className="w-3 h-3" /> /{vocab.pronunciation}/</div>}
-                    <div className="absolute bottom-6 text-[10px] font-bold text-slate-600 uppercase tracking-widest animate-pulse">Click to flip</div>
+                    {vocab.pronunciation && (
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-slate-400 text-sm font-mono">
+                            <Volume2 className="w-3 h-3" /> /{vocab.pronunciation}/
+                        </div>
+                    )}
+                    <div className="absolute bottom-6 text-[10px] font-bold text-slate-600 uppercase tracking-widest animate-pulse">Nhấn để lật</div>
                 </div>
-                {/* Back */}
-                <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-accent-900/80 to-indigo-900/80 border border-accent-500/30 rounded-3xl p-8 flex flex-col items-center justify-center text-center shadow-2xl backdrop-blur-xl">
+                <div className="lesson-flashcard-back">
                     <h3 className="text-2xl font-bold text-white mb-4">{vocab.meaning}</h3>
                     {vocab.example && <p className="text-slate-300 italic text-lg leading-relaxed">"{vocab.example}"</p>}
                 </div>
             </div>
-        </div>
+        </button>
     );
 }
 
@@ -234,7 +255,7 @@ function BaiTapList({
                 <h2 className="text-4xl font-bold text-white mb-4">{passed ? 'Hoàn thành tốt!' : 'Cần luyện thêm'}</h2>
                 <div className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-8 font-mono">{Math.round(results.score)}%</div>
                 {!passed && (
-                    <button onClick={onRetry} className="px-8 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold flex items-center gap-2 transition-all">
+                    <button type="button" onClick={onRetry} className="lesson-secondary-btn flex items-center gap-2">
                         <RotateCcw className="w-5 h-5" /> Làm lại bài tập
                     </button>
                 )}
@@ -242,12 +263,12 @@ function BaiTapList({
         );
     }
 
-    if (exercises.length === 0) return <div className="text-center text-slate-500 py-20 italic">Chưa có bài tập cho bài học này.</div>;
+    if (exercises.length === 0) return <div className="lesson-muted text-center py-20 italic">Chưa có bài tập cho bài học này.</div>;
 
     return (
         <div className="space-y-10 max-w-3xl mx-auto">
-                {exercises.map((ex, i: number) => (
-                <div key={ex.id} className="bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:border-accent-500/30 transition-all shadow-xl">
+            {exercises.map((ex, i: number) => (
+                <div key={ex.id} className="lesson-exercise-card">
                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">{i + 1}</div>
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{ex.type.replace('_', ' ')}</span>
@@ -256,30 +277,30 @@ function BaiTapList({
 
                     {ex.type === 'multiple_choice' && (
                         <div className="grid grid-cols-1 gap-4">
-                            {(ex.options || []).map((opt) => (
-                                <div
-                                    key={opt}
-                                    onClick={() => setAnswers({ ...answers, [ex.id]: opt })}
-                                    className={`
-                                        group relative p-5 rounded-2xl border transition-all duration-200 cursor-pointer flex items-center gap-4
-                                        ${answers[ex.id] === opt
-                                            ? 'bg-amber-500/10 border-amber-500 text-amber-100 shadow-[0_0_20px_rgba(245,158,11,0.2)]'
-                                            : 'bg-black/20 border-white/5 text-slate-300 hover:bg-white/5 hover:border-white/20'}
-                                    `}
-                                >
-                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${answers[ex.id] === opt ? 'border-amber-500 bg-amber-500' : 'border-slate-600 group-hover:border-slate-400'}`}>
-                                        {answers[ex.id] === opt && <div className="w-2 h-2 bg-white rounded-full"></div>}
-                                    </div>
-                                    <span className="text-lg font-medium">{opt}</span>
-                                </div>
-                            ))}
+                            {(ex.options || []).map((opt) => {
+                                const selected = answers[ex.id] === opt;
+                                return (
+                                    <button
+                                        key={opt}
+                                        type="button"
+                                        aria-pressed={selected}
+                                        onClick={() => setAnswers({ ...answers, [ex.id]: opt })}
+                                        className={selected ? 'lesson-option lesson-option-selected' : 'lesson-option'}
+                                    >
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selected ? 'border-amber-500 bg-amber-500' : 'border-slate-600'}`}>
+                                            {selected && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                        </div>
+                                        <span className="text-lg font-medium">{opt}</span>
+                                    </button>
+                                );
+                            })}
                         </div>
                     )}
 
                     {ex.type === 'fill_blank' && (
                         <input
                             type="text"
-                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-white text-xl font-mono focus:border-accent-500 focus:shadow-[0_0_20px_rgba(139,92,246,0.2)] outline-none transition-all placeholder:text-slate-700"
+                            className="lesson-input"
                             placeholder="Nhập câu trả lời..."
                             value={answers[ex.id] || ''}
                             onChange={e => setAnswers({ ...answers, [ex.id]: e.target.value })}
@@ -290,9 +311,10 @@ function BaiTapList({
 
             <div className="flex justify-end pt-10 border-t border-white/10">
                 <button
+                    type="button"
                     onClick={onSubmit}
                     disabled={submitting}
-                    className="px-12 py-5 rounded-2xl bg-white text-black text-lg font-bold shadow-2xl hover:scale-105 hover:shadow-white/20 transition-all disabled:opacity-50 flex items-center gap-3"
+                    className="lesson-primary-btn flex items-center gap-3"
                 >
                     {submitting ? 'Đang nộp...' : <><CheckCircle2 className="w-6 h-6" /> Nộp câu trả lời</>}
                 </button>
