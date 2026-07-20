@@ -20,7 +20,10 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
+import { useSettingsStore } from '@/store/settings.store';
 import './Education.css';
+
+const ONBOARDING_STORAGE_KEY = 'edupro-onboarding';
 
 /* ================================================================ */
 
@@ -63,6 +66,7 @@ const TOTAL_STEPS = 5;
 export default function Onboarding() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const updateSetting = useSettingsStore((s) => s.updateSetting);
   const [step, setStep] = useState(0);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [skillLevel, setSkillLevel] = useState('');
@@ -94,6 +98,22 @@ export default function Onboarding() {
   };
 
   const handleFinish = () => {
+    const payload = {
+      languages: selectedLanguages,
+      skillLevel,
+      goals: selectedGoals,
+      dailyTime,
+      completedAt: new Date().toISOString(),
+    };
+    try {
+      localStorage.setItem(ONBOARDING_STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      // ignore quota / private mode
+    }
+    // Map daily minutes onto existing learning preference
+    if (dailyTime) {
+      updateSetting('dailyGoal', dailyTime);
+    }
     navigate('/education');
   };
 
