@@ -257,9 +257,14 @@ export default function FlashcardDecks() {
               />
             </div>
           </div>
-          <button type="button" aria-label="Mở bộ lọc flashcard" className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all">
+          <button
+            type="button"
+            onClick={openCreateDeckModal}
+            aria-label="Tạo bộ thẻ flashcard"
+            className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all"
+          >
             <Filter className="w-5 h-5" />
-            Lọc
+            Tạo bộ thẻ
           </button>
         </div>
 
@@ -287,8 +292,29 @@ export default function FlashcardDecks() {
                 <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
                   <BookOpen className="w-7 h-7 text-slate-600" />
                 </div>
-                <p className="text-slate-500 text-sm font-medium">Không tìm thấy bộ thẻ.</p>
-                <p className="text-slate-600 text-xs mt-1">Tạo bộ thẻ đầu tiên để bắt đầu ôn tập.</p>
+                <p className="text-slate-500 text-sm font-medium">
+                  {searchQuery.trim() ? 'Không tìm thấy bộ thẻ phù hợp.' : 'Chưa có bộ thẻ nào.'}
+                </p>
+                <p className="text-slate-600 text-xs mt-1">
+                  {searchQuery.trim()
+                    ? 'Thử từ khóa khác hoặc tạo bộ thẻ mới.'
+                    : 'Tạo bộ thẻ đầu tiên hoặc import từ tài liệu.'}
+                </p>
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={openCreateDeckModal}
+                    className="px-5 py-2.5 rounded-xl bg-indigo-500 text-white text-sm font-bold hover:bg-indigo-400 transition-colors"
+                  >
+                    Tạo bộ thẻ
+                  </button>
+                  <Link
+                    to="/flashcards/document-import"
+                    className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-colors"
+                  >
+                    Import tài liệu
+                  </Link>
+                </div>
               </div>
             )}
 
