@@ -1,4 +1,4 @@
-import { Search, Plus, MessageSquare, Eye, Heart, Loader2, Pin, CheckCircle } from 'lucide-react';
+import { MessageSquare, Eye, Heart, Loader2, Pin, CheckCircle } from 'lucide-react';
 import type { ForumThread } from '@/api/community.api';
 import { EmptyState } from './SharedComponents';
 
@@ -10,28 +10,18 @@ interface ForumTabProps {
 export default function ForumTab({ threads, isLoading }: ForumTabProps) {
   return (
     <div className="space-y-6">
-      <div className="flex gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-          <input type="text" placeholder="Search discussions..." className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-800/60 border border-white/5 text-white text-sm placeholder-slate-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition-all" />
-        </div>
-        <button className="flex items-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-sm shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:scale-[1.02] active:scale-95 transition-all">
-          <Plus className="w-4 h-4" /> New Thread
-        </button>
-      </div>
-
-      <div className="flex gap-2 flex-wrap">
-        {['All', 'Study Tips', 'Grammar', 'TOEIC', 'Motivation', 'Challenges'].map((cat, i) => (
-          <button key={cat} className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${i === 0 ? 'bg-amber-600 text-white shadow-[0_0_12px_rgba(245,158,11,0.3)]' : 'bg-slate-800/60 text-slate-400 border border-white/5 hover:text-white hover:bg-white/5'}`}>
-            {cat}
-          </button>
-        ))}
+      <div className="rounded-2xl border border-amber-500/15 bg-amber-500/5 px-4 py-3 text-xs font-bold text-amber-200/90">
+        Forum search, categories, and new threads are coming soon. You can still browse existing discussions below.
       </div>
 
       {isLoading ? (
         <div className="flex justify-center py-16"><Loader2 className="w-10 h-10 animate-spin text-amber-500" /></div>
       ) : threads.length === 0 ? (
-        <EmptyState icon={MessageSquare} message="No discussions yet" sub="Start a new thread!" />
+        <EmptyState
+          icon={MessageSquare}
+          message="No discussions yet"
+          sub="Forum posting will open soon. Meanwhile, share progress on the Social feed."
+        />
       ) : (
         <div className="bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden">
           {threads.map((thread, i) => (
