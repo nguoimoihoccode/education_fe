@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Menu, Bell, User, ChevronDown, LogOut, Settings, X } from 'lucide-react';
+import { Search, Menu, Bell, User, ChevronDown, LogOut, Settings, X, Bot } from 'lucide-react';
 import { getGlobalSearchDestination } from './globalSearch';
 
 interface HeaderProps {
@@ -140,6 +140,11 @@ export function Header({
                     className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-[var(--shell-hover-bg)]"
                     style={{ color: 'var(--stock-text-secondary)' }}>
                     <User size={18} /> Hồ sơ cá nhân
+                  </Link>
+                  <Link to="/ai-tutor" onClick={onToggleProfile}
+                    className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-[var(--shell-hover-bg)]"
+                    style={{ color: 'var(--stock-text-secondary)' }}>
+                    <Bot size={18} /> AI Tutor
                   </Link>
                   <Link to="/settings" onClick={onToggleProfile}
                     className="flex items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-[var(--shell-hover-bg)]"
