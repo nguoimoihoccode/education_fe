@@ -64,11 +64,11 @@ interface Comment {
 }
 
 const FEED_FILTERS = [
-  { id: 'all', label: 'All', icon: Globe },
-  { id: 'achievement', label: 'Achievements', icon: Award },
-  { id: 'question', label: 'Questions', icon: HelpCircle },
-  { id: 'share', label: 'Resources', icon: BookOpen },
-  { id: 'milestone', label: 'Milestones', icon: Flame },
+  { id: 'all', label: 'Tất cả', icon: Globe },
+  { id: 'achievement', label: 'Thành tích', icon: Award },
+  { id: 'question', label: 'Hỏi đáp', icon: HelpCircle },
+  { id: 'share', label: 'Tài nguyên', icon: BookOpen },
+  { id: 'milestone', label: 'Cột mốc', icon: Flame },
 ];
 
 // Map API response to local post format
@@ -131,10 +131,10 @@ export default function Social() {
     mutationFn: createPost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['socialFeed'] });
-      toast.success('Post created!');
+      toast.success('Đã đăng bài!');
     },
     onError: () => {
-      toast.error('Failed to create post');
+      toast.error('Không thể đăng bài');
     },
   });
 
@@ -230,10 +230,10 @@ export default function Social() {
         <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-black font-headline text-white mb-2 flex items-center gap-3">
             <Users className="w-8 h-8 text-emerald-400" />
-            Community
+            Mạng xã hội
           </h1>
           <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">
-            Connect, share, and learn together
+            Kết nối, chia sẻ và học cùng nhau
           </p>
         </header>
 
@@ -252,24 +252,34 @@ export default function Social() {
                       onClick={() => setShowCreatePost(true)}
                       className="w-full text-left px-5 py-3.5 rounded-2xl bg-black/30 border border-white/5 text-slate-500 text-sm hover:bg-black/40 hover:border-white/10 transition-all"
                     >
-                      Share something with the community...
+                      Chia sẻ gì đó với cộng đồng...
                     </button>
                   ) : (
                     <div>
                       <textarea
                         value={newPostText}
                         onChange={(e) => setNewPostText(e.target.value)}
-                        placeholder="What's on your mind? Share a tip, ask a question, or celebrate an achievement..."
+                        placeholder="Bạn đang nghĩ gì? Chia sẻ tip, hỏi đáp, hoặc ăn mừng thành tích..."
                         rows={4}
                         className="w-full px-5 py-4 rounded-2xl bg-black/30 border border-white/5 text-white text-sm placeholder-slate-500 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none"
                         autoFocus
                       />
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex gap-2">
-                          <button className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-accent-400 transition-all">
+                          <button
+                            type="button"
+                            onClick={() => toast('Đính kèm ảnh sẽ sớm có mặt', { icon: '🖼️' })}
+                            className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-accent-400 transition-all"
+                            title="Sắp có"
+                          >
                             <ImageIcon className="w-4 h-4" />
                           </button>
-                          <button className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-amber-400 transition-all">
+                          <button
+                            type="button"
+                            onClick={() => toast('Emoji picker sẽ sớm có mặt', { icon: '😊' })}
+                            className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-amber-400 transition-all"
+                            title="Sắp có"
+                          >
                             <Smile className="w-4 h-4" />
                           </button>
                         </div>
@@ -278,7 +288,7 @@ export default function Social() {
                             onClick={() => setShowCreatePost(false)}
                             className="px-4 py-2.5 rounded-xl bg-white/5 text-slate-400 text-sm font-bold hover:bg-white/10 transition-all"
                           >
-                            Cancel
+                            Hủy
                           </button>
                           <button
                             onClick={handleCreatePost}
@@ -286,7 +296,7 @@ export default function Social() {
                             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white text-sm font-bold hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
                           >
                             <Send className="w-3.5 h-3.5" />
-                            Post
+                            Đăng
                           </button>
                         </div>
                       </div>
@@ -346,7 +356,12 @@ export default function Social() {
                         </p>
                       </div>
                     </div>
-                    <button className="p-2 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white transition-all">
+                    <button
+                      type="button"
+                      onClick={() => toast('Tuỳ chọn bài viết sẽ sớm có mặt', { icon: '⋯' })}
+                      className="p-2 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white transition-all"
+                      title="Sắp có"
+                    >
                       <MoreHorizontal className="w-4 h-4" />
                     </button>
                   </div>
@@ -388,7 +403,12 @@ export default function Social() {
                         <MessageCircle className="w-4 h-4" />
                         {post.comments.length}
                       </button>
-                      <button className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5 hover:text-white transition-all">
+                      <button
+                        type="button"
+                        onClick={() => toast('Chia sẻ bài viết sẽ sớm có mặt', { icon: '🔗' })}
+                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/5 hover:text-white transition-all"
+                        title="Sắp có"
+                      >
                         <Share2 className="w-4 h-4" />
                         {post.shares}
                       </button>
@@ -419,7 +439,12 @@ export default function Social() {
                               <span className="text-[10px] text-slate-600">{comment.createdAt}</span>
                             </div>
                             <p className="text-xs text-slate-300 leading-relaxed">{comment.content}</p>
-                            <button className="flex items-center gap-1 mt-1.5 text-[10px] text-slate-500 hover:text-slate-400 transition-colors">
+                            <button
+                              type="button"
+                              onClick={() => toast('Thích bình luận sẽ sớm có mặt', { icon: '👍' })}
+                              className="flex items-center gap-1 mt-1.5 text-[10px] text-slate-500 hover:text-slate-400 transition-colors"
+                              title="Sắp có"
+                            >
                               <ThumbsUp className="w-3 h-3" /> {comment.likes}
                             </button>
                           </div>
@@ -433,10 +458,16 @@ export default function Social() {
                         <div className="flex-1 flex gap-2">
                           <input
                             type="text"
-                            placeholder="Write a comment..."
-                            className="flex-1 px-4 py-2.5 rounded-xl bg-black/30 border border-white/5 text-white text-xs placeholder-slate-500 focus:border-accent-500 outline-none transition-all"
+                            placeholder="Viết bình luận... (sắp có)"
+                            disabled
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-black/30 border border-white/5 text-white text-xs placeholder-slate-500 focus:border-accent-500 outline-none transition-all disabled:opacity-50"
                           />
-                          <button className="px-3 py-2.5 rounded-xl bg-accent-600 text-white hover:bg-accent-700 transition-all">
+                          <button
+                            type="button"
+                            onClick={() => toast('Gửi bình luận sẽ sớm có mặt', { icon: '💬' })}
+                            className="px-3 py-2.5 rounded-xl bg-accent-600 text-white hover:bg-accent-700 transition-all"
+                            title="Sắp có"
+                          >
                             <Send className="w-3 h-3" />
                           </button>
                         </div>
@@ -454,7 +485,7 @@ export default function Social() {
             <div className="bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-3xl p-6">
               <h3 className="text-sm font-black font-headline text-white mb-4 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-emerald-400" />
-                Trending Topics
+                Chủ đề nổi bật
               </h3>
               <div className="space-y-3">
                 {trendingData.map((topic) => (
@@ -476,7 +507,7 @@ export default function Social() {
             <div className="bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-3xl p-6">
               <h3 className="text-sm font-black font-headline text-white mb-4 flex items-center gap-2">
                 <Star className="w-4 h-4 text-amber-400" />
-                Top Learners
+                Học viên hàng đầu
               </h3>
               <div className="space-y-3">
                 {[
@@ -495,8 +526,13 @@ export default function Social() {
                       </p>
                       <p className="text-[10px] text-slate-500 font-bold inline-flex items-center gap-1.5">LVL {person.level} • {person.streak}d <Flame className="h-3 w-3 text-orange-400" /></p>
                     </div>
-                    <button className="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wider uppercase bg-accent-500/10 text-accent-400 border border-accent-500/20 hover:bg-accent-500/20 transition-all">
-                      Follow
+                    <button
+                      type="button"
+                      onClick={() => toast('Theo dõi người dùng sẽ sớm có mặt', { icon: '👤' })}
+                      className="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wider uppercase bg-accent-500/10 text-accent-400 border border-accent-500/20 hover:bg-accent-500/20 transition-all"
+                      title="Sắp có"
+                    >
+                      Theo dõi
                     </button>
                   </div>
                 ))}
@@ -507,24 +543,24 @@ export default function Social() {
             <div className="bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-3xl p-6">
               <h3 className="text-sm font-black font-headline text-white mb-4 flex items-center gap-2">
                 <Globe className="w-4 h-4 text-accent-400" />
-                Community Stats
+                Thống kê cộng đồng
               </h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 rounded-xl bg-black/20 border border-white/5 text-center">
                   <div className="text-xl font-black font-mono text-emerald-400">12.5K</div>
-                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Members</div>
+                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Thành viên</div>
                 </div>
                 <div className="p-3 rounded-xl bg-black/20 border border-white/5 text-center">
                   <div className="text-xl font-black font-mono text-accent-400">3.2K</div>
-                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Posts Today</div>
+                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Bài hôm nay</div>
                 </div>
                 <div className="p-3 rounded-xl bg-black/20 border border-white/5 text-center">
                   <div className="text-xl font-black font-mono text-amber-400">856</div>
-                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Online Now</div>
+                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Đang online</div>
                 </div>
                 <div className="p-3 rounded-xl bg-black/20 border border-white/5 text-center">
                   <div className="text-xl font-black font-mono text-fuchsia-400">18.9K</div>
-                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Resources</div>
+                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Tài nguyên</div>
                 </div>
               </div>
             </div>
