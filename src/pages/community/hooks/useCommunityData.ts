@@ -70,7 +70,7 @@ export function useCommunityData() {
     mutationFn: (groupId: string) => joinGroup(groupId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['studyGroups'] });
-      toast.success('Joined group!');
+      toast.success('Đã tham gia nhóm!');
     },
   });
 
@@ -78,7 +78,7 @@ export function useCommunityData() {
     mutationFn: (groupId: string) => leaveGroup(groupId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['studyGroups'] });
-      toast.success('Left group');
+      toast.success('Đã rời nhóm');
     },
   });
 
@@ -86,7 +86,7 @@ export function useCommunityData() {
     mutationFn: (eventId: string) => registerEvent(eventId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['communityEvents'] });
-      toast.success('Registered for event!');
+      toast.success('Đã đăng ký sự kiện!');
     },
   });
 

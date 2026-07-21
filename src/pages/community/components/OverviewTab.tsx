@@ -4,6 +4,7 @@ import {
   ChevronRight, ArrowRight, Clock, Trophy, Eye, Heart,
   Award, Loader2, Pin, CheckCircle,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import type { StudyGroup, CommunityEvent, ForumThread, TopMember } from '@/api/community.api';
 import { GroupCard, QuickStat, EmptyState } from './SharedComponents';
 import { eventTypeConfig, formatStatValue } from './constants';
@@ -31,10 +32,10 @@ export default function OverviewTab({
     <div className="space-y-10">
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <QuickStat icon={Users} value={formatStatValue(stats.totalMembers)} label="Members" color="emerald" />
-        <QuickStat icon={MessageSquare} value={formatStatValue(stats.totalDiscussions)} label="Discussions" color="violet" />
-        <QuickStat icon={BookOpen} value={formatStatValue(stats.totalResources)} label="Resources" color="amber" />
-        <QuickStat icon={Calendar} value={stats.eventsThisMonth.toString()} label="Events This Month" color="fuchsia" />
+        <QuickStat icon={Users} value={formatStatValue(stats.totalMembers)} label="Thành viên" color="emerald" />
+        <QuickStat icon={MessageSquare} value={formatStatValue(stats.totalDiscussions)} label="Thảo luận" color="violet" />
+        <QuickStat icon={BookOpen} value={formatStatValue(stats.totalResources)} label="Tài nguyên" color="amber" />
+        <QuickStat icon={Calendar} value={stats.eventsThisMonth.toString()} label="Sự kiện tháng này" color="fuchsia" />
       </div>
 
       {/* Active Challenge */}
@@ -46,13 +47,13 @@ export default function OverviewTab({
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20"><Flame className="h-3 w-3" /> Active Challenge</span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20"><Flame className="h-3 w-3" /> Thử thách đang diễn ra</span>
               </div>
               <h3 className="text-xl font-black font-headline text-white mb-1">{events[0].title}</h3>
               <p className="text-sm text-slate-400 mb-2">{events[0].description}</p>
               <div className="flex items-center gap-4 text-xs text-slate-500 font-bold">
                 <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{events[0].date}</span>
-                <span className="flex items-center gap-1"><Users className="w-3 h-3" />{events[0].participants.toLocaleString()} joined</span>
+                <span className="flex items-center gap-1"><Users className="w-3 h-3" />{events[0].participants.toLocaleString()} tham gia</span>
                 {events[0].reward && <span className="flex items-center gap-1"><Trophy className="w-3 h-3" />{events[0].reward}</span>}
               </div>
             </div>
@@ -64,7 +65,7 @@ export default function OverviewTab({
                   : 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:scale-[1.02]'
               }`}
             >
-              {events[0].isRegistered ? <><CheckCircle className="h-4 w-4" /> Joined</> : 'Join Challenge'}
+              {events[0].isRegistered ? <><CheckCircle className="h-4 w-4" /> Đã tham gia</> : 'Tham gia thử thách'}
             </button>
           </div>
         </div>
@@ -74,16 +75,16 @@ export default function OverviewTab({
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-black font-headline text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-accent-400" /> Popular Study Groups
+            <Users className="w-5 h-5 text-accent-400" /> Nhóm học phổ biến
           </h2>
           <button onClick={() => setActiveTab('groups')} className="text-xs font-bold text-accent-400 hover:text-accent-300 flex items-center gap-1 transition-colors">
-            View All <ChevronRight className="w-3 h-3" />
+            Xem tất cả <ChevronRight className="w-3 h-3" />
           </button>
         </div>
         {isLoadingGroups ? (
           <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-accent-500" /></div>
         ) : groups.length === 0 ? (
-          <EmptyState icon={Users} message="No study groups yet" sub="Be the first to create one!" />
+          <EmptyState icon={Users} message="Chưa có nhóm học" sub="Hãy là người tạo nhóm đầu tiên!" />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {groups.slice(0, 3).map((group) => (
@@ -97,16 +98,16 @@ export default function OverviewTab({
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-black font-headline text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-emerald-400" /> Upcoming Events
+            <Calendar className="w-5 h-5 text-emerald-400" /> Sự kiện sắp tới
           </h2>
           <button onClick={() => setActiveTab('events')} className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors">
-            View All <ChevronRight className="w-3 h-3" />
+            Xem tất cả <ChevronRight className="w-3 h-3" />
           </button>
         </div>
         {isLoadingEvents ? (
           <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>
         ) : events.length <= 1 ? (
-          <EmptyState icon={Calendar} message="No upcoming events" sub="Check back later!" />
+          <EmptyState icon={Calendar} message="Chưa có sự kiện sắp tới" sub="Quay lại sau nhé!" />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {events.slice(1, 3).map((event) => {
@@ -139,20 +140,26 @@ export default function OverviewTab({
         <div className="lg:col-span-7">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-black font-headline text-white flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-amber-400" /> Hot Discussions
+              <MessageSquare className="w-5 h-5 text-amber-400" /> Thảo luận nổi bật
             </h2>
             <button onClick={() => setActiveTab('forum')} className="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 transition-colors">
-              View All <ChevronRight className="w-3 h-3" />
+              Xem tất cả <ChevronRight className="w-3 h-3" />
             </button>
           </div>
           {isLoadingThreads ? (
             <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-amber-500" /></div>
           ) : threads.length === 0 ? (
-            <EmptyState icon={MessageSquare} message="No discussions yet" sub="Start a conversation!" />
+            <EmptyState icon={MessageSquare} message="Chưa có thảo luận" sub="Hãy bắt đầu cuộc trò chuyện!" />
           ) : (
             <div className="bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden">
               {threads.slice(0, 3).map((thread, i) => (
-                <button key={thread.id} className={`w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-white/[0.02] transition-all ${i < 2 ? 'border-b border-white/[0.03]' : ''}`}>
+                <button
+                  key={thread.id}
+                  type="button"
+                  onClick={() => toast('Xem chi tiết thảo luận sẽ sớm có mặt', { icon: '💬' })}
+                  className={`w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-white/[0.02] transition-all ${i < 2 ? 'border-b border-white/[0.03]' : ''}`}
+                  title="Sắp có"
+                >
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                     {thread.author.charAt(0)}
                   </div>
@@ -178,11 +185,11 @@ export default function OverviewTab({
 
         <div className="lg:col-span-5">
           <h2 className="text-lg font-black font-headline text-white flex items-center gap-2 mb-4">
-            <Award className="w-5 h-5 text-fuchsia-400" /> Top Contributors
+            <Award className="w-5 h-5 text-fuchsia-400" /> Đóng góp hàng đầu
           </h2>
           <div className="bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-3xl p-6 space-y-4">
             {topMembers.length === 0 ? (
-              <p className="text-center text-slate-500 text-sm py-4">No data yet</p>
+              <p className="text-center text-slate-500 text-sm py-4">Chưa có dữ liệu</p>
             ) : (
               topMembers.map((m, i) => (
                 <div key={m.name} className="flex items-center gap-4">
@@ -196,7 +203,7 @@ export default function OverviewTab({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-white flex items-center gap-1.5">{m.name} <span>{m.badge}</span></p>
-                    <p className="text-[10px] text-slate-500 font-bold">LVL {m.level} • {m.contributions} contributions</p>
+                    <p className="text-[10px] text-slate-500 font-bold">LVL {m.level} • {m.contributions} đóng góp</p>
                   </div>
                   <div className="text-right">
                     <span className="text-sm font-black font-mono text-emerald-400">{m.xp.toLocaleString()}</span>
@@ -206,7 +213,7 @@ export default function OverviewTab({
               ))
             )}
             <Link to="/leaderboard" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 border border-white/5 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/10 transition-all mt-2">
-              Full Leaderboard <ArrowRight className="w-3 h-3" />
+              Bảng xếp hạng đầy đủ <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         </div>

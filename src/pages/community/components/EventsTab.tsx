@@ -11,7 +11,7 @@ interface EventsTabProps {
 
 export default function EventsTab({ events, isLoading, toggleRegisterEvent }: EventsTabProps) {
   if (isLoading) return <div className="flex justify-center py-16"><Loader2 className="w-10 h-10 animate-spin text-amber-500" /></div>;
-  if (events.length === 0) return <EmptyState icon={Calendar} message="No events scheduled" sub="Check back soon for new events!" />;
+  if (events.length === 0) return <EmptyState icon={Calendar} message="Chưa có sự kiện" sub="Quay lại sau để xem sự kiện mới!" />;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -45,7 +45,7 @@ export default function EventsTab({ events, isLoading, toggleRegisterEvent }: Ev
                   : `bg-gradient-to-r ${event.type === 'challenge' ? 'from-amber-500 to-orange-600' : event.type === 'workshop' ? 'from-emerald-600 to-teal-600' : event.type === 'live' ? 'from-accent-600 to-fuchsia-600' : 'from-fuchsia-600 to-pink-600'} text-white shadow-lg hover:scale-[1.02] active:scale-95`
               }`}
             >
-              {event.isRegistered ? '✓ Registered' : 'Register Now'}
+              {event.isRegistered ? '✓ Đã đăng ký' : 'Đăng ký ngay'}
             </button>
           </div>
         );

@@ -9,11 +9,11 @@ import ResourcesTab from './community/components/ResourcesTab';
 import './Education.css';
 
 const TAB_ITEMS: { id: TabId; label: string; icon: LucideIcon }[] = [
-  { id: 'overview', label: 'Overview', icon: Compass },
-  { id: 'groups', label: 'Study Groups', icon: Users },
-  { id: 'events', label: 'Events', icon: Calendar },
-  { id: 'forum', label: 'Forum', icon: MessageSquare },
-  { id: 'resources', label: 'Resources', icon: BookOpen },
+  { id: 'overview', label: 'Tổng quan', icon: Compass },
+  { id: 'groups', label: 'Nhóm học', icon: Users },
+  { id: 'events', label: 'Sự kiện', icon: Calendar },
+  { id: 'forum', label: 'Diễn đàn', icon: MessageSquare },
+  { id: 'resources', label: 'Tài nguyên', icon: BookOpen },
 ];
 
 export default function CommunityHub() {
@@ -31,10 +31,10 @@ export default function CommunityHub() {
           <div className="relative">
             <h1 className="text-3xl md:text-4xl font-black font-headline text-white mb-2 flex items-center gap-3">
               <Compass className="w-8 h-8 text-emerald-400" />
-              Community Hub
+              Cộng đồng
             </h1>
             <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">
-              Study groups • Events • Forum • Resources
+              Nhóm học • Sự kiện • Diễn đàn • Tài nguyên
             </p>
           </div>
         </div>

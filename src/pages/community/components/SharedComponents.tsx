@@ -15,7 +15,7 @@ export function GroupCard({ group, onToggle }: { group: StudyGroup; onToggle: ()
             {group.name}
             {group.isPrivate && <Lock className="w-3 h-3 text-slate-500" />}
           </h4>
-          <p className="text-[10px] text-slate-500 font-bold">{group.category} • {group.members.toLocaleString()} members</p>
+          <p className="text-[10px] text-slate-500 font-bold">{group.category} • {group.members.toLocaleString()} thành viên</p>
         </div>
       </div>
       <p className="text-xs text-slate-400 leading-relaxed mb-4 line-clamp-2">{group.description}</p>
@@ -32,7 +32,7 @@ export function GroupCard({ group, onToggle }: { group: StudyGroup; onToggle: ()
               : `bg-gradient-to-r ${group.gradient} text-white shadow-md hover:scale-[1.02]`
           }`}
         >
-          {group.isJoined ? 'Joined' : 'Join'}
+          {group.isJoined ? 'Đã tham gia' : 'Tham gia'}
         </button>
       </div>
     </div>

@@ -4,10 +4,10 @@ import {
 import type { LucideIcon } from 'lucide-react';
 
 export const eventTypeConfig: Record<string, { color: string; bg: string; icon: LucideIcon; label: string }> = {
-  challenge: { color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20', icon: Flame, label: 'Challenge' },
+  challenge: { color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20', icon: Flame, label: 'Thử thách' },
   workshop: { color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', icon: Lightbulb, label: 'Workshop' },
-  live: { color: 'text-accent-400', bg: 'bg-accent-500/10 border-accent-500/20', icon: Video, label: 'Live' },
-  contest: { color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/20', icon: Trophy, label: 'Contest' },
+  live: { color: 'text-accent-400', bg: 'bg-accent-500/10 border-accent-500/20', icon: Video, label: 'Trực tiếp' },
+  contest: { color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/20', icon: Trophy, label: 'Cuộc thi' },
 };
 
 export const resourceTypeConfig: Record<string, { icon: LucideIcon; color: string }> = {
