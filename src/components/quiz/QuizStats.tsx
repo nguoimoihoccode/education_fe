@@ -28,27 +28,27 @@ export function QuizStats({ stats, topicStats, className }: QuizStatsProps) {
         <StatCard
           icon={BookOpen}
           value={stats.totalQuizzes}
-          label="Total Quizzes"
+          label="Tổng quiz"
           color="violet"
         />
         <StatCard
           icon={Target}
           value={stats.totalAttempts}
-          label="Total Attempts"
+          label="Tổng lần làm"
           color="blue"
         />
         <StatCard
           icon={CheckCircle}
           value={stats.passedQuizzes}
-          label="Passed Quizzes"
-          subtext={`${passRate}% pass rate`}
+          label="Quiz đạt"
+          subtext={`${passRate}% tỷ lệ đạt`}
           color="green"
         />
         <StatCard
           icon={Clock}
           value={stats.completedQuizzes}
-          label="Completed"
-          subtext={`${completionRate}% completion`}
+          label="Hoàn thành"
+          subtext={`${completionRate}% hoàn tất`}
           color="amber"
         />
       </div>
@@ -57,27 +57,27 @@ export function QuizStats({ stats, topicStats, className }: QuizStatsProps) {
       <div className="glass-pane rounded-2xl p-6 md:p-8">
         <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
           <TrendingUp className="w-6 h-6 text-accent-400" />
-          Performance Overview
+          Tổng quan hiệu suất
         </h3>
 
         <div className="space-y-6">
           <ProgressBar
-            label="Average Score"
+            label="Điểm trung bình"
             current={stats.averageScore}
             max={100}
             unit="%"
             color="bg-accent-500"
           />
           <ProgressBar
-            label="Highest Score"
+            label="Điểm cao nhất"
             current={stats.highestScore}
             max={100}
             unit="%"
             color="bg-emerald-500"
           />
           <div className="flex items-center justify-between text-sm text-slate-300 pt-4 border-t border-white/5">
-            <span>Lowest Score: <strong className="text-white">{stats.lowestScore}%</strong></span>
-            <span>Avg Time/Question: <strong className="text-white">{formatTime(stats.averageTimePerQuestion)}</strong></span>
+            <span>Điểm thấp nhất: <strong className="text-white">{stats.lowestScore}%</strong></span>
+            <span>TB thời gian/câu: <strong className="text-white">{formatTime(stats.averageTimePerQuestion)}</strong></span>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@ export function QuizStats({ stats, topicStats, className }: QuizStatsProps) {
         <div className="glass-pane rounded-2xl p-6 md:p-8">
           <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
             <Eye className="w-6 h-6 text-emerald-400" />
-            Topics Performance
+            Hiệu suất theo chủ đề
           </h3>
 
           <div className="space-y-4">
@@ -99,8 +99,8 @@ export function QuizStats({ stats, topicStats, className }: QuizStatsProps) {
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
                   <h4 className="font-bold text-white">{topic.topic}</h4>
                   <div className="flex items-center gap-4 text-sm">
-                    <span className="text-slate-300">{topic.totalAttempts} attempts</span>
-                    <span className="font-black text-emerald-400 text-lg">{Math.round(topic.averageScore)}% avg</span>
+                    <span className="text-slate-300">{topic.totalAttempts} lần làm</span>
+                    <span className="font-black text-emerald-400 text-lg">{Math.round(topic.averageScore)}% TB</span>
                   </div>
                 </div>
 
@@ -146,7 +146,7 @@ export function QuizStats({ stats, topicStats, className }: QuizStatsProps) {
         <div className="glass-pane rounded-2xl p-6 md:p-8">
           <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
             <Target className="w-6 h-6 text-accent-400" />
-            Topics Explored
+            Chủ đề đã luyện
           </h3>
           <div className="flex flex-wrap gap-3">
             {stats.watchedTopics.map((topic) => (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Plus,
   Search,
@@ -38,6 +38,7 @@ const ITEMS_PER_PAGE = 9;
 
 export default function QuizListPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [topicFilter, setTopicFilter] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,11 +95,14 @@ export default function QuizListPage() {
   // Mutations
   const createQuizMutation = useMutation({
     mutationFn: createQuiz,
-    onSuccess: () => {
+    onSuccess: (created) => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       queryClient.invalidateQueries({ queryKey: ['quizStats'] });
-      toast.success('Đã tạo quiz');
+      toast.success('Đã tạo quiz — mở chi tiết để xem trạng thái câu hỏi');
       closeQuizModal();
+      if (created?.id) {
+        navigate(`/quiz/${created.id}`);
+      }
     },
     onError: (error) => {
       toast.error(getQuizCreateErrorMessage(error));
@@ -223,7 +227,7 @@ export default function QuizListPage() {
           </Link>
 
           <Link
-            to="/quiz"
+            to="/quiz/offline-quiz-hsk1"
             className="learning-card group"
           >
             <div className="flex items-center gap-4">
@@ -231,12 +235,12 @@ export default function QuizListPage() {
                 <Play className="w-6 h-6 text-amber-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white mb-1">Danh sách quiz</h3>
-                <p className="text-sm text-slate-300">Chọn bài luyện phù hợp</p>
+                <h3 className="text-lg font-bold text-white mb-1">HSK nhanh</h3>
+                <p className="text-sm text-slate-300">Luyện HSK1 với cấu hình độ khó</p>
               </div>
             </div>
             <div className="mt-4 flex items-center text-amber-400 text-sm font-medium group-hover:text-amber-300">
-              Xem danh sách <ArrowRight className="w-4 h-4 ml-1" />
+              Bắt đầu HSK1 <ArrowRight className="w-4 h-4 ml-1" />
             </div>
           </Link>
         </div>
@@ -408,10 +412,10 @@ export default function QuizListPage() {
                     onChange={(e) => setForm((current) => ({ ...current, difficulty: e.target.value as QuizListFormState['difficulty'] }))}
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none appearance-none cursor-pointer"
                   >
-                    <option value="EASY" className="bg-slate-800">Easy</option>
-                    <option value="MEDIUM" className="bg-slate-800">Medium</option>
-                    <option value="HARD" className="bg-slate-800">Hard</option>
-                    <option value="MIXED" className="bg-slate-800">Mixed</option>
+                    <option value="EASY" className="bg-slate-800">Dễ</option>
+                    <option value="MEDIUM" className="bg-slate-800">Trung bình</option>
+                    <option value="HARD" className="bg-slate-800">Khó</option>
+                    <option value="MIXED" className="bg-slate-800">Tổng hợp</option>
                   </select>
                 </div>
 
@@ -424,16 +428,16 @@ export default function QuizListPage() {
                     onChange={(e) => setForm((current) => ({ ...current, questionType: e.target.value as QuizListFormState['questionType'] }))}
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none appearance-none cursor-pointer"
                   >
-                    <option value="MIXED" className="bg-slate-800">Mixed</option>
-                    <option value="MULTIPLE_CHOICE" className="bg-slate-800">Multiple Choice</option>
-                    <option value="TRUE_FALSE" className="bg-slate-800">True/False</option>
-                    <option value="FILL_BLANK" className="bg-slate-800">Fill Blank</option>
+                    <option value="MIXED" className="bg-slate-800">Tổng hợp</option>
+                    <option value="MULTIPLE_CHOICE" className="bg-slate-800">Trắc nghiệm</option>
+                    <option value="TRUE_FALSE" className="bg-slate-800">Đúng/Sai</option>
+                    <option value="FILL_BLANK" className="bg-slate-800">Điền chỗ trống</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
-                    Questions
+                    Số câu hỏi
                   </label>
                   <input
                     type="number"
@@ -442,13 +446,14 @@ export default function QuizListPage() {
                     value={form.questionCount}
                     onChange={(e) => setForm((current) => ({ ...current, questionCount: parseInt(e.target.value, 10) || 10 }))}
                     disabled={isEditMode}
+                    title={isEditMode ? 'Không đổi số câu khi sửa (cần soạn câu riêng)' : undefined}
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
-                    Time (min)
+                    Thời gian (phút)
                   </label>
                   <input
                     type="number"
@@ -457,6 +462,7 @@ export default function QuizListPage() {
                     value={form.timeLimitMinutes}
                     onChange={(e) => setForm((current) => ({ ...current, timeLimitMinutes: parseFloat(e.target.value) || 10 }))}
                     disabled={isEditMode}
+                    title={isEditMode ? 'Không đổi thời gian khi sửa' : undefined}
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
@@ -465,7 +471,7 @@ export default function QuizListPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
-                    Passing Score (%)
+                    Điểm đạt (%)
                   </label>
                   <input
                     type="number"
@@ -474,13 +480,14 @@ export default function QuizListPage() {
                     value={form.passingScore}
                     onChange={(e) => setForm((current) => ({ ...current, passingScore: parseInt(e.target.value, 10) || 70 }))}
                     disabled={isEditMode}
+                    title={isEditMode ? 'Không đổi điểm đạt khi sửa' : undefined}
                     className="w-full px-4 py-3.5 rounded-xl bg-black/40 border border-white/5 text-white font-mono focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">
-                    Max Retries
+                    Số lần làm lại tối đa
                   </label>
                   <input
                     type="number"
@@ -495,7 +502,7 @@ export default function QuizListPage() {
 
               {/* Options */}
               <div className="space-y-4 pt-5 border-t border-white/5">
-                <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest">Options</h4>
+                <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest">Tuỳ chọn</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
                     <input
@@ -505,8 +512,8 @@ export default function QuizListPage() {
                       className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                     />
                     <div>
-                      <div className="text-sm font-bold text-white">Shuffle Questions</div>
-                      <div className="text-xs text-slate-300">Randomize order</div>
+                      <div className="text-sm font-bold text-white">Trộn câu hỏi</div>
+                      <div className="text-xs text-slate-300">Thứ tự ngẫu nhiên</div>
                     </div>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
@@ -517,8 +524,8 @@ export default function QuizListPage() {
                       className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                     />
                     <div>
-                      <div className="text-sm font-bold text-white">Shuffle Answers</div>
-                      <div className="text-xs text-slate-300">Randomize options</div>
+                      <div className="text-sm font-bold text-white">Trộn đáp án</div>
+                      <div className="text-xs text-slate-300">Đảo thứ tự lựa chọn</div>
                     </div>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
@@ -529,8 +536,8 @@ export default function QuizListPage() {
                       className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                     />
                     <div>
-                      <div className="text-sm font-bold text-white">Show Correct</div>
-                      <div className="text-xs text-slate-300">After submission</div>
+                      <div className="text-sm font-bold text-white">Hiện đáp án đúng</div>
+                      <div className="text-xs text-slate-300">Sau khi nộp bài</div>
                     </div>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer px-4 py-3.5 bg-black/20 rounded-xl border border-white/5 hover:bg-white/5">
@@ -541,8 +548,8 @@ export default function QuizListPage() {
                       className="w-5 h-5 rounded-lg border-white/20 bg-black/40 text-accent-500 focus:ring-accent-500"
                     />
                     <div>
-                      <div className="text-sm font-bold text-white">Allow Retry</div>
-                      <div className="text-xs text-slate-300">Multiple attempts</div>
+                      <div className="text-sm font-bold text-white">Cho làm lại</div>
+                      <div className="text-xs text-slate-300">Nhiều lần thử</div>
                     </div>
                   </label>
                 </div>
