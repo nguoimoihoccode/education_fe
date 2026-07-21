@@ -13,6 +13,7 @@ import {
   HSK2_HARD_QUESTIONS,
 } from '@/mocks/quizOffline';
 import { getQuizDetailPreviewQuestions } from './quizDetailPreview';
+import { buildQuizSessionSearch, type QuizPlayMode } from './quizMode';
 import '../Education.css';
 
 export default function QuizDetailPage() {
@@ -35,6 +36,7 @@ export default function QuizDetailPage() {
     quiz?.id === 'offline-quiz-hsk1' || quiz?.id === 'offline-quiz-hsk2';
   const [selectedDifficulty, setSelectedDifficulty] = useState<'EASY' | 'MEDIUM' | 'HARD'>('EASY');
   const [selectedQuestionCount, setSelectedQuestionCount] = useState<10 | 20 | 30>(20);
+  const [playMode, setPlayMode] = useState<QuizPlayMode>('practice');
   const [previewSeed] = useState(() => Math.floor(Math.random() * 1000));
   const hskPreviewPool = quiz?.id === 'offline-quiz-hsk2'
     ? selectedDifficulty === 'EASY'
@@ -129,18 +131,75 @@ export default function QuizDetailPage() {
             </div>
 
             <div className="flex gap-3">
-              <Link
-                to={isOfflineHskQuiz
-                  ? `/quiz/${quiz.id}/session?difficulty=${selectedDifficulty}&count=${selectedQuestionCount}`
-                  : `/quiz/${quiz.id}/session`}
-                className="flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold hover:scale-105 transition-transform shadow-lg shadow-accent-900/30"
-              >
-                <Play className="w-5 h-5" />
-                Bắt đầu làm bài
-              </Link>
+              {isOfflineHskQuiz || (quiz.questions?.length ?? 0) > 0 || quiz.questionCount > 0 ? (
+                <Link
+                  to={`/quiz/${quiz.id}/session${buildQuizSessionSearch({
+                    mode: playMode,
+                    difficulty: isOfflineHskQuiz ? selectedDifficulty : null,
+                    count: isOfflineHskQuiz ? selectedQuestionCount : null,
+                  })}`}
+                  className="flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold hover:scale-105 transition-transform shadow-lg shadow-accent-900/30"
+                >
+                  <Play className="w-5 h-5" />
+                  {playMode === 'practice' ? 'Bắt đầu học' : 'Bắt đầu kiểm tra'}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="flex items-center gap-2 px-8 py-4 rounded-full bg-white/10 border border-white/10 text-slate-400 font-bold cursor-not-allowed"
+                  title="Quiz chưa có câu hỏi"
+                >
+                  <Play className="w-5 h-5" />
+                  Chưa có câu hỏi
+                </button>
+              )}
             </div>
           </div>
         </header>
+
+        <div className="glass-card mb-8">
+          <h3 className="font-bold text-white mb-2">Chế độ làm bài</h3>
+          <p className="text-sm text-slate-400 mb-4">
+            Học: chấm ngay từng câu. Kiểm tra: lô 3 câu, chấm điểm khi nộp bài.
+          </p>
+          <div className="flex gap-2 flex-wrap mb-2">
+            {(
+              [
+                {
+                  id: 'practice' as const,
+                  label: 'Học',
+                  hint: 'Chọn → Kiểm tra → xem đúng/sai ngay',
+                },
+                {
+                  id: 'exam' as const,
+                  label: 'Kiểm tra',
+                  hint: 'Lô 3 câu, đổi trong lô, chấm cuối bài',
+                },
+              ] as const
+            ).map((mode) => (
+              <button
+                key={mode.id}
+                type="button"
+                onClick={() => setPlayMode(mode.id)}
+                className={`px-4 py-2 rounded-full border text-sm font-semibold ${
+                  playMode === mode.id
+                    ? mode.id === 'practice'
+                      ? 'bg-emerald-600 text-white border-emerald-500'
+                      : 'bg-rose-600 text-white border-rose-500'
+                    : 'bg-white/5 text-slate-300 border-white/10'
+                }`}
+              >
+                {mode.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-slate-400">
+            {playMode === 'practice'
+              ? 'Chọn → Kiểm tra → xem đúng/sai ngay'
+              : 'Lô 3 câu, đổi trong lô, chấm cuối bài'}
+          </p>
+        </div>
 
         {isOfflineHskQuiz && (
           <div className="glass-card mb-8">
@@ -197,7 +256,7 @@ export default function QuizDetailPage() {
             </h3>
             <dl className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <dt className="text-slate-300">Questions</dt>
+                <dt className="text-slate-300">Số câu hỏi</dt>
                 <dd className="text-white font-medium">{isOfflineHskQuiz ? selectedQuestionCount : quiz.questionCount}</dd>
               </div>
               <div className="flex justify-between">
@@ -275,7 +334,10 @@ export default function QuizDetailPage() {
               </div>
             ) : (
               <div className="py-10 text-center text-slate-300">
-                <p>Bài quiz này chưa có câu hỏi.</p>
+                <p className="mb-2">Bài quiz này chưa có câu hỏi.</p>
+                <p className="text-sm text-slate-500">
+                  Thêm câu hỏi trước khi bắt đầu làm bài. (Tính năng soạn câu sẽ sớm có trong app.)
+                </p>
               </div>
             )}
           </div>

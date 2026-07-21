@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Trophy, XCircle,RotateCw, Home, BarChart2 } from 'lucide-react';
 import { getQuizSession, getWrongAnswers, getQuizById } from '@/api/quiz.api';
@@ -7,7 +7,10 @@ import '../Education.css';
 
 export default function QuizResultPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
+  const [searchParams] = useSearchParams();
   const sessionId_ = sessionId!;
+  const retryDifficulty = searchParams.get('difficulty');
+  const retryCount = searchParams.get('count');
 
   const { data: session, isLoading: isLoadingSession } = useQuery({
     queryKey: ['quizSession', sessionId_],
@@ -135,15 +138,24 @@ export default function QuizResultPage() {
 
         {/* Actions */}
         <div className="flex flex-wrap gap-4 mb-8 justify-center">
-          {canRetry && !isPassed && (
-            <Link
-              to={`/quiz/${quiz.id}/session`}
-              className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all"
-            >
-              <RotateCw className="w-5 h-5" />
-              Thử lại
-            </Link>
-          )}
+          <Link
+            to={(() => {
+              const isHsk = quiz.id === 'offline-quiz-hsk1' || quiz.id === 'offline-quiz-hsk2';
+              const modeParam = searchParams.get('mode') === 'exam' ? 'exam' : 'practice';
+              if (isHsk) {
+                const d = retryDifficulty === 'EASY' || retryDifficulty === 'MEDIUM' || retryDifficulty === 'HARD'
+                  ? retryDifficulty
+                  : 'EASY';
+                const c = retryCount === '10' || retryCount === '20' || retryCount === '30' ? retryCount : '20';
+                return `/quiz/${quiz.id}/session?mode=${modeParam}&difficulty=${d}&count=${c}`;
+              }
+              return `/quiz/${quiz.id}/session?mode=${modeParam}`;
+            })()}
+            className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all"
+          >
+            <RotateCw className="w-5 h-5" />
+            {isPassed || !canRetry ? 'Luyện lại' : 'Thử lại'}
+          </Link>
           <Link
             to={`/quiz/${quiz.id}`}
             className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white font-medium hover:bg-white/20 transition-all"

@@ -40,10 +40,27 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
     onDelete?.(quiz);
   };
 
+  const isOfflineHskQuiz =
+    quiz.id === 'offline-quiz-hsk1' || quiz.id === 'offline-quiz-hsk2';
+  const hasQuestions =
+    isOfflineHskQuiz ||
+    (quiz.questions?.length ?? 0) > 0 ||
+    quiz.questionCount > 0;
+
   const handleStartQuiz = (e: React.MouseEvent) => {
     e.stopPropagation();
     onStartQuiz?.(quiz);
-    navigate(`/quiz/${quiz.id}/session`);
+    // HSK offline needs difficulty/count config on detail first
+    if (isOfflineHskQuiz) {
+      navigate(`/quiz/${quiz.id}`);
+      return;
+    }
+    if (!hasQuestions) {
+      navigate(`/quiz/${quiz.id}`);
+      return;
+    }
+    // Always go detail so user can pick Học / Kiểm tra
+    navigate(`/quiz/${quiz.id}`);
   };
 
   const handleViewDetails = () => {
@@ -221,7 +238,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_0_15px_rgba(139,92,246,0.3)]"
           >
             <Zap className="w-4 h-4" />
-            Bắt đầu
+            {isOfflineHskQuiz ? 'Cấu hình' : hasQuestions ? 'Bắt đầu' : 'Chi tiết'}
           </button>
         </div>
       </div>
