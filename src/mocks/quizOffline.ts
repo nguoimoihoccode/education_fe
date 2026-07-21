@@ -352,89 +352,133 @@ const HSK3_WORD_BANK: Hsk1WordEntry[] = [
   { hanzi: '适应', pinyin: 'shì yìng', meaning: 'Thích nghi', distractors: ['Từ chối', 'Giải thích', 'Bắt đầu'] },
 ];
 
+function pickUniqueValues(pool: string[], exclude: string, count: number, seed: number): string[] {
+  const candidates = pool.filter((item) => item !== exclude);
+  if (candidates.length === 0 || count <= 0) return [];
+
+  const picked: string[] = [];
+  const stride = Math.max(1, Math.floor(candidates.length / count) || 1);
+
+  for (let step = 0; picked.length < count && step < candidates.length * 2; step += 1) {
+    const candidate = candidates[(seed + step * stride) % candidates.length];
+    if (!picked.includes(candidate)) {
+      picked.push(candidate);
+    }
+  }
+
+  for (const candidate of candidates) {
+    if (picked.length >= count) break;
+    if (!picked.includes(candidate)) picked.push(candidate);
+  }
+
+  return picked.slice(0, count);
+}
+
+function buildChoiceOptions(correct: string, distractors: string[]): string[] {
+  const unique = [correct, ...distractors.filter((item) => item && item !== correct)];
+  return [...new Set(unique)].slice(0, 4);
+}
+
+function pickHanziDistractors(
+  wordBank: Hsk1WordEntry[],
+  entry: Hsk1WordEntry,
+  index: number,
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD',
+): string[] {
+  const allHanzi = wordBank.map((item) => item.hanzi);
+
+  if (difficulty === 'HARD') {
+    return pickUniqueValues(allHanzi, entry.hanzi, 3, Math.max(0, index - 1));
+  }
+
+  if (difficulty === 'MEDIUM') {
+    const nearby = pickUniqueValues(allHanzi, entry.hanzi, 2, Math.max(0, index - 1));
+    const farther = pickUniqueValues(allHanzi, entry.hanzi, 3, index + 11).filter(
+      (item) => !nearby.includes(item),
+    );
+    return [...nearby, ...farther].slice(0, 3);
+  }
+
+  return pickUniqueValues(allHanzi, entry.hanzi, 3, index + 17);
+}
+
+function pickMeaningDistractors(
+  wordBank: Hsk1WordEntry[],
+  entry: Hsk1WordEntry,
+  index: number,
+): string[] {
+  const fromEntry = entry.distractors.filter((item) => item !== entry.meaning);
+  if (fromEntry.length >= 3) return fromEntry.slice(0, 3);
+
+  const otherMeanings = wordBank
+    .filter((item) => item.hanzi !== entry.hanzi && item.meaning !== entry.meaning)
+    .map((item) => item.meaning);
+
+  return [...fromEntry, ...pickUniqueValues(otherMeanings, entry.meaning, 3 - fromEntry.length, index + 5)].slice(0, 3);
+}
+
 function createChineseQuestions(
   wordBank: Hsk1WordEntry[],
   quizId: string,
   difficulty: 'EASY' | 'MEDIUM' | 'HARD',
 ) {
   return wordBank.flatMap((entry, index) => {
-    const nearbyEntries = wordBank
-      .filter((item) => item.hanzi !== entry.hanzi)
-      .slice(Math.max(0, index - 1), Math.max(0, index - 1) + 3)
-      .map((item) => item.hanzi);
-
-    const fartherEntries = wordBank
-      .filter((item) => item.hanzi !== entry.hanzi)
-      .slice((index + 7) % Math.max(1, wordBank.length - 3), (index + 10) % wordBank.length || undefined)
-      .map((item) => item.hanzi)
-      .slice(0, 3);
-
-    const optionsByDifficulty =
-      difficulty === 'EASY'
-        ? [entry.hanzi, ...wordBank.filter((item) => item.hanzi !== entry.hanzi).slice(index % 4, index % 4 + 3).map((item) => item.hanzi)]
-      : difficulty === 'MEDIUM'
-          ? [
-              entry.hanzi,
-              nearbyEntries[0] ?? entry.hanzi,
-              fartherEntries[0] ?? entry.hanzi,
-              fartherEntries[1] ?? entry.hanzi,
-            ]
-          : [
-              entry.hanzi,
-              nearbyEntries[0] ?? entry.hanzi,
-              nearbyEntries[1] ?? entry.hanzi,
-              nearbyEntries[2] ?? entry.hanzi,
-            ];
+    const meaningOptions = buildChoiceOptions(entry.meaning, pickMeaningDistractors(wordBank, entry, index));
+    const hanziOptions = buildChoiceOptions(
+      entry.hanzi,
+      pickHanziDistractors(wordBank, entry, index, difficulty),
+    );
 
     return [
-    {
-      id: `${quizId}-q${index * 2 + 1}`,
-      quizId,
-      question: difficulty === 'HARD'
-        ? `Trong câu đơn giản, "${entry.hanzi}" (${entry.pinyin}) thường được hiểu gần nhất là gì?`
-        : `"${entry.hanzi}" (${entry.pinyin}) có nghĩa gần đúng là gì?`,
-      type: 'MULTIPLE_CHOICE' as const,
-      options: rotateOptions(optionsByDifficulty, index % optionsByDifficulty.length),
-      correctAnswer: entry.hanzi,
-      explanation: `${entry.hanzi} (${entry.pinyin}) có nghĩa là ${entry.meaning.toLowerCase()}.`,
-      points: 1,
-      createdAt: nowIso(),
-      updatedAt: nowIso(),
-    },
-    {
-      id: `${quizId}-q${index * 2 + 2}`,
-      quizId,
-      question:
-        difficulty === 'EASY'
-          ? `Nếu ai đó nói "${entry.hanzi}", ý gần nhất là gì?`
-          : difficulty === 'MEDIUM'
-            ? `Nếu trong đối thoại có từ "${entry.hanzi}", người nói đang muốn diễn đạt gì?`
-            : `Nếu nghe từ "${entry.hanzi}" trong hội thoại, cách hiểu nào phù hợp nhất?`,
-      type: 'MULTIPLE_CHOICE' as const,
-      options: rotateOptions([entry.meaning, ...entry.distractors], (index + 1) % 4),
-      correctAnswer: entry.meaning,
-      explanation: `${entry.hanzi} (${entry.pinyin}) được hiểu là ${entry.meaning.toLowerCase()}.`,
-      points: 1,
-      createdAt: nowIso(),
-      updatedAt: nowIso(),
-    },
-    {
-      id: `${quizId}-q${index * 2 + 3}`,
-      quizId,
-      question:
-        difficulty === 'EASY'
-          ? `Từ nào phù hợp nhất với nghĩa "${entry.meaning}"?`
-        : difficulty === 'MEDIUM'
-          ? `Trong tình huống quen thuộc, từ nào mang nghĩa gần với "${entry.meaning}" nhất?`
-          : `Nếu cần diễn đạt ý "${entry.meaning}", cách chọn từ nào là phù hợp nhất?`,
-      type: 'MULTIPLE_CHOICE' as const,
-      options: rotateOptions([entry.hanzi, ...wordBank.filter((item) => item.hanzi !== entry.hanzi).slice((index + 2) % 5, (index + 2) % 5 + 3).map((item) => item.hanzi)], (index + 2) % 4),
-      correctAnswer: entry.hanzi,
-      explanation: `Đáp án đúng là ${entry.hanzi} (${entry.pinyin}), mang nghĩa ${entry.meaning.toLowerCase()}.`,
-      points: 1,
-      createdAt: nowIso(),
-      updatedAt: nowIso(),
-    },
+      {
+        id: `${quizId}-q${index * 3 + 1}`,
+        quizId,
+        question:
+          difficulty === 'HARD'
+            ? `Trong câu đơn giản, "${entry.hanzi}" (${entry.pinyin}) thường được hiểu gần nhất là gì?`
+            : `"${entry.hanzi}" (${entry.pinyin}) có nghĩa gần đúng là gì?`,
+        type: 'MULTIPLE_CHOICE' as const,
+        options: rotateOptions(meaningOptions, index % meaningOptions.length),
+        correctAnswer: entry.meaning,
+        explanation: `${entry.hanzi} (${entry.pinyin}) có nghĩa là ${entry.meaning.toLowerCase()}.`,
+        points: 1,
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+      },
+      {
+        id: `${quizId}-q${index * 3 + 2}`,
+        quizId,
+        question:
+          difficulty === 'EASY'
+            ? `Nếu ai đó nói "${entry.hanzi}", ý gần nhất là gì?`
+            : difficulty === 'MEDIUM'
+              ? `Nếu trong đối thoại có từ "${entry.hanzi}", người nói đang muốn diễn đạt gì?`
+              : `Nếu nghe từ "${entry.hanzi}" trong hội thoại, cách hiểu nào phù hợp nhất?`,
+        type: 'MULTIPLE_CHOICE' as const,
+        options: rotateOptions(meaningOptions, (index + 1) % meaningOptions.length),
+        correctAnswer: entry.meaning,
+        explanation: `${entry.hanzi} (${entry.pinyin}) được hiểu là ${entry.meaning.toLowerCase()}.`,
+        points: 1,
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+      },
+      {
+        id: `${quizId}-q${index * 3 + 3}`,
+        quizId,
+        question:
+          difficulty === 'EASY'
+            ? `Từ nào phù hợp nhất với nghĩa "${entry.meaning}"?`
+            : difficulty === 'MEDIUM'
+              ? `Trong tình huống quen thuộc, từ nào mang nghĩa gần với "${entry.meaning}" nhất?`
+              : `Nếu cần diễn đạt ý "${entry.meaning}", cách chọn từ nào là phù hợp nhất?`,
+        type: 'MULTIPLE_CHOICE' as const,
+        options: rotateOptions(hanziOptions, (index + 2) % hanziOptions.length),
+        correctAnswer: entry.hanzi,
+        explanation: `Đáp án đúng là ${entry.hanzi} (${entry.pinyin}), mang nghĩa ${entry.meaning.toLowerCase()}.`,
+        points: 1,
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+      },
     ];
   });
 }
@@ -450,8 +494,8 @@ function createHsk1ContextQuestions(quizId: string, difficulty: 'EASY' | 'MEDIUM
       },
       {
         question: '“我喜欢喝茶” 这句话最接近什么意思？',
-        options: ['我喜欢喝茶。', '我喜欢吃米饭。', '我不喜欢茶。', '我想买茶。'],
-        correctAnswer: '我喜欢喝茶。',
+        options: ['Tôi thích uống trà', 'Tôi thích ăn cơm', 'Tôi không thích trà', 'Tôi muốn mua trà'],
+        correctAnswer: 'Tôi thích uống trà',
         explanation: 'Câu này có nghĩa là “Tôi thích uống trà”.',
       },
       {
@@ -470,8 +514,8 @@ function createHsk1ContextQuestions(quizId: string, difficulty: 'EASY' | 'MEDIUM
       },
       {
         question: '“他在学校” 这句话最接近什么意思？',
-        options: ['他在学校。', '他是老师。', '他喜欢学校。', '他去医院。'],
-        correctAnswer: '他在学校。',
+        options: ['Anh ấy ở trường học', 'Anh ấy là giáo viên', 'Anh ấy thích trường học', 'Anh ấy đi bệnh viện'],
+        correctAnswer: 'Anh ấy ở trường học',
         explanation: 'Câu này có nghĩa là “Anh ấy ở trường học”.',
       },
       {
@@ -526,8 +570,13 @@ function createHsk1ContextQuestions(quizId: string, difficulty: 'EASY' | 'MEDIUM
       },
       {
         question: '“我在中国学校学习汉语” 这句话最接近什么意思？',
-        options: ['我在中国的学校学汉语。', '我喜欢美国的学校。', '我是教汉语的老师。', '我不学汉语。'],
-        correctAnswer: '我在中国的学校学汉语。',
+        options: [
+          'Tôi học tiếng Trung ở trường tại Trung Quốc',
+          'Tôi thích trường học ở Mỹ',
+          'Tôi là giáo viên dạy tiếng Trung',
+          'Tôi không học tiếng Trung',
+        ],
+        correctAnswer: 'Tôi học tiếng Trung ở trường tại Trung Quốc',
         explanation: 'Câu này có nghĩa là “Tôi học tiếng Trung ở trường tại Trung Quốc”.',
       },
       {
@@ -730,201 +779,130 @@ export const HSK1_HARD_QUESTIONS = [
   ...createHsk1ContextQuestions('offline-quiz-hsk1-hard', 'HARD'),
 ];
 
+function createWordBankExtraQuestions(
+  wordBank: Hsk1WordEntry[],
+  quizId: string,
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD',
+  variants: Array<'meaning' | 'hanzi'>,
+) {
+  return variants.flatMap((variant, variantIndex) =>
+    wordBank.map((entry, index) => {
+      if (variant === 'meaning') {
+        const options = buildChoiceOptions(
+          entry.meaning,
+          pickMeaningDistractors(wordBank, entry, index + variantIndex * 17),
+        );
+        const prompts =
+          difficulty === 'EASY'
+            ? [
+                `Nếu ai đó dùng từ "${entry.hanzi}", họ đang nói gần nhất về điều gì?`,
+                `Nếu người học mới gặp từ "${entry.hanzi}", cách hiểu dễ nhất là gì?`,
+              ]
+            : difficulty === 'MEDIUM'
+              ? [
+                  `Nếu trong ngữ cảnh công việc hoặc học tập có từ "${entry.hanzi}", người nói đang muốn diễn đạt gì?`,
+                ]
+              : [
+                  `Nếu trong đoạn hội thoại xuất hiện "${entry.hanzi}", cách hiểu nào phù hợp nhất?`,
+                ];
+
+        return {
+          id: `${quizId}-extra${variantIndex + 1}-${index + 1}`,
+          quizId,
+          question: prompts[variantIndex % prompts.length],
+          type: 'MULTIPLE_CHOICE' as const,
+          options: rotateOptions(options, (index + variantIndex) % options.length),
+          correctAnswer: entry.meaning,
+          explanation: `${entry.hanzi} (${entry.pinyin}) được hiểu gần nhất là ${entry.meaning.toLowerCase()}.`,
+          points: 1,
+          createdAt: nowIso(),
+          updatedAt: nowIso(),
+        };
+      }
+
+      const options = buildChoiceOptions(
+        entry.hanzi,
+        pickHanziDistractors(wordBank, entry, index + variantIndex * 11, difficulty),
+      );
+      const prompts =
+        difficulty === 'EASY'
+          ? [`Câu nào dùng để diễn đạt nghĩa gần với "${entry.meaning}" nhất?`]
+          : difficulty === 'MEDIUM'
+            ? [`Trong các lựa chọn sau, từ nào mang nghĩa gần nhất với "${entry.meaning}"?`]
+            : [
+                `Nếu phải chọn từ phù hợp nhất cho ý "${entry.meaning}", đáp án nào đáng tin nhất?`,
+                `Trong ngữ cảnh phức hơn, từ nào phù hợp nhất với ý "${entry.meaning}"?`,
+              ];
+
+      return {
+        id: `${quizId}-extra${variantIndex + 1}-${index + 1}`,
+        quizId,
+        question: prompts[variantIndex % prompts.length],
+        type: 'MULTIPLE_CHOICE' as const,
+        options: rotateOptions(options, (index + variantIndex + 1) % options.length),
+        correctAnswer: entry.hanzi,
+        explanation: `${entry.hanzi} là lựa chọn phù hợp nhất cho nghĩa "${entry.meaning}".`,
+        points: 1,
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+      };
+    }),
+  );
+}
+
 export const HSK2_EASY_QUESTIONS = [
-  ...createChineseQuestions(HSK2_WORD_BANK, 'offline-quiz-hsk2-easy', 'EASY').map((question, index) => ({
-    ...question,
-    question: index % 2 === 0
-      ? question.question.replace('có nghĩa gần đúng là gì', 'co nghia gan dung la gi')
-      : question.question,
-  })),
-  ...HSK2_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk2-easy-extra-${index + 1}`,
-    quizId: 'offline-quiz-hsk2-easy',
-    question: `Nếu ai đó dùng từ "${entry.hanzi}", họ đang nói gần nhất về điều gì?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.meaning, ...entry.distractors],
-    correctAnswer: entry.meaning,
-    explanation: `${entry.hanzi} (${entry.pinyin}) được hiểu gần nhất là ${entry.meaning.toLowerCase()}.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
-  ...HSK2_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk2-easy-extra2-${index + 1}`,
-    quizId: 'offline-quiz-hsk2-easy',
-    question: `Câu nào dùng để diễn đạt nghĩa gần với "${entry.meaning}" nhất?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.hanzi, ...HSK2_WORD_BANK.filter((item) => item.hanzi !== entry.hanzi).slice(index % 5, index % 5 + 3).map((item) => item.hanzi)],
-    correctAnswer: entry.hanzi,
-    explanation: `${entry.hanzi} là cách diễn đạt đúng cho nghĩa "${entry.meaning}".`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
-  ...HSK2_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk2-easy-extra3-${index + 1}`,
-    quizId: 'offline-quiz-hsk2-easy',
-    question: `Nếu người học mới gặp từ "${entry.hanzi}", cách hiểu dễ nhất là gì?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.meaning, ...entry.distractors],
-    correctAnswer: entry.meaning,
-    explanation: `${entry.hanzi} (${entry.pinyin}) thường được hiểu trước tiên là ${entry.meaning.toLowerCase()}.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
+  ...createChineseQuestions(HSK2_WORD_BANK, 'offline-quiz-hsk2-easy', 'EASY'),
+  ...createWordBankExtraQuestions(HSK2_WORD_BANK, 'offline-quiz-hsk2-easy', 'EASY', [
+    'meaning',
+    'hanzi',
+    'meaning',
+  ]),
   ...createHsk2ContextQuestions('offline-quiz-hsk2-easy', 'EASY'),
 ];
 
 export const HSK2_MEDIUM_QUESTIONS = [
   ...createChineseQuestions(HSK2_WORD_BANK, 'offline-quiz-hsk2-medium', 'MEDIUM'),
-  ...HSK2_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk2-medium-extra-${index + 1}`,
-    quizId: 'offline-quiz-hsk2-medium',
-    question: `Nếu trong ngữ cảnh công việc có từ "${entry.hanzi}", người nói đang muốn diễn đạt gì?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.meaning, ...entry.distractors],
-    correctAnswer: entry.meaning,
-    explanation: `${entry.hanzi} trong HSK2 thường được hiểu là ${entry.meaning.toLowerCase()}.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
-  ...HSK2_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk2-medium-extra2-${index + 1}`,
-    quizId: 'offline-quiz-hsk2-medium',
-    question: `Trong các lựa chọn sau, từ nào mang nghĩa gần nhất với "${entry.meaning}"?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.hanzi, ...HSK2_WORD_BANK.filter((item) => item.hanzi !== entry.hanzi).slice((index + 2) % 7, (index + 2) % 7 + 3).map((item) => item.hanzi)],
-    correctAnswer: entry.hanzi,
-    explanation: `${entry.hanzi} là đáp án đúng cho nghĩa này.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
+  ...createWordBankExtraQuestions(HSK2_WORD_BANK, 'offline-quiz-hsk2-medium', 'MEDIUM', [
+    'meaning',
+    'hanzi',
+  ]),
   ...createHsk2ContextQuestions('offline-quiz-hsk2-medium', 'MEDIUM'),
 ];
 
 export const HSK2_HARD_QUESTIONS = [
   ...createChineseQuestions(HSK2_WORD_BANK, 'offline-quiz-hsk2-hard', 'HARD'),
-  ...HSK2_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk2-hard-extra-${index + 1}`,
-    quizId: 'offline-quiz-hsk2-hard',
-    question: `Nếu trong đoạn hội thoại xuất hiện "${entry.hanzi}", cách hiểu nào phù hợp nhất?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.meaning, ...entry.distractors],
-    correctAnswer: entry.meaning,
-    explanation: `${entry.hanzi} trong ngữ cảnh này nên được hiểu là ${entry.meaning.toLowerCase()}.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
-  ...HSK2_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk2-hard-extra2-${index + 1}`,
-    quizId: 'offline-quiz-hsk2-hard',
-    question: `Nếu phải chọn từ phù hợp nhất cho ý "${entry.meaning}", đáp án nào đáng tin nhất?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.hanzi, ...HSK2_WORD_BANK.filter((item) => item.hanzi !== entry.hanzi).slice((index + 3) % 9, (index + 3) % 9 + 3).map((item) => item.hanzi)],
-    correctAnswer: entry.hanzi,
-    explanation: `${entry.hanzi} là lựa chọn phù hợp nhất cho nghĩa này.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
+  ...createWordBankExtraQuestions(HSK2_WORD_BANK, 'offline-quiz-hsk2-hard', 'HARD', [
+    'meaning',
+    'hanzi',
+  ]),
   ...createHsk2ContextQuestions('offline-quiz-hsk2-hard', 'HARD'),
 ];
 
 const HSK3_EASY_QUESTIONS = [
   ...createChineseQuestions(HSK3_WORD_BANK, 'offline-quiz-hsk3-easy', 'EASY').slice(0, 40),
-  ...HSK3_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk3-easy-extra-${index + 1}`,
-    quizId: 'offline-quiz-hsk3-easy',
-    question: `Nếu ai đó dùng từ "${entry.hanzi}", họ đang nói gần nhất về điều gì?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.meaning, ...entry.distractors],
-    correctAnswer: entry.meaning,
-    explanation: `${entry.hanzi} (${entry.pinyin}) thường được hiểu gần nhất là ${entry.meaning.toLowerCase()}.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
-  ...HSK3_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk3-easy-extra2-${index + 1}`,
-    quizId: 'offline-quiz-hsk3-easy',
-    question: `Câu nào diễn đạt nghĩa gần với "${entry.meaning}" nhất?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.hanzi, ...HSK3_WORD_BANK.filter((item) => item.hanzi !== entry.hanzi).slice(index % 4, index % 4 + 3).map((item) => item.hanzi)],
-    correctAnswer: entry.hanzi,
-    explanation: `${entry.hanzi} là từ phù hợp nhất cho nghĩa này.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
+  ...createWordBankExtraQuestions(HSK3_WORD_BANK, 'offline-quiz-hsk3-easy', 'EASY', [
+    'meaning',
+    'hanzi',
+  ]),
   ...createHsk2ContextQuestions('offline-quiz-hsk3-easy', 'EASY'),
 ];
 
 const HSK3_MEDIUM_QUESTIONS = [
   ...createChineseQuestions(HSK3_WORD_BANK, 'offline-quiz-hsk3-medium', 'MEDIUM').slice(18, 62),
-  ...HSK3_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk3-medium-extra-${index + 1}`,
-    quizId: 'offline-quiz-hsk3-medium',
-    question: `Nếu trong ngữ cảnh công việc hoặc học tập có từ "${entry.hanzi}", người nói đang muốn diễn đạt gì?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.meaning, ...entry.distractors],
-    correctAnswer: entry.meaning,
-    explanation: `${entry.hanzi} trong HSK3 thường được hiểu là ${entry.meaning.toLowerCase()}.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
-  ...HSK3_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk3-medium-extra2-${index + 1}`,
-    quizId: 'offline-quiz-hsk3-medium',
-    question: `Nếu phải chọn từ phù hợp nhất với ý "${entry.meaning}" trong câu ngắn, đáp án nào đúng nhất?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.hanzi, ...HSK3_WORD_BANK.filter((item) => item.hanzi !== entry.hanzi).slice((index + 2) % 5, (index + 2) % 5 + 3).map((item) => item.hanzi)],
-    correctAnswer: entry.hanzi,
-    explanation: `${entry.hanzi} là lựa chọn phù hợp nhất cho ngữ cảnh này.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
+  ...createWordBankExtraQuestions(HSK3_WORD_BANK, 'offline-quiz-hsk3-medium', 'MEDIUM', [
+    'meaning',
+    'hanzi',
+  ]),
   ...createHsk2ContextQuestions('offline-quiz-hsk3-medium', 'MEDIUM'),
 ];
 
 const HSK3_HARD_QUESTIONS = [
   ...createChineseQuestions(HSK3_WORD_BANK, 'offline-quiz-hsk3-hard', 'HARD').slice(30, 76),
-  ...HSK3_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk3-hard-extra-${index + 1}`,
-    quizId: 'offline-quiz-hsk3-hard',
-    question: `Nếu cần dùng từ gần nhất với "${entry.meaning}" trong một câu phức hơn, đáp án nào đáng tin nhất?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.hanzi, ...HSK3_WORD_BANK.filter((item) => item.hanzi !== entry.hanzi).slice(index % 6, index % 6 + 3).map((item) => item.hanzi)],
-    correctAnswer: entry.hanzi,
-    explanation: `${entry.hanzi} là lựa chọn phù hợp nhất cho nghĩa này.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
-  ...HSK3_WORD_BANK.map((entry, index) => ({
-    id: `offline-quiz-hsk3-hard-extra2-${index + 1}`,
-    quizId: 'offline-quiz-hsk3-hard',
-    question: `Trong ngữ cảnh phức hơn, từ nào phù hợp nhất với ý "${entry.meaning}"?`,
-    type: 'MULTIPLE_CHOICE' as const,
-    options: [entry.hanzi, ...HSK3_WORD_BANK.filter((item) => item.hanzi !== entry.hanzi).slice((index + 3) % 6, (index + 3) % 6 + 3).map((item) => item.hanzi)],
-    correctAnswer: entry.hanzi,
-    explanation: `${entry.hanzi} là từ phù hợp nhất cho nghĩa này trong ngữ cảnh khó hơn.`,
-    points: 1,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  })),
-  ...createHsk2ContextQuestions('offline-quiz-hsk3-hard', 'HARD').map((question, index) => ({
-    ...question,
-    question:
-      index % 2 === 0
-        ? `Nếu trong ngữ cảnh công việc có câu "${question.question}", ý gần nhất là gì?`
-        : question.question,
-  })),
+  ...createWordBankExtraQuestions(HSK3_WORD_BANK, 'offline-quiz-hsk3-hard', 'HARD', [
+    'hanzi',
+    'hanzi',
+  ]),
+  ...createHsk2ContextQuestions('offline-quiz-hsk3-hard', 'HARD'),
 ];
 
 const HSK1_ALL_QUESTIONS = [
