@@ -34,7 +34,10 @@ function AdminSessionCard({
   onRevoke: (session: LoginSession) => void;
 }) {
   const DeviceIcon = session.device?.toLowerCase().includes('mobile') ? Smartphone : Laptop;
-  const isActive = !session.isRevoked && new Date(session.expiresAt).getTime() > Date.now();
+  const isActive = useMemo(
+    () => !session.isRevoked && new Date(session.expiresAt).getTime() > Date.now(),
+    [session.isRevoked, session.expiresAt]
+  );
 
   return (
     <article className="group relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/75 p-5 shadow-2xl shadow-black/25 backdrop-blur-xl transition-colors hover:border-accent-400/40 sm:p-6">

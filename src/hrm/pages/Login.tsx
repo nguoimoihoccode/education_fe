@@ -46,7 +46,7 @@ export const Login: React.FC = () => {
                         {/* Google Login */}
                         <button
                             onClick={loginWithGoogle}
-                            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border-2 border-secondary-200 rounded-xl hover:border-secondary-300 hover:bg-secondary-50 transition-all duration-200 group"
+                            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:border-accent-400/40 hover:bg-white/10 transition-all duration-200 group"
                         >
                             <svg className="w-5 h-5" viewBox="0 0 24 24">
                                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -73,7 +73,7 @@ export const Login: React.FC = () => {
                         {/* Microsoft Login */}
                         <button
                             onClick={loginWithMicrosoft}
-                            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border-2 border-secondary-200 rounded-xl hover:border-secondary-300 hover:bg-secondary-50 transition-all duration-200 group"
+                            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-xl hover:border-accent-400/40 hover:bg-white/10 transition-all duration-200 group"
                         >
                             <svg className="w-5 h-5" viewBox="0 0 24 24">
                                 <path fill="#F25022" d="M1 1h10v10H1z" />
