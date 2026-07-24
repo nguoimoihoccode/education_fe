@@ -83,11 +83,11 @@ export default function LessonView() {
         },
     });
 
-    if (isLoading) return <div className="education-container flex items-center justify-center"><div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div></div>;
-    if (!lesson) return <div className="education-container text-center pt-20">Lesson not found</div>;
+    if (isLoading) return <div className="education-container education-path-page flex items-center justify-center" style={{ color: 'var(--app-text)' }}><div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div></div>;
+    if (!lesson) return <div className="education-container education-path-page text-center pt-20" style={{ color: 'var(--app-text)' }}>Lesson not found</div>;
 
     return (
-        <div className="education-container lesson-page">
+        <div className="education-container education-path-page lesson-page" style={{ color: 'var(--app-text)' }}>
             <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[100px]"></div>

@@ -158,7 +158,7 @@ export default function PremiumUpgrade() {
   };
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         {/* ============ Hero Section ============ */}
         <div className="relative text-center mb-16 pt-8">

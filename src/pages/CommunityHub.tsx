@@ -20,7 +20,7 @@ export default function CommunityHub() {
   const data = useCommunityData();
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         {/* Header */}
         <div className="relative mb-8">

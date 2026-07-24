@@ -101,8 +101,8 @@ export default function CourseDetail() {
         document.getElementById(syllabusSectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    if (isLoadingCourse) return <div className="education-container flex items-center justify-center"><div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div></div>;
-    if (!course) return <div className="education-container flex items-center justify-center">Course not found</div>;
+    if (isLoadingCourse) return <div className="education-container education-path-page flex items-center justify-center" style={{ color: 'var(--app-text)' }}><div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div></div>;
+    if (!course) return <div className="education-container education-path-page flex items-center justify-center" style={{ color: 'var(--app-text)' }}>Course not found</div>;
 
     const lessons = lessonsData?.items || [];
     const totalLessons = lessonsData?.total || 0;
@@ -126,7 +126,7 @@ export default function CourseDetail() {
     };
 
     return (
-        <div className="education-container">
+        <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
             <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[100px]"></div>

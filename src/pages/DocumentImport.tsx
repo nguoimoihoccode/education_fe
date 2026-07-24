@@ -145,7 +145,7 @@ export default function DocumentImportPage() {
   ] as const;
 
   return (
-    <div className="education-container relative min-h-screen">
+    <div className="education-container education-path-page relative min-h-screen" style={{ color: 'var(--app-text)' }}>
       {/* Ambient Background */}
       <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
         <div className="absolute top-[-15%] left-[-10%] w-[45%] h-[45%] rounded-full bg-accent-600/8 blur-[120px]"></div>

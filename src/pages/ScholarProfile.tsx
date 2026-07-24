@@ -71,7 +71,7 @@ export default function ScholarProfile() {
 
   if (isLoading) {
     return (
-      <div className="education-container">
+      <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
         <div className="dashboard-wrapper flex items-center justify-center py-20">
           <Loader2 className="w-10 h-10 animate-spin text-accent-500" />
         </div>
@@ -81,7 +81,7 @@ export default function ScholarProfile() {
 
   if (error || !scholar) {
     return (
-      <div className="education-container">
+      <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
         <div className="dashboard-wrapper text-center py-20">
           <Users className="w-16 h-16 text-slate-600 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-3">Profile Not Found</h2>
@@ -95,7 +95,7 @@ export default function ScholarProfile() {
   }
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         {/* ============ HERO / PROFILE HEADER ============ */}
         <div className="relative mb-8">

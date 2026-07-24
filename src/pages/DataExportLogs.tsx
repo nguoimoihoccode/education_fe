@@ -222,7 +222,7 @@ export default function DataExportLogs() {
   };
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         <div className="max-w-5xl mx-auto">
           

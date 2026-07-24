@@ -41,7 +41,7 @@ export default function UserProfile() {
   } = useProfileData();
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         {/* Hero / Profile Header */}
         <div className="relative mb-10">

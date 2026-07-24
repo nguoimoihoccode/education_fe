@@ -120,7 +120,7 @@ export default function Onboarding() {
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         <div className="max-w-2xl mx-auto min-h-[75vh] flex flex-col">
           {/* Progress Bar */}

@@ -224,7 +224,7 @@ export default function Social() {
   };
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         {/* ============ Header ============ */}
         <header className="mb-8">

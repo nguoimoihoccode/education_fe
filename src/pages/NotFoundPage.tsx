@@ -4,7 +4,7 @@ import './Education.css';
 
 export default function NotFoundPage() {
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         <div className="min-h-[70vh] flex flex-col items-center justify-center text-center relative">
           {/* Ambient glow */}

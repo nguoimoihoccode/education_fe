@@ -27,7 +27,7 @@ const UPCOMING_FEATURES = [
 
 export default function ComingSoon() {
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         <div className="max-w-4xl mx-auto">
           {/* ============ HERO ============ */}
