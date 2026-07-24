@@ -164,6 +164,15 @@ export default function QuizSessionPage() {
   const examSelectedAnswer = examQuestion ? (answers[examQuestion.id] ?? '') : '';
   const displaySelectedAnswer = isExamMode ? examSelectedAnswer : selectedAnswer;
 
+  // All questions in the current batch (exam mode shows 3 at once)
+  const batchQuestions = useMemo(
+    () =>
+      isExamMode
+        ? sessionQuestions.slice(batchView.batchStart, batchView.batchEnd)
+        : [],
+    [isExamMode, sessionQuestions, batchView.batchStart, batchView.batchEnd],
+  );
+
   const startCurrentSession = useEffectEvent(() => {
     if (quizId && !sessionId) {
       startMutation.mutate();
@@ -283,19 +292,22 @@ export default function QuizSessionPage() {
     return () => clearInterval(timer);
   }, [session, quiz, isFinishing, isExamMode, finishExam, finishPracticeTimeout]);
 
-  // Exam: track time on current editable question
+  // Exam: track time on all questions in the current batch
   useEffect(() => {
-    if (!isExamMode || !examQuestion || isFinishing || !batchView.isEditable) return;
+    if (!isExamMode || batchQuestions.length === 0 || isFinishing || !batchView.isEditable) return;
 
     const timer = setInterval(() => {
-      setTimeSpentByQuestion((prev) => ({
-        ...prev,
-        [examQuestion.id]: (prev[examQuestion.id] ?? 0) + 1,
-      }));
+      setTimeSpentByQuestion((prev) => {
+        const next = { ...prev };
+        for (const q of batchQuestions) {
+          next[q.id] = (next[q.id] ?? 0) + 1;
+        }
+        return next;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isExamMode, examQuestion, isFinishing, batchView.isEditable, batchView.globalQuestionIndex]);
+  }, [isExamMode, batchQuestions, isFinishing, batchView.isEditable]);
 
   // Practice: track time on current question when not showing feedback
   useEffect(() => {
@@ -548,34 +560,86 @@ export default function QuizSessionPage() {
           </div>
         </header>
 
-        {isExamMode && batchView.batchLength > 0 && (
-          <div className="mb-4 flex flex-wrap gap-2">
-            {Array.from({ length: batchView.batchLength }, (_, index) => {
-              const questionId = batchView.batchQuestionIds[index];
-              const answered = Boolean(answers[questionId]?.trim());
-              const active = index === batchView.questionIndexInBatch;
+        {isExamMode && batchQuestions.length > 0 && (
+          <div className="space-y-6 mb-6">
+            {batchQuestions.map((question, qIdx) => {
+              const qSelectedAnswer = answers[question.id] ?? '';
+              const qIsSelected = (option: string) => qSelectedAnswer === option;
               return (
-                <button
-                  key={questionId}
-                  type="button"
-                  onClick={() => handleSelectBatchQuestion(index)}
-                  disabled={isFinishing}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
-                    active
-                      ? 'bg-accent-600 border-accent-500 text-white'
-                      : answered
-                        ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200'
-                        : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
-                  }`}
-                >
-                  Câu {batchView.batchStart + index + 1}
-                </button>
+                <div key={question.id} className="glass-card">
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-lg bg-accent-600 text-white flex items-center justify-center text-xs font-bold">
+                          {batchView.batchStart + qIdx + 1}
+                        </span>
+                        <span className="text-sm font-bold text-accent-400">
+                          {getQuestionTypeLabel(question.type)}
+                        </span>
+                      </div>
+                      <span className="text-sm text-slate-300">{question.points} điểm</span>
+                    </div>
+                    <h2 className="text-lg md:text-xl font-bold text-white">{question.question}</h2>
+                  </div>
+
+                  {question.options && question.options.length > 0 ? (
+                    <div className="space-y-3">
+                      {question.options.map((option, idx) => {
+                        const isSelected = qIsSelected(option);
+                        return (
+                          <button
+                            key={`${question.id}-${idx}`}
+                            type="button"
+                            onClick={() => {
+                              if (!batchView.isEditable || isFinishing) return;
+                              setAnswers((prev) => ({ ...prev, [question.id]: option }));
+                            }}
+                            disabled={!batchView.isEditable || isFinishing}
+                            className={`w-full p-4 rounded-xl text-left transition-all ${
+                              isSelected
+                                ? 'bg-accent-600/20 border-2 border-accent-500 text-white'
+                                : 'bg-white/5 border border-white/10 text-slate-100 hover:bg-white/10 hover:border-accent-500/30'
+                            } ${!batchView.isEditable ? 'opacity-80 cursor-not-allowed' : ''}`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <span
+                                className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
+                                  isSelected
+                                    ? 'bg-accent-600 text-white'
+                                    : 'bg-white/10 text-slate-200'
+                                }`}
+                              >
+                                {String.fromCharCode(65 + idx)}
+                              </span>
+                              <span className="flex-1 pt-1">{option}</span>
+                              {isSelected && (
+                                <CheckCircle className="w-5 h-5 text-accent-400 flex-shrink-0" />
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={qSelectedAnswer}
+                      onChange={(e) => {
+                        if (!batchView.isEditable || isFinishing) return;
+                        setAnswers((prev) => ({ ...prev, [question.id]: e.target.value }));
+                      }}
+                      disabled={!batchView.isEditable || isFinishing}
+                      placeholder="Nhập câu trả lời"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-accent-500 disabled:opacity-70"
+                    />
+                  )}
+                </div>
               );
             })}
           </div>
         )}
 
-        {currentQuestion && (
+        {!isExamMode && currentQuestion && (
           <div className="glass-card mb-6">
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
@@ -683,97 +747,80 @@ export default function QuizSessionPage() {
                 )}
               </div>
             )}
-
-            <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              {isExamMode ? (
-                <>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={handleGoPrevBatch}
-                      disabled={!batchView.canGoPrevBatch || isFinishing}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-medium hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      <ArrowLeft className="w-4 h-4" />
-                      Lô trước
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleGoPrevQuestion}
-                      disabled={!batchView.canGoPrevQuestion || isFinishing}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-medium hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      Câu trước
-                    </button>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 sm:justify-end">
-                    <button
-                      type="button"
-                      onClick={handleGoNextQuestion}
-                      disabled={!batchView.canGoNextQuestion || isFinishing}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-medium hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
-                    >
-                      Câu sau
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-
-                    {!batchView.isLastBatch ? (
-                      <button
-                        type="button"
-                        onClick={handleGoNextBatch}
-                        disabled={!batchView.canGoNextBatch || isFinishing}
-                        className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Lô tiếp
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => void finishExam('submit')}
-                        disabled={!batchView.canSubmitQuiz || isFinishing}
-                        className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isFinishing ? 'Đang nộp bài...' : 'Nộp bài'}
-                        <Send className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="flex w-full justify-end">
-                  {feedback ? (
-                    <button
-                      type="button"
-                      onClick={() => void handlePracticeContinue()}
-                      disabled={isFinishing}
-                      className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {practiceView.shouldFinishAfterFeedback ||
-                      localAnsweredCount >= practiceView.totalQuestions
-                        ? isFinishing
-                          ? 'Đang kết thúc...'
-                          : 'Xem kết quả'
-                        : 'Câu tiếp'}
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => void handlePracticeSubmit()}
-                      disabled={!selectedAnswer.trim() || isSubmitting || isFinishing}
-                      className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isSubmitting ? 'Đang chấm...' : 'Kiểm tra'}
-                      <CheckCircle className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
           </div>
         )}
+
+        {/* Navigation buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+          {isExamMode ? (
+            <>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleGoPrevBatch}
+                  disabled={!batchView.canGoPrevBatch || isFinishing}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-medium hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Lô trước
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2 sm:justify-end">
+                {!batchView.isLastBatch ? (
+                  <button
+                    type="button"
+                    onClick={handleGoNextBatch}
+                    disabled={!batchView.canGoNextBatch || isFinishing}
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Lô tiếp
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void finishExam('submit')}
+                    disabled={!batchView.canSubmitQuiz || isFinishing}
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isFinishing ? 'Đang nộp bài...' : 'Nộp bài'}
+                    <Send className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="flex w-full justify-end">
+              {feedback ? (
+                <button
+                  type="button"
+                  onClick={() => void handlePracticeContinue()}
+                  disabled={isFinishing}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {practiceView.shouldFinishAfterFeedback ||
+                  localAnsweredCount >= practiceView.totalQuestions
+                    ? isFinishing
+                      ? 'Đang kết thúc...'
+                      : 'Xem kết quả'
+                    : 'Câu tiếp'}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => void handlePracticeSubmit()}
+                  disabled={!selectedAnswer.trim() || isSubmitting || isFinishing}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Đang chấm...' : 'Kiểm tra'}
+                  <CheckCircle className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="glass-card p-4">
           <div className="flex items-start gap-2 text-sm text-slate-300">
