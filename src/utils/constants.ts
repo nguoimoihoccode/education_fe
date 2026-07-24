@@ -29,4 +29,29 @@ export const STORAGE_KEYS = {
   USER: 'user',
   THEME: 'theme',
   LANGUAGE: 'language',
+  AI_PROVIDER: 'ai-provider-settings',
+} as const;
+
+// AI Provider Presets
+export const AI_PROVIDER_PRESETS = {
+  groq: {
+    label: 'Groq',
+    baseUrl: 'https://api.groq.com/openai/v1',
+    models: [
+      'llama-3.3-70b-versatile',
+      'llama-3.1-8b-instant',
+      'mixtral-8x7b-32768',
+      'gemma2-9b-it',
+    ],
+  },
+  openai: {
+    label: 'OpenAI',
+    baseUrl: 'https://api.openai.com/v1',
+    models: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo'],
+  },
+  custom: {
+    label: 'Custom',
+    baseUrl: '',
+    models: [],
+  },
 } as const;
