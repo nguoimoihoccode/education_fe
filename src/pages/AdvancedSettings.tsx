@@ -114,16 +114,18 @@ export default function AdvancedSettings() {
   const [aiTesting, setAiTesting] = useState(false);
 
   const s = useSettingsStore();
-  const { setApiKey, setBaseUrl, setModel } = useAiProviderStore();
+  const { saveSettings } = useAiProviderStore();
 
   const setSetting = <K extends keyof SettingsValues>(key: K, value: SettingsValues[K]) => {
     s.updateSetting(key, value);
   };
 
   const handleSaveAiSettings = () => {
-    setApiKey(aiApiKey || '');
-    setBaseUrl(aiBaseUrl || 'https://api.openai.com/v1');
-    setModel(aiModel || 'gpt-4o-mini');
+    saveSettings({
+      apiKey: aiApiKey || '',
+      baseUrl: aiBaseUrl || 'https://api.groq.com/openai/v1',
+      model: aiModel || 'llama-3.3-70b-versatile',
+    });
     toast.success('AI settings saved!');
   };
 
@@ -770,7 +772,7 @@ export default function AdvancedSettings() {
                       </button>
                     </div>
                   </>
-                )}
+                ) : null}
               </SettingsPanel>
             )}
 
