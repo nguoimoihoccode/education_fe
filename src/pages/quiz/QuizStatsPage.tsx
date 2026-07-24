@@ -33,7 +33,7 @@ export default function QuizStatsPage() {
   const totalPages = historyData?.totalPages || 1;
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="dashboard-wrapper">
         <header className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>

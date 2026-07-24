@@ -467,7 +467,7 @@ export default function QuizSessionPage() {
   }
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       <div className="detail-wrapper">
         {isOfflineMode && (
           <div className="mb-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-xs font-bold text-amber-200">

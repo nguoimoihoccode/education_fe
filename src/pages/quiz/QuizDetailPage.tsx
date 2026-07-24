@@ -94,7 +94,7 @@ export default function QuizDetailPage() {
   }
 
   return (
-    <div className="education-container">
+    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
       
 
       <div className="detail-wrapper">
