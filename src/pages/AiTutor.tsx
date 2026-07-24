@@ -20,9 +20,6 @@ import {
   ChevronRight,
   RotateCcw,
   Loader2,
-  Key,
-  Globe,
-  Cpu,
   Settings,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
