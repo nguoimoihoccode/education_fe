@@ -1,19 +1,55 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { STORAGE_KEYS } from '@/utils/constants';
 
-type AiProviderState = {
+export interface LocalAiSettings {
   apiKey: string;
   baseUrl: string;
   model: string;
-  setApiKey: (key: string) => void;
-  setBaseUrl: (url: string) => void;
-  setModel: (model: string) => void;
+  maxTokens: number;
+  temperature: number;
+}
+
+export const DEFAULT_LOCAL_SETTINGS: LocalAiSettings = {
+  apiKey: '',
+  baseUrl: 'https://api.groq.com/openai/v1',
+  model: 'llama-3.3-70b-versatile',
+  maxTokens: 700,
+  temperature: 0.4,
 };
 
-export const useAiProviderStore = create<AiProviderState>((set) => ({
-  apiKey: '',
-  baseUrl: 'https://api.openai.com/v1',
-  model: 'gpt-4o-mini',
-  setApiKey: (key) => set({ apiKey: key }),
-  setBaseUrl: (url) => set({ baseUrl: url }),
-  setModel: (model) => set({ model }),
-}));
+interface AiProviderState {
+  settings: LocalAiSettings;
+  isConfigured: boolean;
+  saveSettings: (settings: Partial<LocalAiSettings>) => void;
+  clearSettings: () => void;
+}
+
+export const useAiProviderStore = create<AiProviderState>()(
+  persist(
+    (set, get) => ({
+      settings: { ...DEFAULT_LOCAL_SETTINGS },
+      isConfigured: false,
+      saveSettings: (partial) => {
+        const next = { ...get().settings, ...partial };
+        set({
+          settings: next,
+          isConfigured: !!next.apiKey.trim(),
+        });
+      },
+      clearSettings: () => {
+        set({
+          settings: { ...DEFAULT_LOCAL_SETTINGS },
+          isConfigured: false,
+        });
+      },
+    }),
+    {
+      name: STORAGE_KEYS.AI_PROVIDER,
+      partialize: (state) => ({
+        settings: state.settings,
+        isConfigured: state.isConfigured,
+      }),
+    },
+  ),
+);
