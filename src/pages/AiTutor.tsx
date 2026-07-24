@@ -153,6 +153,24 @@ export default function AiTutor() {
     const load = async () => {
       setIsLoading(true);
       setLoadError(null);
+
+      // BYOK mode: create a local in-memory conversation, skip BE entirely
+      if (hasLocalKey) {
+        const localConv: Conversation = {
+          id: `local-${crypto.randomUUID()}`,
+          title: 'New Chat',
+          messages: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        loadedConvIds.current.add(localConv.id);
+        skipNextDetailLoad.current = true;
+        setConversations([localConv]);
+        setActiveConvId(localConv.id);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         let list = await listConversations();
         if (cancelled) return;
@@ -210,7 +228,7 @@ export default function AiTutor() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [hasLocalKey]);
 
   // Load full messages when selecting a conversation (skip if already loaded or just created)
   useEffect(() => {
@@ -395,6 +413,23 @@ export default function AiTutor() {
   };
 
   const handleNewChat = async () => {
+    // BYOK mode: create local conversation
+    if (hasLocalKey) {
+      const conv: Conversation = {
+        id: `local-${crypto.randomUUID()}`,
+        title: 'New Chat',
+        messages: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      loadedConvIds.current.add(conv.id);
+      skipNextDetailLoad.current = true;
+      setConversations((prev) => [conv, ...prev]);
+      setActiveConvId(conv.id);
+      setLoadError(null);
+      return;
+    }
+
     try {
       const created = await createConversation();
       const conv = mapSummaryToConversation(created, []);
@@ -409,6 +444,33 @@ export default function AiTutor() {
   };
 
   const handleDeleteConv = async (id: string) => {
+    // BYOK mode: just remove from local state
+    if (hasLocalKey) {
+      loadedConvIds.current.delete(id);
+      const remaining = conversations.filter((c) => c.id !== id);
+
+      if (remaining.length === 0) {
+        const conv: Conversation = {
+          id: `local-${crypto.randomUUID()}`,
+          title: 'New Chat',
+          messages: [],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        loadedConvIds.current.add(conv.id);
+        skipNextDetailLoad.current = true;
+        setConversations([conv]);
+        setActiveConvId(conv.id);
+        return;
+      }
+
+      setConversations(remaining);
+      if (activeConvId === id) {
+        setActiveConvId(remaining[0].id);
+      }
+      return;
+    }
+
     try {
       await deleteConversation(id);
       loadedConvIds.current.delete(id);
