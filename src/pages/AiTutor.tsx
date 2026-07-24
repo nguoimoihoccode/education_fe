@@ -23,6 +23,7 @@ import {
   Key,
   Globe,
   Cpu,
+  Settings,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store/auth.store';
@@ -36,6 +37,9 @@ import {
 import { useAiProviderStore } from '@/store/aiProvider.store';
 import type { AiMessage, AiConversationSummary, SendMessageResponse } from '@/types/ai.types';
 import './Education.css';
+import { AiSettingsDrawer } from '@/components/ai';
+import { directSendMessage } from '@/api/aiDirect.api';
+import type { DirectChatMessage } from '@/api/aiDirect.api';
 
 /* ============ Types ============ */
 interface ChatMessage {
@@ -127,6 +131,8 @@ export default function AiTutor() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const loadedConvIds = useRef<Set<string>>(new Set());
   const skipNextDetailLoad = useRef(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { isConfigured: hasLocalKey, settings: localSettings } = useAiProviderStore();
 
   const activeConv = conversations.find((c) => c.id === activeConvId) || conversations[0];
   const messages = useMemo(() => activeConv?.messages || [], [activeConv]);
@@ -288,6 +294,47 @@ export default function AiTutor() {
     };
   };
 
+  const directSend = async (
+    conversationId: string,
+    message: string,
+  ): Promise<SendMessageResponse> => {
+    const now = new Date().toISOString();
+    const systemPrompt =
+      'You are a helpful AI language tutor. Answer clearly and concisely.';
+
+    const history: DirectChatMessage[] = messages
+      .slice(-20)
+      .map((m) => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.content,
+      }));
+
+    history.unshift({ role: 'system', content: systemPrompt });
+    history.push({ role: 'user', content: message });
+
+    const result = await directSendMessage(history, localSettings);
+
+    return {
+      userMessage: {
+        id: `local-user-${Date.now()}`,
+        role: 'user',
+        content: message,
+        createdAt: now,
+      },
+      assistantMessage: {
+        id: `local-asst-${Date.now()}`,
+        role: 'assistant',
+        content: result.content,
+        createdAt: new Date().toISOString(),
+      },
+      conversation: {
+        id: conversationId,
+        title: message.slice(0, 40) + (message.length > 40 ? '...' : ''),
+        updatedAt: now,
+      },
+    };
+  };
+
   const handleSend = async () => {
     const trimmed = input.trim();
     if (!trimmed || isTyping || !activeConvId) return;
@@ -299,7 +346,9 @@ export default function AiTutor() {
       const reply =
         import.meta.env.VITE_AI_MOCK === '1'
           ? await mockSendMessage(activeConvId, trimmed)
-          : await sendMessage(activeConvId, trimmed);
+          : hasLocalKey
+            ? await directSend(activeConvId, trimmed)
+            : await sendMessage(activeConvId, trimmed);
 
       const userMsg = mapApiMessage(reply.userMessage);
       const assistantMsg = mapApiMessage(reply.assistantMessage);
@@ -492,6 +541,14 @@ export default function AiTutor() {
                 </p>
               </div>
             </div>
+            <button
+              onClick={() => setSettingsOpen(true)}
+              className="p-2.5 rounded-xl hover:bg-[var(--app-surface-hover)] transition-all"
+              style={{ color: 'var(--app-text-muted)' }}
+              title="AI Provider Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
             <button
               onClick={() => activeConvId && handleDeleteConv(activeConvId)}
               disabled={!activeConvId || isLoading}
@@ -688,6 +745,7 @@ export default function AiTutor() {
           </div>
         </div>
       </div>
+      <AiSettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 }
