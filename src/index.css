@@ -13,23 +13,23 @@
 :root {
   /* Canonical app tokens */
   --app-bg: #000000;
-  --app-bg-elevated: #050505;
-  --app-surface: #111111;
-  --app-surface-hover: #1a1a1a;
-  --app-border: rgba(255, 255, 255, 0.12);
-  --app-border-strong: rgba(255, 255, 255, 0.22);
+  --app-bg-elevated: #0a0a0a;
+  --app-surface: #141414;
+  --app-surface-hover: #1e1e1e;
+  --app-border: rgba(255, 255, 255, 0.16);
+  --app-border-strong: rgba(255, 255, 255, 0.26);
   --app-text: #ffffff;
   --app-text-muted: #d4d4d4;
-  --app-text-subtle: #c4c4c4;
+  --app-text-subtle: #9ca3af;
   --app-primary: #10b981;
   --app-primary-hover: #059669;
   --app-accent: #8b5cf6;
   --app-warning: #f59e0b;
   --app-danger: #ef4444;
   --app-focus: #22d3ee;
-  --app-glass-bg: rgba(15, 23, 42, 0.72);
+  --app-glass-bg: rgba(20, 20, 20, 0.72);
   --app-glass-border: var(--app-border);
-  --app-glass-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+  --app-glass-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
   --app-motion-fast: 150ms;
   --app-motion-base: 200ms;
   --app-motion-slow: 300ms;

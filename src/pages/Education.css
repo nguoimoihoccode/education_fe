@@ -29,11 +29,6 @@
     --edu-amber: #f59e0b;
     --edu-emerald: #10b981;
 
-    --text-primary: #e2e8f0;
-    /* Slate 200 */
-    --text-secondary: #94a3b8;
-    /* Slate 400 */
-
     /* Shared readable dark-card tokens */
     --edu-surface-readable: rgba(15, 23, 42, 0.92);
     --edu-surface-readable-hover: rgba(15, 23, 42, 0.98);
@@ -1343,8 +1338,6 @@
     --edu-bg: #f8fafc;
     --edu-card: #ffffff;
     --edu-border: rgba(0, 0, 0, 0.1);
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
 }
 
 
@@ -1384,18 +1377,6 @@
 }
 :root[data-font-size='large'] {
     font-size: 18px;
-}
-:root[data-theme='light'] {
-    filter: invert(1) hue-rotate(180deg);
-    background-color: #fff; /* to ensure background is white before invert */
-}
-:root[data-theme='light'] body {
-    background-color: #000; /* Will be inverted to white */
-}
-:root[data-theme='light'] img,
-:root[data-theme='light'] video,
-:root[data-theme='light'] iframe {
-    filter: invert(1) hue-rotate(180deg);
 }
 
 /* ============================================
