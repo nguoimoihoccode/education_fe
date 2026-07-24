@@ -1,4 +1,4 @@
-export const QUIZ_BATCH_SIZE = 3;
+export const QUIZ_BATCH_SIZE = 5;
 
 export interface QuizBatchViewInput {
   totalQuestions: number;
