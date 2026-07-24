@@ -428,7 +428,7 @@ export default function QuizSessionPage() {
 
   if (isLoadingQuiz || isStarting || (quiz && !session && !startMutation.isError)) {
     return (
-      <div className="education-container">
+      <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
         <div className="ambient-background">
           <div className="orb orb-1"></div>
           <div className="orb orb-2"></div>
@@ -445,7 +445,7 @@ export default function QuizSessionPage() {
 
   if (!quiz || !session) {
     return (
-      <div className="education-container">
+      <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
         <div className="ambient-background">
           <div className="orb orb-1"></div>
           <div className="orb orb-2"></div>
