@@ -46,10 +46,19 @@ export const useAiProviderStore = create<AiProviderState>()(
     }),
     {
       name: STORAGE_KEYS.AI_PROVIDER,
+      version: 1,
       partialize: (state) => ({
         settings: state.settings,
         isConfigured: state.isConfigured,
       }),
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<AiProviderState>;
+        return {
+          ...current,
+          ...p,
+          settings: { ...DEFAULT_LOCAL_SETTINGS, ...(p.settings ?? {}) },
+        };
+      },
     },
   ),
 );
