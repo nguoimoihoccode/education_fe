@@ -39,6 +39,7 @@ import type { LucideIcon } from 'lucide-react';
 import { getAiSettings, updateAiSettings, testAiSettings } from '@/api/ai.api';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore, type SettingsState } from '@/store/settings.store';
+import { useAiProviderStore } from '@/store/aiProvider.store';
 import type { AiProviderSettingsView, ConfigSource } from '@/types/ai.types';
 import './Education.css';
 
@@ -113,9 +114,17 @@ export default function AdvancedSettings() {
   const [aiTesting, setAiTesting] = useState(false);
 
   const s = useSettingsStore();
+  const { setApiKey, setBaseUrl, setModel } = useAiProviderStore();
 
   const setSetting = <K extends keyof SettingsValues>(key: K, value: SettingsValues[K]) => {
     s.updateSetting(key, value);
+  };
+
+  const handleSaveAiSettings = () => {
+    setApiKey(aiApiKey || '');
+    setBaseUrl(aiBaseUrl || 'https://api.openai.com/v1');
+    setModel(aiModel || 'gpt-4o-mini');
+    toast.success('AI settings saved!');
   };
 
   const theme = s.theme; const setTheme = (v: string) => setSetting('theme', v);
@@ -624,7 +633,7 @@ export default function AdvancedSettings() {
                   <div className="flex items-center justify-center gap-2 py-12 text-slate-400 text-sm font-bold">
                     <Loader2 className="w-4 h-4 animate-spin" /> Loading settings…
                   </div>
-                ) : (
+                ) : aiSettings ? (
                   <>
                     <SettingRow label="Base URL" description="OpenAI-compatible API base URL" icon={Globe}>
                       <div className="flex flex-col items-end gap-1.5">
@@ -727,7 +736,7 @@ export default function AdvancedSettings() {
                     <div className="flex flex-wrap items-center gap-2 pt-6">
                       <button
                         type="button"
-                        onClick={handleSaveAi}
+                        onClick={handleSaveAiSettings}
                         disabled={aiSaving || aiTesting}
                         className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white text-xs font-bold shadow-[0_0_15px_rgba(139,92,246,0.25)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
                       >

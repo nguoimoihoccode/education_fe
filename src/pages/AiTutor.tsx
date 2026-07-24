@@ -20,6 +20,9 @@ import {
   ChevronRight,
   RotateCcw,
   Loader2,
+  Key,
+  Globe,
+  Cpu,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store/auth.store';
@@ -30,6 +33,7 @@ import {
   deleteConversation,
   sendMessage,
 } from '@/api/ai.api';
+import { useAiProviderStore } from '@/store/aiProvider.store';
 import type { AiMessage, AiConversationSummary, SendMessageResponse } from '@/types/ai.types';
 import './Education.css';
 
@@ -98,7 +102,7 @@ const renderSafeMessageContent = (content: string) => {
 
     if (segment.startsWith('`') && segment.endsWith('`')) {
       return (
-        <code key={index} className="px-1.5 py-0.5 rounded bg-black/30 text-accent-300 text-xs font-mono">
+        <code key={index} className="px-1.5 py-0.5 rounded text-accent-300 text-xs font-mono" style={{ background: 'rgba(0,0,0,0.3)' }}>
           {segment.slice(1, -1)}
         </code>
       );
@@ -401,13 +405,14 @@ export default function AiTutor() {
     new Date(date).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="education-container" style={{ paddingBottom: 0 }}>
+    <div className="education-container education-path-page" style={{ paddingBottom: 0, color: 'var(--app-text)' }}>
       <div className="flex h-[calc(100vh-64px)]">
         {/* ============ Sidebar ============ */}
         <aside
           className={`${
             sidebarOpen ? 'w-72' : 'w-0'
-          } flex-shrink-0 bg-slate-900/70 backdrop-blur-xl border-r border-white/5 flex flex-col transition-all duration-300 overflow-hidden`}
+          } flex-shrink-0 backdrop-blur-xl border-r flex flex-col transition-all duration-300 overflow-hidden`}
+          style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}
         >
           {/* New Chat Button */}
           <div className="p-4">
@@ -424,7 +429,7 @@ export default function AiTutor() {
           {/* Conversation List */}
           <div className="flex-1 overflow-y-auto px-3 space-y-1">
             {isLoading ? (
-              <div className="flex items-center justify-center py-8 text-slate-500">
+              <div className="flex items-center justify-center py-8" style={{ color: 'var(--app-text-subtle)' }}>
                 <Loader2 className="w-5 h-5 animate-spin" />
               </div>
             ) : (
@@ -435,8 +440,9 @@ export default function AiTutor() {
                   className={`group w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all text-sm ${
                     activeConvId === conv.id
                       ? 'bg-accent-600/15 text-white border border-accent-500/20'
-                      : 'text-slate-400 hover:bg-white/5 hover:text-white border border-transparent'
+                      : 'border border-transparent hover:bg-[var(--app-surface-hover)]'
                   }`}
+                  style={activeConvId !== conv.id ? { color: 'var(--app-text-muted)' } : undefined}
                 >
                   <MessageSquare className="w-4 h-4 flex-shrink-0" />
                   <span className="flex-1 truncate font-medium">{conv.title}</span>
@@ -445,7 +451,7 @@ export default function AiTutor() {
                       e.stopPropagation();
                       handleDeleteConv(conv.id);
                     }}
-                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded-lg transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-1 rounded-lg transition-all hover:bg-[var(--app-surface-hover)]"
                   >
                     <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                   </button>
@@ -455,8 +461,8 @@ export default function AiTutor() {
           </div>
 
           {/* Sidebar Footer */}
-          <div className="p-4 border-t border-white/5">
-            <div className="flex items-center gap-3 text-xs text-slate-500">
+          <div className="p-4 border-t" style={{ borderColor: 'var(--app-border)' }}>
+            <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--app-text-subtle)' }}>
               <Sparkles className="w-4 h-4 text-accent-400" />
               <span className="font-bold tracking-wider uppercase">AI Tutor v2.0</span>
             </div>
@@ -466,10 +472,11 @@ export default function AiTutor() {
         {/* ============ Chat Area ============ */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Chat Header */}
-          <header className="flex items-center gap-4 px-6 py-4 border-b border-white/5 bg-slate-900/40 backdrop-blur-md flex-shrink-0">
+          <header className="flex items-center gap-4 px-6 py-4 border-b backdrop-blur-md flex-shrink-0" style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}>
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-xl hover:bg-white/5 text-slate-400 hover:text-white transition-all"
+              className="p-2 rounded-xl hover:bg-[var(--app-surface-hover)] transition-all"
+              style={{ color: 'var(--app-text-muted)' }}
             >
               <MessageSquare className="w-5 h-5" />
             </button>
@@ -488,7 +495,8 @@ export default function AiTutor() {
             <button
               onClick={() => activeConvId && handleDeleteConv(activeConvId)}
               disabled={!activeConvId || isLoading}
-              className="p-2.5 rounded-xl hover:bg-white/5 text-slate-500 hover:text-rose-400 transition-all disabled:opacity-30"
+              className="p-2.5 rounded-xl hover:bg-[var(--app-surface-hover)] transition-all disabled:opacity-30"
+              style={{ color: 'var(--app-text-subtle)' }}
               title="Clear chat"
             >
               <RotateCcw className="w-4 h-4" />
@@ -510,7 +518,7 @@ export default function AiTutor() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto">
             {isLoading || isLoadingMessages ? (
-              <div className="flex flex-col items-center justify-center h-full gap-3 text-slate-400">
+              <div className="flex flex-col items-center justify-center h-full gap-3" style={{ color: 'var(--app-text-muted)' }}>
                 <Loader2 className="w-8 h-8 animate-spin text-accent-400" aria-hidden />
                 <span className="text-sm font-medium">
                   {isLoading ? 'Loading conversations…' : 'Loading messages…'}
@@ -531,7 +539,7 @@ export default function AiTutor() {
                 <h2 className="text-2xl md:text-3xl font-black font-headline text-white mb-3 text-center">
                   Hi {user?.displayName?.split(' ')[0] || 'there'}! I'm your AI Tutor
                 </h2>
-                <p className="text-slate-400 text-center max-w-lg mb-10 text-sm leading-relaxed">
+                <p className="text-center max-w-lg mb-10 text-sm leading-relaxed" style={{ color: 'var(--app-text-muted)' }}>
                   Ask me anything about languages, grammar, vocabulary, or study strategies. I'm here to help you learn faster and smarter.
                 </p>
 
@@ -544,13 +552,14 @@ export default function AiTutor() {
                         setInput(prompt.prompt);
                         inputRef.current?.focus();
                       }}
-                      className="group p-4 rounded-2xl bg-slate-800/60 border border-white/5 hover:border-accent-500/30 hover:bg-slate-800/80 text-left transition-all duration-200 hover:-translate-y-0.5"
+                      className="group p-4 rounded-2xl border text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-accent-500/30"
+                      style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}
                     >
                       <div className="flex items-center gap-3 mb-2">
                         <prompt.icon className="w-4 h-4 text-accent-400" />
                         <span className="text-xs font-bold text-white">{prompt.label}</span>
                       </div>
-                      <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">{prompt.prompt}</p>
+                      <p className="text-[11px] line-clamp-2 leading-relaxed" style={{ color: 'var(--app-text-subtle)' }}>{prompt.prompt}</p>
                       <ChevronRight className="w-3.5 h-3.5 text-accent-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
                   ))}
@@ -582,11 +591,12 @@ export default function AiTutor() {
                     {/* Message Bubble */}
                     <div className={`max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                       <div
-                        className={`px-5 py-4 rounded-2xl text-sm leading-relaxed ${
+                        className={`px-5 py-4 rounded-2xl text-sm leading-relaxed border ${
                           msg.role === 'user'
-                            ? 'bg-accent-600/20 border border-accent-500/20 text-white rounded-br-md'
-                            : 'bg-slate-800/80 border border-white/5 text-slate-200 rounded-bl-md'
+                            ? 'bg-accent-600/20 border-accent-500/20 text-white rounded-br-md'
+                            : 'rounded-bl-md'
                         }`}
+                        style={msg.role === 'assistant' ? { background: 'var(--app-surface)', borderColor: 'var(--app-border)', color: 'var(--app-text-muted)' } : undefined}
                       >
                         {/* Render lightweight markdown without executing raw HTML. */}
                         <div className="whitespace-pre-wrap">{renderSafeMessageContent(msg.content)}</div>
@@ -594,12 +604,13 @@ export default function AiTutor() {
 
                       {/* Actions */}
                       <div className={`flex items-center gap-2 mt-1.5 ${msg.role === 'user' ? 'justify-end' : ''}`}>
-                        <span className="text-[10px] text-slate-600 font-mono">{formatTime(msg.timestamp)}</span>
+                        <span className="text-[10px] font-mono" style={{ color: 'var(--app-text-subtle)' }}>{formatTime(msg.timestamp)}</span>
                         {msg.role === 'assistant' && (
                           <>
                             <button
                               onClick={() => handleCopy(msg.content, msg.id)}
-                              className="p-1 rounded-md hover:bg-white/5 text-slate-600 hover:text-slate-400 opacity-0 group-hover:opacity-100 transition-all"
+                              className="p-1 rounded-md hover:bg-[var(--app-surface-hover)] opacity-0 group-hover:opacity-100 transition-all"
+                              style={{ color: 'var(--app-text-subtle)' }}
                               title="Copy"
                             >
                               {copiedId === msg.id ? (
@@ -611,7 +622,8 @@ export default function AiTutor() {
                             <button
                               type="button"
                               onClick={() => toast('Đọc to sẽ sớm có mặt', { icon: '🔊' })}
-                              className="p-1 rounded-md hover:bg-white/5 text-slate-600 hover:text-slate-400 opacity-0 group-hover:opacity-100 transition-all"
+                              className="p-1 rounded-md hover:bg-[var(--app-surface-hover)] opacity-0 group-hover:opacity-100 transition-all"
+                              style={{ color: 'var(--app-text-subtle)' }}
                               title="Listen (sắp có)"
                             >
                               <Volume2 className="w-3 h-3" />
@@ -629,7 +641,7 @@ export default function AiTutor() {
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent-600 to-fuchsia-600 flex items-center justify-center shadow-md">
                       <Bot className="w-5 h-5 text-white" />
                     </div>
-                    <div className="px-5 py-4 rounded-2xl rounded-bl-md bg-slate-800/80 border border-white/5">
+                    <div className="px-5 py-4 rounded-2xl rounded-bl-md border" style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}>
                       <div className="flex gap-1.5">
                         <span className="w-2 h-2 rounded-full bg-accent-400 animate-bounce" style={{ animationDelay: '0ms' }} />
                         <span className="w-2 h-2 rounded-full bg-accent-400 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -645,7 +657,7 @@ export default function AiTutor() {
           </div>
 
           {/* Input Area */}
-          <div className="px-4 md:px-6 pb-5 pt-3 border-t border-white/5 bg-slate-900/60 backdrop-blur-md flex-shrink-0">
+          <div className="px-4 md:px-6 pb-5 pt-3 border-t backdrop-blur-md flex-shrink-0" style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}>
             <div className="max-w-4xl mx-auto">
               <div className="flex gap-3 items-end">
                 <div className="flex-1 relative">
@@ -657,8 +669,8 @@ export default function AiTutor() {
                     placeholder="Ask your AI tutor anything..."
                     rows={1}
                     disabled={isTyping || isLoading || !activeConvId}
-                    className="w-full px-5 py-4 pr-14 rounded-2xl bg-slate-800/80 border border-white/10 text-white placeholder-slate-500 text-sm focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none disabled:opacity-50"
-                    style={{ maxHeight: '160px' }}
+                    className="w-full px-5 py-4 pr-14 rounded-2xl border text-sm focus:border-accent-500 focus:ring-1 focus:ring-accent-500 outline-none transition-all resize-none disabled:opacity-50"
+                    style={{ background: 'var(--app-surface-hover)', borderColor: 'var(--app-border-strong)', color: 'var(--app-text)', maxHeight: '160px' }}
                   />
                   <button
                     onClick={handleSend}
@@ -669,7 +681,7 @@ export default function AiTutor() {
                   </button>
                 </div>
               </div>
-              <p className="text-[10px] text-slate-600 mt-2 text-center font-medium">
+              <p className="text-[10px] mt-2 text-center font-medium" style={{ color: 'var(--app-text-subtle)' }}>
                 AI Tutor may occasionally provide inaccurate information. Always verify important facts.
               </p>
             </div>
