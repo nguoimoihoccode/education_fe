@@ -395,16 +395,6 @@ export default function QuizSessionPage() {
     setTimeSpentOnQuestion(0);
   };
 
-  const handleGoPrevQuestion = () => {
-    if (!batchView.canGoPrevQuestion) return;
-    setQuestionIndexInBatch((prev) => prev - 1);
-  };
-
-  const handleGoNextQuestion = () => {
-    if (!batchView.canGoNextQuestion) return;
-    setQuestionIndexInBatch((prev) => prev + 1);
-  };
-
   const handleGoPrevBatch = () => {
     if (!batchView.canGoPrevBatch) return;
     setBatchIndex((prev) => prev - 1);
@@ -417,11 +407,6 @@ export default function QuizSessionPage() {
     setBatchIndex(next);
     setMaxReachedBatchIndex((prev) => Math.max(prev, next));
     setQuestionIndexInBatch(0);
-  };
-
-  const handleSelectBatchQuestion = (indexInBatch: number) => {
-    if (indexInBatch < 0 || indexInBatch >= batchView.batchLength) return;
-    setQuestionIndexInBatch(indexInBatch);
   };
 
   const isStarting = startMutation.isPending || (isLoadingQuiz && !quiz);

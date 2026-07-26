@@ -109,8 +109,8 @@ export default function DocumentImportPage() {
 
     try {
       await previewMutation.mutateAsync({ file, options: importOptions });
-    } catch (error) {
-      console.error('Error processing file:', error);
+    } catch {
+      // preview error handled by mutation state
     } finally {
       setIsProcessing(false);
     }

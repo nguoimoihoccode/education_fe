@@ -35,7 +35,7 @@ function AdminSessionCard({
 }) {
   const DeviceIcon = session.device?.toLowerCase().includes('mobile') ? Smartphone : Laptop;
   const isActive = useMemo(
-    () => !session.isRevoked && new Date(session.expiresAt).getTime() > Date.now(),
+    () => !session.isRevoked && new Date(session.expiresAt).getTime() > new Date().getTime(),
     [session.isRevoked, session.expiresAt]
   );
 

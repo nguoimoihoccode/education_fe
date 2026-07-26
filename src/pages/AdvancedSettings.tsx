@@ -232,35 +232,6 @@ export default function AdvancedSettings() {
     if (target) setActiveSection(target);
   }, [location.search, location.hash, canManageAi]);
 
-  const handleSaveAi = async () => {
-    setAiSaving(true);
-    try {
-      const body: Parameters<typeof updateAiSettings>[0] = {
-        baseUrl: aiBaseUrl,
-        model: aiModel,
-        maxTokens: Number(aiMaxTokens),
-        temperature: Number(aiTemperature),
-        systemRules: aiSystemRules,
-      };
-      if (aiApiKey.trim()) body.apiKey = aiApiKey.trim();
-      const view = await updateAiSettings(body);
-      applyAiSettings(view);
-      toast.success('AI settings saved');
-      setShowSavedToast(true);
-      if (savedToastTimeoutRef.current !== null) {
-        window.clearTimeout(savedToastTimeoutRef.current);
-      }
-      savedToastTimeoutRef.current = window.setTimeout(() => {
-        setShowSavedToast(false);
-        savedToastTimeoutRef.current = null;
-      }, 2500);
-    } catch {
-      toast.error('Failed to save AI settings');
-    } finally {
-      setAiSaving(false);
-    }
-  };
-
   const handleTestAi = async () => {
     setAiTesting(true);
     try {

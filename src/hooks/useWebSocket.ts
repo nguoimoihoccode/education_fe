@@ -61,7 +61,6 @@ export const useWebSocket = ({ symbols, enabled = true }: UseWebSocketOptions) =
 
     const token = useAuthStore.getState().accessToken;
     if (!token) {
-      console.warn('No access token found for WebSocket connection');
       return;
     }
 
@@ -74,7 +73,6 @@ export const useWebSocket = ({ symbols, enabled = true }: UseWebSocketOptions) =
 
     const handleConnect = () => {
       setConnected(true);
-      console.log('WebSocket connected');
       
       // Subscribe to symbols
       socket.emit('subscribe', { symbols });
@@ -87,11 +85,9 @@ export const useWebSocket = ({ symbols, enabled = true }: UseWebSocketOptions) =
 
     const handleDisconnect = () => {
       setConnected(false);
-      console.log('WebSocket disconnected');
     };
 
-    const handleConnectError = (error: Error) => {
-      console.error('WebSocket connection error:', error);
+    const handleConnectError = () => {
       setConnected(false);
     };
 
