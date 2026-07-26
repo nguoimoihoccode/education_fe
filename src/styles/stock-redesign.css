@@ -78,7 +78,6 @@
     border: 1px solid var(--stock-glass-border);
     box-shadow: var(--stock-glass-shadow);
     transition: all var(--stock-transition);
-    animation: stockFadeIn 0.4s ease-out;
 }
 
 .stock-card:hover {
@@ -538,23 +537,6 @@
     background: rgba(148, 163, 184, 0.3);
 }
 
-/* ---- Animations ---- */
-@keyframes stockFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.stock-fade-in {
-    animation: stockFadeIn 0.4s ease-out;
-}
-
 /* ---- Progress bar ---- */
 .stock-progress-bar {
     height: 4px;
@@ -603,17 +585,4 @@
     right: -2px;
     background: linear-gradient(135deg, var(--stock-accent-rose), #f43f5e);
     box-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
-    animation: stockPulse 2s infinite;
-}
-
-@keyframes stockPulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
 }

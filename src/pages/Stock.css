@@ -46,7 +46,6 @@
     border-radius: 50%;
     filter: blur(120px);
     opacity: 0.15;
-    animation: stock-pulse 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stock-orb-1 {
@@ -68,18 +67,6 @@
 }
 
 /* Blue */
-
-@keyframes stock-pulse {
-    0% {
-        transform: scale(1);
-        opacity: 0.1;
-    }
-
-    100% {
-        transform: scale(1.1);
-        opacity: 0.2;
-    }
-}
 
 /* --- Components --- */
 

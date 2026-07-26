@@ -46,7 +46,6 @@
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.08;
-  animation: orb-float 20s infinite ease-in-out alternate;
   transform-style: preserve-3d;
 }
 
@@ -78,24 +77,6 @@
   opacity: 0.08;
   animation-delay: -10s;
   animation-duration: 35s;
-}
-
-@keyframes orb-float {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-
-  33% {
-    transform: translate3d(30px, -50px, 20px) scale(1.1);
-  }
-
-  66% {
-    transform: translate3d(-20px, 20px, -20px) scale(0.95);
-  }
-
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
 }
 
 .noise-overlay {
@@ -229,22 +210,6 @@
   -webkit-text-fill-color: transparent;
 }
 
-@keyframes stockFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.stock-fade-in {
-  animation: stockFadeIn 0.4s ease-out;
-}
-
 .stock-notification-dot {
   position: absolute;
   top: -2px;
@@ -254,18 +219,6 @@
   border-radius: 9999px;
   background: linear-gradient(135deg, var(--stock-accent-rose), #f43f5e);
   box-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
-  animation: stockPulse 2s infinite;
-}
-
-@keyframes stockPulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.5;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
