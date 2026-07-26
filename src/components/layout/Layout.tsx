@@ -46,13 +46,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="min-h-screen relative" style={{ backgroundColor: 'var(--app-bg)', color: 'var(--stock-text-primary)' }}>
-      {/* Ambient Background */}
-      <div className="ambient-background" style={{ zIndex: 0 }}>
-        <div className="orb orb-1"></div>
-        <div className="orb orb-2"></div>
-        <div className="orb orb-3"></div>
-        <div className="noise-overlay"></div>
-      </div>
+
 
       {/* Sidebars */}
       <DesktopSidebar

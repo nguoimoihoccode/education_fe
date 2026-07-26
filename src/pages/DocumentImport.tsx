@@ -343,7 +343,7 @@ export default function DocumentImportPage() {
               <div className="bg-slate-800/80 backdrop-blur-md border border-accent-500/30 rounded-3xl p-10 text-center shadow-[0_0_40px_rgba(139,92,246,0.15)]">
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-accent-500/10 flex items-center justify-center border border-accent-500/20 relative">
                   <Loader2 className="w-10 h-10 text-accent-400 animate-spin" />
-                  <div className="absolute inset-0 rounded-full border border-accent-400/30 animate-ping" />
+                  <div className="absolute inset-0 rounded-full border border-accent-400/30" />
                 </div>
                 <h3 className="text-2xl font-black font-headline text-white mb-2">AI đang xử lý...</h3>
                 <p className="text-slate-400 text-sm max-w-md mx-auto">
@@ -353,7 +353,7 @@ export default function DocumentImportPage() {
                 {/* Animated progress bar */}
                 <div className="mt-8 max-w-sm mx-auto">
                   <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
-                    <div className="h-full bg-gradient-to-r from-accent-500 to-fuchsia-500 rounded-full animate-pulse w-2/3" />
+                    <div className="h-full bg-gradient-to-r from-accent-500 to-fuchsia-500 rounded-full w-2/3" />
                   </div>
                   <div className="flex justify-between mt-2 text-xs text-slate-500 font-bold tracking-widest uppercase">
                     <span>Đọc file</span>
@@ -381,7 +381,7 @@ export default function DocumentImportPage() {
             <div className="bg-slate-800/80 backdrop-blur-md border border-white/10 rounded-3xl p-10 text-center shadow-2xl">
               {/* Success Icon */}
               <div className="w-28 h-28 mx-auto mb-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-[0_0_50px_rgba(16,185,129,0.3)] relative">
-                <div className="absolute inset-0 rounded-full border border-white/20 animate-ping" />
+                <div className="absolute inset-0 rounded-full border border-white/20" />
                 <CheckCircle className="w-14 h-14 text-white" />
               </div>
 

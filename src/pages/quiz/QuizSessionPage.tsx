@@ -441,12 +441,7 @@ export default function QuizSessionPage() {
   if (isLoadingQuiz || isStarting || (quiz && !session && !startMutation.isError)) {
     return (
       <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
-        <div className="ambient-background">
-          <div className="orb orb-1"></div>
-          <div className="orb orb-2"></div>
-          <div className="orb orb-3"></div>
-          <div className="noise-overlay"></div>
-        </div>
+
         <div className="detail-wrapper flex flex-col items-center justify-center py-20 gap-4">
           <div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-slate-300 text-sm font-medium">Đang chuẩn bị phiên quiz...</p>
@@ -458,12 +453,7 @@ export default function QuizSessionPage() {
   if (!quiz || !session) {
     return (
       <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
-        <div className="ambient-background">
-          <div className="orb orb-1"></div>
-          <div className="orb orb-2"></div>
-          <div className="orb orb-3"></div>
-          <div className="noise-overlay"></div>
-        </div>
+
         <div className="detail-wrapper py-20 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Lỗi phiên làm bài</h2>
           <p className="text-slate-300 mb-6">Không thể tải phiên quiz.</p>

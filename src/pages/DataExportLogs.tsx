@@ -261,7 +261,7 @@ export default function DataExportLogs() {
 
           {/* ==================== EXPORT TAB ==================== */}
           {activeTab === 'export' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left: Export Form */}
               <div className="space-y-6">
                 <div className="bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-3xl p-6">
@@ -401,7 +401,7 @@ export default function DataExportLogs() {
                             </div>
                           ) : (
                             <div className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold">
-                              <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" /> Processing
+                              <div className="w-2 h-2 rounded-full bg-amber-400" /> Processing
                             </div>
                           )}
                         </div>
@@ -425,7 +425,7 @@ export default function DataExportLogs() {
 
           {/* ==================== LOGS TAB ==================== */}
           {activeTab === 'logs' && (
-            <div className="bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-3xl p-6 relative min-h-[60vh] animate-fade-in flex flex-col">
+            <div className="bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-3xl p-6 relative min-h-[60vh] flex flex-col">
               {/* Toolbar */}
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
                 <div className="flex gap-2">

@@ -161,7 +161,7 @@ export default function FlashcardReviewPage() {
         </div>
         <div className="text-center max-w-lg w-full relative z-10 bg-slate-800/80 backdrop-blur-md p-10 rounded-3xl border border-white/10 shadow-2xl">
           <div className="w-28 h-28 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent-500 to-amber-500 flex items-center justify-center shadow-[0_0_40px_rgba(139,92,246,0.4)] relative">
-            <div className="absolute inset-0 rounded-full border border-white/20 animate-ping"></div>
+            <div className="absolute inset-0 rounded-full border border-white/20"></div>
             <Award className="w-14 h-14 text-white" />
           </div>
 

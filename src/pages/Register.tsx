@@ -65,7 +65,6 @@ export const Register = () => {
       <div className="stock-ambient-bg">
         <div className="stock-orb stock-orb-1" style={{ width: '60vw', background: 'rgba(245, 158, 11, 0.2)' }}></div>
         <div className="stock-orb stock-orb-2" style={{ width: '50vw', background: 'rgba(139, 92, 246, 0.2)' }}></div>
-        <div className="noise-overlay"></div>
       </div>
 
       <div className="w-full max-w-md p-6 relative z-10 fade-in-entry">

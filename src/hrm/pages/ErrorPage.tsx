@@ -15,7 +15,7 @@ export const ErrorPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-white to-secondary-100 flex items-center justify-center p-4">
             <div className="w-full max-w-2xl">
-                <div className="card text-center animate-fade-in">
+                <div className="card text-center">
                     {/* Error Icon */}
                     <div className="mb-6">
                         <div className="w-24 h-24 mx-auto bg-gradient-to-br from-accent-rose/20 to-accent-rose/10 rounded-full flex items-center justify-center">

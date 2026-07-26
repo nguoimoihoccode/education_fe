@@ -42,7 +42,7 @@ export default function NotFoundPage() {
             {/* Illustration */}
             <div className="mb-10">
               <div className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-slate-800/60 backdrop-blur-md border border-white/10">
-                <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse" />
+                <div className="w-3 h-3 rounded-full bg-rose-500" />
                 <code className="text-xs font-mono text-slate-400">
                   Error: <span className="text-rose-400">ROUTE_NOT_FOUND</span> — This path does not match any route
                 </code>

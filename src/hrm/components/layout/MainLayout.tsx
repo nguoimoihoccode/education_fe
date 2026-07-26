@@ -29,7 +29,7 @@ export const MainLayout: React.FC = () => {
             {/* Mobile sidebar overlay */}
             {isMobileSidebarOpen && (
                 <div
-                    className="fixed inset-0 modal-backdrop z-40 lg:hidden animate-fade-in"
+                    className="fixed inset-0 modal-backdrop z-40 lg:hidden"
                     onClick={closeMobileSidebar}
                 />
             )}

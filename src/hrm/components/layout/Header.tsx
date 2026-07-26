@@ -265,7 +265,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, onToggleMobileS
 
             {/* Mobile search bar */}
             {isSearchOpen && (
-                <div className="md:hidden absolute top-16 left-0 right-0 p-4 glass border-b border-secondary-200 shadow-lg animate-fade-in">
+                <div className="md:hidden absolute top-16 left-0 right-0 p-4 glass border-b border-secondary-200 shadow-lg">
                     <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary-400">
                             search

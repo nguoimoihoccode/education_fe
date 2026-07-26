@@ -39,7 +39,7 @@ export function SlideTemplateRenderer({ slide, template, showAnswer, onRevealAns
           <h2 className="slide-title mb-8 text-4xl font-black">{content.title}</h2>
           <ul className="space-y-5 text-2xl">
             {(content.bullets ?? []).map((bullet, index) => (
-              <li key={`${bullet}-${index}`} className="slide-bullet rounded-2xl bg-white/10 p-4" style={{ animationDelay: `${160 + index * 120}ms` }}>{bullet}</li>
+              <li key={`${bullet}-${index}`} className="slide-bullet rounded-2xl bg-white/10 p-4">{bullet}</li>
             ))}
           </ul>
         </div>
@@ -50,8 +50,8 @@ export function SlideTemplateRenderer({ slide, template, showAnswer, onRevealAns
           <p className="slide-kicker mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">Quick Check</p>
           <h2 className="slide-title mb-8 text-4xl font-black">{content.question}</h2>
           <div className="grid gap-3 md:grid-cols-3">
-            {(content.options ?? []).map((option, index) => (
-              <div key={option} className="slide-bullet rounded-2xl border border-white/15 bg-white/10 p-4 text-lg" style={{ animationDelay: `${140 + index * 120}ms` }}>{option}</div>
+            {(content.options ?? []).map((option) => (
+              <div key={option} className="slide-bullet rounded-2xl border border-white/15 bg-white/10 p-4 text-lg">{option}</div>
             ))}
           </div>
           <button className="mt-8 cursor-pointer rounded-full bg-amber-400 px-6 py-3 font-bold text-slate-950 transition-transform duration-200 hover:-translate-y-0.5" onClick={onRevealAnswer} type="button">
@@ -66,7 +66,7 @@ export function SlideTemplateRenderer({ slide, template, showAnswer, onRevealAns
           <h2 className="slide-title mb-8 text-4xl font-black">{content.title ?? 'Summary'}</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {(content.bullets ?? []).map((bullet, index) => (
-              <div key={`${bullet}-${index}`} className="slide-bullet rounded-2xl bg-white/10 p-5 text-xl" style={{ animationDelay: `${160 + index * 120}ms` }}>{bullet}</div>
+              <div key={`${bullet}-${index}`} className="slide-bullet rounded-2xl bg-white/10 p-5 text-xl">{bullet}</div>
             ))}
           </div>
         </div>

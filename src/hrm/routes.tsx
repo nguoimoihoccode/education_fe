@@ -20,7 +20,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard').then((m) => ({ default:
 
 // Placeholder component for pages not yet converted
 const PlaceholderPage: React.FC<{ name: string }> = ({ name }) => (
-    <div className="card animate-fade-in">
+    <div className="card">
         <div className="text-center py-12">
             <div className="icon-box icon-primary mx-auto mb-4 w-16 h-16">
                 <span className="material-symbols-outlined text-3xl">construction</span>

@@ -40,7 +40,7 @@ export default function ComingSoon() {
 
             <div className="relative">
               {/* Animated rocket */}
-              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-fuchsia-600 to-accent-600 flex items-center justify-center mx-auto mb-8 shadow-[0_0_60px_rgba(192,38,211,0.2)] animate-bounce" style={{ animationDuration: '3s' }}>
+              <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-fuchsia-600 to-accent-600 flex items-center justify-center mx-auto mb-8 shadow-[0_0_60px_rgba(192,38,211,0.2)]">
                 <Rocket className="w-12 h-12 text-white" />
               </div>
 

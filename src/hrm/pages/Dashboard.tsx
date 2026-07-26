@@ -124,7 +124,7 @@ export const Dashboard: React.FC = () => {
     return (
         <div className="space-y-4">
             {/* Page Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                     <h1 className="text-xl md:text-2xl font-bold text-secondary-900">
                         Welcome back, <span className="gradient-text">John</span>! 👋
@@ -137,11 +137,10 @@ export const Dashboard: React.FC = () => {
 
             {/* Quick Actions (Mobile) */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:hidden">
-                {quickActions.map((action, i) => (
+                {quickActions.map((action) => (
                     <button
                         key={action.label}
                         className="flex flex-col items-center justify-center p-3 card group cursor-pointer"
-                        style={{ animationDelay: `${i * 100}ms` }}
                     >
                         <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg ${getIconClass(action.color)}`}>
                             <span className="material-symbols-outlined text-xl">{action.icon}</span>
@@ -155,8 +154,8 @@ export const Dashboard: React.FC = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-                {stats.map((stat, i) => (
-                    <div key={stat.label} className="card group cursor-pointer" style={{ animationDelay: `${i * 100}ms` }}>
+                {stats.map((stat) => (
+                    <div key={stat.label} className="card group cursor-pointer">
                         <div className="flex items-start justify-between">
                             <div>
                                 <p className="text-xs font-semibold text-secondary-500">{stat.label}</p>
@@ -234,11 +233,10 @@ export const Dashboard: React.FC = () => {
                         </button>
                     </div>
                     <div className="space-y-2">
-                        {recentActivities.map((activity, i) => (
+                        {recentActivities.map((activity) => (
                             <div
                                 key={activity.id}
                                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary-50/80 transition-all duration-200 group cursor-pointer border border-transparent hover:border-secondary-100"
-                                style={{ animationDelay: `${i * 50}ms` }}
                             >
                                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all group-hover:scale-110 ${getIconClass(activity.color)}`}>
                                     <span className={`material-symbols-outlined text-base ${activity.color === 'gray' ? 'text-secondary-600' : ''}`}>
@@ -267,11 +265,10 @@ export const Dashboard: React.FC = () => {
                         <button className="text-sm text-primary-600 hover:text-primary-700 font-semibold transition-colors">View all</button>
                     </div>
                     <div className="space-y-3">
-                        {upcomingEvents.map((event, i) => (
+                        {upcomingEvents.map((event) => (
                             <div
                                 key={event.id}
                                 className="p-3 rounded-lg border border-secondary-100 hover:border-primary-200 hover:shadow-md transition-all duration-200 group cursor-pointer bg-gradient-to-r from-white to-secondary-50/50"
-                                style={{ animationDelay: `${i * 50}ms` }}
                             >
                                 <div className="flex items-start gap-2">
                                     <div className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ring-4 ring-opacity-20 ${getEventDotClass(event.type)}`} />
@@ -326,8 +323,8 @@ export const Dashboard: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {upcomingLeaves.map((leave, i) => (
-                                <tr key={leave.id} className="group" style={{ animationDelay: `${i * 50}ms` }}>
+                            {upcomingLeaves.map((leave) => (
+                                <tr key={leave.id} className="group">
                                     <td>
                                         <div className="flex items-center gap-3">
                                             <img
@@ -382,8 +379,8 @@ export const Dashboard: React.FC = () => {
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-rose-100 text-sm font-bold text-rose-700">{birthdaysThisMonth.length}</span>
                     </div>
                     <div className="space-y-3">
-                        {birthdaysThisMonth.map((emp, i) => (
-                            <div key={emp.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-rose-50/50 transition-all group cursor-pointer border border-transparent hover:border-rose-100" style={{ animationDelay: `${i * 50}ms` }}>
+                        {birthdaysThisMonth.map((emp) => (
+                            <div key={emp.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-rose-50/50 transition-all group cursor-pointer border border-transparent hover:border-rose-100">
                                 <div className="relative">
                                     <img src={emp.avatar} alt={emp.name} className="w-10 h-10 rounded-lg ring-2 ring-white shadow-sm group-hover:ring-rose-200 transition-all" />
                                     <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center text-white text-xs">🎂</span>
@@ -422,12 +419,11 @@ export const Dashboard: React.FC = () => {
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-700">2 New</span>
                     </div>
                     <div className="space-y-3">
-                        {announcements.map((ann, i) => (
+                        {announcements.map((ann) => (
                             <div
                                 key={ann.id}
                                 className={`p-3 rounded-xl border border-secondary-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group cursor-pointer ${ann.isPinned ? 'border-l-4 border-l-blue-500' : ''
                                     }`}
-                                style={{ animationDelay: `${i * 50}ms` }}
                             >
                                 <div className="flex items-start gap-3">
                                     <div className="w-8 h-8 rounded-lg bg-secondary-100 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
@@ -470,8 +466,8 @@ export const Dashboard: React.FC = () => {
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary-100 text-sm font-bold text-primary-700">{newEmployees.length}</span>
                     </div>
                     <div className="space-y-3">
-                        {newEmployees.map((emp, i) => (
-                            <div key={emp.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary-50/50 transition-all group cursor-pointer border border-transparent hover:border-primary-100" style={{ animationDelay: `${i * 50}ms` }}>
+                        {newEmployees.map((emp) => (
+                            <div key={emp.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary-50/50 transition-all group cursor-pointer border border-transparent hover:border-primary-100">
                                 <div className="relative">
                                     <img src={emp.avatar} alt={emp.name} className="w-10 h-10 rounded-lg ring-2 ring-white shadow-sm group-hover:ring-primary-200 transition-all" />
                                     {emp.daysAgo <= 7 && (
@@ -536,7 +532,7 @@ export const Dashboard: React.FC = () => {
                                     border: '1px solid rgba(44, 179, 74, 0.2)',
                                 }}
                             >
-                                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse" />
+                                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2" />
                                 Working
                             </span>
                         </div>

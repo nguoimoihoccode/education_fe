@@ -216,7 +216,7 @@ function TuVungCard({ vocab }: { vocab: Vocabulary }) {
                             <Volume2 className="w-3 h-3" /> /{vocab.pronunciation}/
                         </div>
                     )}
-                    <div className="absolute bottom-6 text-[10px] font-bold text-slate-600 uppercase tracking-widest animate-pulse">Nhấn để lật</div>
+                    <div className="absolute bottom-6 text-[10px] font-bold text-slate-600 uppercase tracking-widest">Nhấn để lật</div>
                 </div>
                 <div className="lesson-flashcard-back">
                     <h3 className="text-2xl font-bold text-white mb-4">{vocab.meaning}</h3>
@@ -249,7 +249,7 @@ function BaiTapList({
         return (
             <div className="text-center py-16 flex flex-col items-center justify-center">
                 <div className={`w-32 h-32 rounded-full flex items-center justify-center mb-8 relative ${passed ? 'bg-emerald-500/10' : 'bg-rose-500/10'}`}>
-                    <div className={`absolute inset-0 rounded-full animate-ping opacity-20 ${passed ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                    <div className={`absolute inset-0 rounded-full opacity-20 ${passed ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
                     {passed ? <Award className="w-16 h-16 text-emerald-400" /> : <XCircle className="w-16 h-16 text-rose-400" />}
                 </div>
                 <h2 className="text-4xl font-bold text-white mb-4">{passed ? 'Hoàn thành tốt!' : 'Cần luyện thêm'}</h2>

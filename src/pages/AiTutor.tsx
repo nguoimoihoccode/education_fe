@@ -595,7 +595,7 @@ export default function AiTutor() {
               <div>
                 <h2 className="text-sm font-black font-headline text-white">AI Tutor</h2>
                 <p className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                   Online — Ready to help
                 </p>
               </div>
@@ -759,9 +759,9 @@ export default function AiTutor() {
                     </div>
                     <div className="px-5 py-4 rounded-2xl rounded-bl-md border" style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}>
                       <div className="flex gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-accent-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-2 h-2 rounded-full bg-accent-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-2 h-2 rounded-full bg-accent-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                        <span className="w-2 h-2 rounded-full bg-accent-400" />
+                        <span className="w-2 h-2 rounded-full bg-accent-400" />
+                        <span className="w-2 h-2 rounded-full bg-accent-400" />
                       </div>
                     </div>
                   </div>

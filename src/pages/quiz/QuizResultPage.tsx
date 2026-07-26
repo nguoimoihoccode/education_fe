@@ -33,12 +33,7 @@ export default function QuizResultPage() {
   if (isLoadingSession || (session?.quizId && isLoadingQuiz)) {
     return (
       <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
-        <div className="ambient-background">
-          <div className="orb orb-1"></div>
-          <div className="orb orb-2"></div>
-          <div className="orb orb-3"></div>
-          <div className="noise-overlay"></div>
-        </div>
+
         <div className="detail-wrapper flex items-center justify-center py-20">
           <div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
@@ -49,12 +44,7 @@ export default function QuizResultPage() {
   if (!session || !quiz) {
     return (
       <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
-        <div className="ambient-background">
-          <div className="orb orb-1"></div>
-          <div className="orb orb-2"></div>
-          <div className="orb orb-3"></div>
-          <div className="noise-overlay"></div>
-        </div>
+
         <div className="detail-wrapper py-20 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Không tìm thấy kết quả</h2>
           <p className="text-slate-300 mb-6">Không thể tải kết quả quiz.</p>

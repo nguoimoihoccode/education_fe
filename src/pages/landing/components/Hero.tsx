@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { ArrowUpRight, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import BlurText from './BlurText';
@@ -74,27 +73,19 @@ const Hero = () => {
         <BlurText
           text="Chinh Phục Ngôn Ngữ Cùng AI"
           className="font-heading max-w-3xl text-5xl leading-[0.85] tracking-normal text-white italic drop-shadow-[0_8px_32px_rgba(0,0,0,0.55)] md:text-7xl lg:text-[5.5rem]"
-          delay={100}
-          direction="bottom"
           as="h1"
         />
 
         {/* Subtext */}
-        <motion.p
-          initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
-          animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.6, ease: 'easeOut' }}
+        <p
           className="font-body mt-8 max-w-xl text-sm leading-relaxed font-light text-white/90 drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)] md:text-base"
         >
           Học ngôn ngữ thông minh hơn với AI Tutor, Flashcards thích ứng, và hệ
           thống lặp lại ngắt quãng. Hành trình chinh phục của bạn bắt đầu tại đây.
-        </motion.p>
+        </p>
 
         {/* CTA Buttons */}
-        <motion.div
-          initial={{ filter: 'blur(10px)', opacity: 0, y: 20 }}
-          animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 0.6, ease: 'easeOut' }}
+        <div
           className="mt-8 flex flex-col items-center gap-4 sm:flex-row"
         >
           <Link
@@ -111,7 +102,7 @@ const Hero = () => {
             <Play className="h-4 w-4 fill-white" />
             Khám phá khóa học
           </Link>
-        </motion.div>
+        </div>
 
         {/* Features Bar */}
         <div className="mt-auto flex flex-col items-center gap-6 pt-16 pb-8">

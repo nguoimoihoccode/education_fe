@@ -112,7 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, isMobileOpen, onCloseM
                 {/* Logo */}
                 <div className="h-14 flex items-center justify-center border-b border-gray-100/50 px-3">
                     {isOpen ? (
-                        <div className="flex items-center gap-2 animate-fade-in">
+                        <div className="flex items-center gap-2">
                             <div
                                 className="w-9 h-9 rounded-lg flex items-center justify-center shadow-lg"
                                 style={{ background: 'linear-gradient(135deg, #2CB34A 0%, #0d9488 100%)' }}
@@ -167,7 +167,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, isMobileOpen, onCloseM
                                     </button>
 
                                     {isMenuExpanded(item.id) && isOpen && (
-                                        <div className="space-y-1 pl-4 animate-fade-in">
+                                        <div className="space-y-1 pl-4">
                                             {item.children.map((child) => (
                                                 <NavLink
                                                     key={child.route}
@@ -333,7 +333,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, isMobileOpen, onCloseM
                                     </button>
 
                                     {isMenuExpanded(item.id) && (
-                                        <div className="space-y-1 pl-4 animate-fade-in">
+                                        <div className="space-y-1 pl-4">
                                             {item.children.map((child) => (
                                                 <NavLink
                                                     key={child.route}

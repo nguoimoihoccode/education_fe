@@ -103,7 +103,7 @@ export function FlashcardCard({
                 className="mt-6 p-4 rounded-full bg-white/5 border border-white/10 text-accent-400 hover:bg-accent-500/20 hover:border-accent-500/30 transition-all hover:scale-110 active:scale-95 shadow-lg group"
                 aria-label="Play pronunciation"
               >
-                <Volume2 className={clsx('w-6 h-6 group-hover:scale-110 transition-transform', isPlaying && 'animate-pulse text-emerald-400')} />
+                <Volume2 className={clsx('w-6 h-6 group-hover:scale-110 transition-transform', isPlaying && 'text-emerald-400')} />
               </button>
             )}
           </div>
