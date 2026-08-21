@@ -20,7 +20,7 @@ npm run preview  # Preview production build
 ### Tech Stack
 - **React 19** with TypeScript
 - **Vite 7** for build tooling
-- **Tailwind CSS 4** for styling
+- **Tailwind CSS 3** for styling (`tailwindcss ^3.4.19`)
 - **TanStack Query** for server state management
 - **Zustand** for client state (auth store)
 - **React Router DOM** for routing
