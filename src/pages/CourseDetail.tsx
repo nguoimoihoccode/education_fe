@@ -1,22 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     BookOpen,
     ChevronLeft,
     Play,
-    Lock,
     Users,
     Sparkles,
     Star,
     Award,
+    Layers,
+    ClipboardList,
     type LucideIcon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCourseById, enrollCourse, getMyCourses, getLessonsByCourse } from '@/api/education.api';
+import { getPublicQuizzes } from '@/api/quiz.api';
+import { getPublicFlashcardDecks } from '@/api/flashcard.api';
 import { useAuth } from '@/hooks/useAuth';
-import { Pagination } from '@/components/ui';
-import type { CourseLevel, LessonType } from '@/types/education.types';
+import type { CourseLevel } from '@/types/education.types';
+import { LessonType } from '@/types/education.types';
+import type { Quiz } from '@/types/quiz.types';
+import type { FlashcardDeck } from '@/types/flashcard.types';
+import { ROUTES } from '@/config/routes';
 import { getCoursePrimaryAction, getLessonTargetUrl } from './courseDetailView';
 import './Education.css';
 
@@ -43,9 +49,8 @@ export default function CourseDetail() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { isAuthenticated } = useAuth();
-    const [currentPage, setCurrentPage] = useState(1);
-    const lessonsPerPage = 10;
     const syllabusSectionId = 'course-syllabus';
+    const LESSON_FETCH_LIMIT = 200;
 
     useEffect(() => {
         const animatedBg = document.querySelector('.animated-bg') as HTMLElement;
@@ -64,8 +69,8 @@ export default function CourseDetail() {
     });
 
     const { data: lessonsData, isLoading: isLoadingLessons } = useQuery({
-        queryKey: ['lessons', id, currentPage, lessonsPerPage],
-        queryFn: () => getLessonsByCourse(id!, { page: currentPage, limit: lessonsPerPage }),
+        queryKey: ['lessons', id],
+        queryFn: () => getLessonsByCourse(id!, { page: 1, limit: LESSON_FETCH_LIMIT }),
         enabled: !!id
     });
 
@@ -75,7 +80,7 @@ export default function CourseDetail() {
         enabled: isAuthenticated
     });
 
-    const isEnrolled = myCourses.some((uc) => uc.courseId === id);
+const isEnrolled = myCourses.some((uc) => uc.courseId === id);
     const userCourse = myCourses.find((uc) => uc.courseId === id);
 
     const enrollMutation = useMutation({
@@ -87,26 +92,49 @@ export default function CourseDetail() {
         onError: () => toast.error('Failed to enroll.'),
     });
 
+    useEffect(() => {
+        if (isAuthenticated && !isEnrolled && course && !enrollMutation.isSuccess) {
+            enrollMutation.mutate();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated, isEnrolled, course]);
+
     const handleEnroll = () => {
         if (!isAuthenticated) return navigate('/login');
         enrollMutation.mutate();
-    };
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleCourseInfo = () => {
         document.getElementById(syllabusSectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
+    const examsFilter = course?.title?.toLowerCase().includes('topik') ? 'topik'
+        : course?.title?.toLowerCase().includes('jlpt') ? 'jlpt'
+        : course?.language?.name?.toLowerCase();
+
+    const { data: publicQuizzes = [] } = useQuery({
+        queryKey: ['publicQuizzes'],
+        queryFn: () => getPublicQuizzes({ limit: 50 }).then((d) => d.items ?? []),
+        enabled: !!examsFilter,
+    });
+    const { data: publicDecks = [] } = useQuery({
+        queryKey: ['publicDecks'],
+        queryFn: () => getPublicFlashcardDecks({ limit: 50 }).then((d) => d.items ?? []),
+        enabled: !!examsFilter,
+    });
+
+    const examKey = examsFilter as string;
+    const relatedQuizzes: Quiz[] = examsFilter
+        ? publicQuizzes.filter((q) => `${q.name} ${q.topic ?? ''}`.toLowerCase().includes(examKey))
+        : [];
+    const relatedDecks: FlashcardDeck[] = examsFilter
+        ? publicDecks.filter((d) => `${d.name}`.toLowerCase().includes(examKey))
+        : [];
+
     if (isLoadingCourse) return <div className="education-container education-path-page flex items-center justify-center" style={{ color: 'var(--app-text)' }}><div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div></div>;
     if (!course) return <div className="education-container education-path-page flex items-center justify-center" style={{ color: 'var(--app-text)' }}>Course not found</div>;
 
     const lessons = lessonsData?.items || [];
-    const totalLessons = lessonsData?.total || 0;
-    const totalPages = lessonsData?.totalPages || 1;
     const primaryAction = getCoursePrimaryAction({ isAuthenticated, isEnrolled, lessons });
 
     const handlePrimaryAction = () => {
@@ -124,6 +152,22 @@ export default function CourseDetail() {
             navigate(primaryAction.targetUrl);
         }
     };
+
+    const groupLessons = (items: typeof lessons) => {
+        const order: LessonType[] = [
+            LessonType.VOCABULARY,
+            LessonType.GRAMMAR,
+            LessonType.READING,
+            LessonType.LISTENING,
+            LessonType.SPEAKING,
+            LessonType.PRACTICE,
+            LessonType.QUIZ,
+        ];
+        return order
+            .map((t) => ({ type: t, items: items.filter((l) => l.type === t) }))
+            .filter((g) => g.items.length > 0);
+    };
+    const groups = groupLessons(lessons);
 
     return (
         <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
@@ -201,7 +245,7 @@ export default function CourseDetail() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-[10px] uppercase text-slate-400 font-bold mb-1 tracking-wider">Đã học</p>
-                                    <p className="text-xl font-black text-white">{userCourse?.completedLessons || 0}/{totalLessons} <span className="text-xs text-slate-400 font-medium">bài học</span></p>
+                                    <p className="text-xl font-black text-white">{userCourse?.completedLessons || 0}/{lessons.length} <span className="text-xs text-slate-400 font-medium">bài học</span></p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] uppercase text-slate-400 font-bold mb-1 tracking-wider">Thời gian học</p>
@@ -225,7 +269,7 @@ export default function CourseDetail() {
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                             <div>
                             <h2 className="text-3xl font-black font-headline mb-3 text-white">Giáo trình khóa học</h2>
-                            <p className="text-slate-400 max-w-xl leading-relaxed">Master the nuances of the language through structured lessons and comprehensive exercises.</p>
+                            <p className="text-slate-400 max-w-xl leading-relaxed">Gồm {lessons.length} bài học được phân nhóm theo dạng bài, giúp bạn dễ theo dõi tiến độ hơn.</p>
                         </div>
                     </div>
 
@@ -233,85 +277,113 @@ export default function CourseDetail() {
                         <div className="flex items-center justify-center py-20">
                             <div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div>
                         </div>
+                    ) : groups.length === 0 ? (
+                        <div className="text-center py-20 text-slate-400">Chưa có bài học cho khóa học này.</div>
                     ) : (
                         <div className="space-y-12">
-                            <div className="relative">
-                                {/* Section Header */}
-                                <div className="flex items-center gap-6 mb-8">
-                                    <div className="flex-none w-14 h-14 rounded-full bg-slate-800/80 backdrop-blur-md border border-accent-500/20 flex items-center justify-center font-headline font-black text-xl text-accent-400 shadow-[0_0_20px_rgba(139,92,246,0.15)]">01</div>
-                                    <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-                                    <h3 className="text-2xl font-bold font-headline text-white pr-8">Core Lessons</h3>
-                                </div>
+                            {groups.map((group, groupIdx) => (
+                                <div key={group.type} className="relative">
+                                    <div className="flex items-center gap-6 mb-8">
+                                        <div className="flex-none w-14 h-14 rounded-full bg-slate-800/80 backdrop-blur-md border border-accent-500/20 flex items-center justify-center font-headline font-black text-xl text-accent-400 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+                                            {String(groupIdx + 1).padStart(2, '0')}
+                                        </div>
+                                        <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
+                                        <h3 className="text-2xl font-bold font-headline text-white pr-8">
+                                            {groupTypeLabel(group.type, group.items.length)}
+                                        </h3>
+                                    </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {lessons.map((lesson, idx) => {
-                                        const config = typeConfig[lesson.type as LessonType] || typeConfig.vocabulary;
-                                        const Icon = config.icon;
-                                        const locked = !isEnrolled;
-                                        const lessonTargetUrl = getLessonTargetUrl(isEnrolled, lesson.id);
-                                        
-                                        // Status logic mimicking Stitch design
-                                        const statusClass = locked ? "opacity-50 hover:opacity-75" : "hover:bg-white/5";
-                                        let outerClass = locked ? "bg-slate-800/60" : "bg-slate-800/80 hover:bg-slate-800";
-                                        if (!locked && idx === 0) {
-                                            outerClass = "bg-accent-900/20 border-accent-500/30 hover:bg-accent-900/30";
-                                        }
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {group.items.map((lesson) => {
+                                            const config = typeConfig[lesson.type as LessonType] || typeConfig.vocabulary;
+                                            const Icon = config.icon;
+                                            const lessonTargetUrl = getLessonTargetUrl(true, lesson.id);
 
-                                        return (
-                                            <div key={lesson.id} className={`group border border-white/5 backdrop-blur-md p-6 rounded-2xl flex items-center justify-between transition-all duration-300 ${outerClass} ${statusClass}`}>
-                                                <div className="flex items-center gap-5">
-                                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg ${locked ? 'bg-white/5 text-slate-500' : 'bg-white/10 ' + config.color}`}>
-                                                        {locked ? <Lock className="w-5 h-5" /> : <Icon className="w-6 h-6" />}
-                                                    </div>
+                                            return (
+                                                <Link
+                                                    key={lesson.id}
+                                                    to={lessonTargetUrl || '#'}
+                                                    className={`group border border-white/5 backdrop-blur-md p-6 rounded-2xl flex items-center justify-between transition-all duration-300 bg-slate-800/80 hover:bg-slate-800`}
+                                                >
+                                                    <div className="flex items-center gap-5">
+                                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg bg-white/10 ${config.color}`}>
+                                                            <Icon className="w-6 h-6" />
+                                                        </div>
                                                         <div>
                                                             <h4 className="font-bold text-white mb-1 group-hover:text-accent-300 transition-colors">{lesson.title}</h4>
-                                                            <p className={`text-xs font-bold tracking-wide ${!locked && idx === 0 ? 'text-accent-400' : 'text-slate-400'}`}>
-                                                                {!locked && idx === 0 ? 'Hoạt động hiện tại' : config.label.toUpperCase()} • {lesson.estimatedMinutes}m
+                                                            <p className="text-xs font-bold tracking-wide text-slate-400">
+                                                                {config.label.toUpperCase()} • {lesson.estimatedMinutes}m
                                                             </p>
                                                         </div>
                                                     </div>
-                                                {lessonTargetUrl ? (
-                                                    <Link to={lessonTargetUrl} className="shrink-0 flex items-center justify-center" aria-label={`Mở bài học ${lesson.title}`}>
-                                                        {idx === 0 ? (
-                                                            <span className="w-10 h-10 rounded-full bg-accent-600 text-white flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:scale-110 transition-transform">
-                                                                <Play className="w-5 h-5 fill-current ml-0.5" />
-                                                            </span>
-                                                        ) : (
-                                                            <span className="text-slate-500 group-hover:text-accent-400 transition-colors">
-                                                                <Play className="w-8 h-8" />
-                                                            </span>
-                                                        )}
-                                                    </Link>
-                                                ) : (
-                                                    <button
-                                                        type="button"
-                                                        onClick={handleEnroll}
-                                                        className="shrink-0 flex items-center justify-center text-slate-600 hover:text-emerald-400 transition-colors"
-                                                        aria-label="Enroll để mở bài học"
-                                                    >
-                                                        <Lock className="w-5 h-5" />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
+                                                    <span className="text-slate-500 group-hover:text-accent-400 transition-colors">
+                                                        <Play className="w-8 h-8" />
+                                                    </span>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
-                            </div>
-
-                            {/* Pagination */}
-                            {totalPages > 1 && (
-                                <div className="mt-12 flex justify-center w-full">
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
-                                    />
-                                </div>
-                            )}
+                            ))}
                         </div>
+                    )}
+
+                    {(relatedDecks.length > 0 || relatedQuizzes.length > 0) && (
+                        <section className="mt-20">
+                            <div className="flex items-center gap-6 mb-8">
+                                <div className="flex-none w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                                    <Layers className="w-7 h-7" />
+                                </div>
+                                <div className="h-px flex-1 bg-gradient-to-r from-emerald-500/20 to-transparent"></div>
+                                <h3 className="text-2xl font-bold font-headline text-white pr-8">Ôn luyện trong khóa</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {relatedDecks.map((deck) => (
+                                    <Link
+                                        key={deck.id}
+                                        to={ROUTES.FLASHCARD_REVIEW}
+                                        className="group border border-white/5 backdrop-blur-md p-6 rounded-2xl flex items-center justify-between bg-slate-800/80 hover:bg-slate-800 transition-all"
+                                    >
+                                        <div className="flex items-center gap-5">
+                                            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                                                <BookOpen className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-white mb-1 group-hover:text-emerald-300 transition-colors">{deck.name}</h4>
+                                                <p className="text-xs font-bold tracking-wide text-slate-400">FLASHCARD • {deck.cardCount} thẻ</p>
+                                            </div>
+                                        </div>
+                                        <span className="text-emerald-500/60 group-hover:text-emerald-400 transition-colors"><Play className="w-8 h-8" /></span>
+                                    </Link>
+                                ))}
+                                {relatedQuizzes.map((quiz) => (
+                                    <Link
+                                        key={quiz.id}
+                                        to={ROUTES.QUIZ_DETAIL(quiz.id)}
+                                        className="group border border-white/5 backdrop-blur-md p-6 rounded-2xl flex items-center justify-between bg-slate-800/80 hover:bg-slate-800 transition-all"
+                                    >
+                                        <div className="flex items-center gap-5">
+                                            <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                                                <ClipboardList className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-white mb-1 group-hover:text-amber-300 transition-colors">{quiz.name}</h4>
+                                                <p className="text-xs font-bold tracking-wide text-slate-400">QUIZ • {quiz.questionCount} câu</p>
+                                            </div>
+                                        </div>
+                                        <span className="text-amber-500/60 group-hover:text-amber-400 transition-colors"><Play className="w-8 h-8" /></span>
+                                    </Link>
+                                ))}
+                            </div>
+                        </section>
                     )}
                 </section>
             </div>
         </div>
     );
+}
+
+function groupTypeLabel(type: LessonType, count: number): string {
+    const label = typeConfig[type]?.label ?? 'Lesson';
+    return `${label}${count > 1 ? 's' : ''}`;
 }

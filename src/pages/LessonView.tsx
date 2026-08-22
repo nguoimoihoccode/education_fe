@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     ChevronLeft, BookOpen, CheckCircle2, XCircle, Lightbulb, Clock, Zap, Award, Volume2, RotateCcw,
-    Sparkles
+    Sparkles, ClipboardList
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -13,9 +13,10 @@ import {
     completeLesson,
     submitExercises,
 } from '@/api/education.api';
-import { getPublishedLessonSlideDecks } from '@/api/slides.api';
+import { getPublicQuizzes } from '@/api/quiz.api';
 import type { Vocabulary, Exercise, SubmitExercisesResult } from '@/types/education.types';
 import { QUERY_KEYS } from '@/config/query';
+import { ROUTES } from '@/config/routes';
 import ReactMarkdown from 'react-markdown';
 import './Education.css';
 
@@ -37,6 +38,7 @@ const lessonTabs: LessonTab[] = [
 
 export default function LessonView() {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState<TabId>('content');
     const [exerciseAnswers, setExerciseAnswers] = useState<CauTraLoiMap>({});
@@ -57,8 +59,20 @@ export default function LessonView() {
     const { data: lesson, isLoading } = useQuery({ queryKey: ['lesson', id], queryFn: () => getLessonById(id!), enabled: !!id });
     const { data: vocabularies = [] } = useQuery({ queryKey: ['vocabulary', id], queryFn: () => getVocabularyByLesson(id!), enabled: !!id });
     const { data: exercises = [] } = useQuery({ queryKey: ['exercises', id], queryFn: () => getExercisesByLesson(id!), enabled: !!id });
-    const { data: slideDecks = [] } = useQuery({ queryKey: ['lesson-slides', id], queryFn: () => getPublishedLessonSlideDecks(id!), enabled: !!id });
-
+    const { data: relatedQuiz } = useQuery({
+        queryKey: ['lessonQuiz', id],
+        queryFn: () => getPublicQuizzes({ limit: 50 }).then((d) => d.items ?? []),
+        select: (quizzes) => quizzes.find((q) =>
+            `${q.name} ${q.topic ?? ''}`.toLowerCase().includes('topik')),
+        enabled: !!id && !!lesson && lesson.type === 'quiz',
+    });
+    const openQuiz = () => {
+        if (relatedQuiz) {
+            navigate(ROUTES.QUIZ_DETAIL(relatedQuiz.id));
+        } else {
+            navigate(ROUTES.QUIZ);
+        }
+    };
     const completeMutation = useMutation({
         mutationFn: () => {
             const startedAt = startTimeRef.current ?? Date.now();
@@ -113,19 +127,10 @@ export default function LessonView() {
                         {lesson.title}
                     </h1>
                     <p className="lesson-muted text-lg max-w-2xl mx-auto leading-relaxed">{lesson.description}</p>
-                    <div className="mt-6 flex flex-wrap justify-center gap-3">
-                        {slideDecks[0] && (
-                            <Link to={`/education/slides/${slideDecks[0].id}/present`} className="lesson-primary-btn">
-                                Xem Slides
-                            </Link>
-                        )}
-                        <Link to={`/education/slides/create?lessonId=${lesson.id}`} className="lesson-secondary-btn">
-                            Tạo Slides từ bài này
-                        </Link>
-                    </div>
                 </div>
 
                 {/* Glass Tabs */}
+                {lesson.type !== 'quiz' && (
                 <div className="flex justify-center mb-10 relative z-10">
                     <div className="lesson-tabs">
                         {lessonTabs.map((tab) => {
@@ -145,11 +150,46 @@ export default function LessonView() {
                         })}
                     </div>
                 </div>
+                )}
 
                 {/* Content Area */}
                 <div className="lesson-panel min-h-[500px] relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-accent-500/10 to-transparent pointer-events-none rounded-tr-3xl"></div>
 
+                    {lesson.type === 'quiz' ? (
+                        <div className="fade-in-entry relative z-10 flex flex-col items-center text-center py-16 px-6">
+                            <div className="w-24 h-24 rounded-3xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-8 shadow-[0_0_40px_rgba(245,158,11,0.15)]">
+                                <ClipboardList className="w-12 h-12" />
+                            </div>
+                            <h2 className="text-3xl md:text-4xl font-black font-headline text-white mb-4">
+                                {relatedQuiz ? relatedQuiz.name : 'Bài thi thử (Mock Test)'}
+                            </h2>
+                            <p className="lesson-muted text-lg max-w-xl mx-auto leading-relaxed mb-8">
+                                {relatedQuiz
+                                    ? `${relatedQuiz.questionCount} câu • mức ${relatedQuiz.difficulty ?? 'MIXED'}`
+                                    : 'Bài học dạng đề thi. Bấm bắt đầu để làm đề thi thử.'}
+                            </p>
+                            <button
+                                type="button"
+                                onClick={openQuiz}
+                                className="lesson-primary-btn flex items-center gap-3 text-lg px-8 py-4"
+                            >
+                                <Award className="w-6 h-6" /> Bắt đầu làm đề thi
+                            </button>
+                            <div className="mt-10 pt-8 border-t border-white/10 w-full flex flex-col items-center">
+                                <p className="lesson-muted mb-4 text-sm uppercase tracking-widest">Đã hoàn thành đề?</p>
+                                <button
+                                    type="button"
+                                    onClick={() => completeMutation.mutate()}
+                                    disabled={completeMutation.isPending}
+                                    className="lesson-secondary-btn flex items-center gap-2"
+                                >
+                                    <CheckCircle2 className="w-5 h-5" /> {completeMutation.isPending ? 'Đang hoàn thành...' : 'Đánh dấu đã học'}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                    <>
                     {activeTab === 'content' && (
                         <div className="lesson-content fade-in-entry relative z-10">
                             <ReactMarkdown>{lesson.content || '> *No content available.*'}</ReactMarkdown>
@@ -187,6 +227,8 @@ export default function LessonView() {
                                 onRetry={() => { setExerciseResults(null); setExerciseAnswers({}); }}
                             />
                         </div>
+                    )}
+                    </>
                     )}
                 </div>
             </div>
