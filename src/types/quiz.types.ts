@@ -121,16 +121,6 @@ export interface WrongAnswer {
   timeSpent: number;
 }
 
-export interface LeaderboardEntry {
-  rank: number;
-  userId: number;
-  userName: string;
-  score: number;
-  timeSpent: number;
-  accuracy: number; // percentage
-  completedAt: string;
-}
-
 // Request DTOs
 export interface CreateQuizDto {
   name: string;
@@ -196,4 +186,3 @@ export interface GenerateQuizFromFlashcardsDto {
 export type PaginatedQuizResponse = PaginatedItemsResponse<Quiz>;
 export type PaginatedQuizSessionResponse = PaginatedItemsResponse<QuizSession>;
 export type PaginatedQuizHistoryResponse = PaginatedItemsResponse<QuizHistoryItem>;
-export type PaginatedLeaderboardResponse = PaginatedItemsResponse<LeaderboardEntry>;

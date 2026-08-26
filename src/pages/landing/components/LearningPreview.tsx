@@ -25,11 +25,11 @@ const LearningPreview = () => {
       <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
           <div className="landing-preview-kicker mb-5">Trải nghiệm học thật</div>
-          <h2 className="max-w-xl text-4xl font-black leading-tight tracking-tight md:text-5xl">
+          <h2 className="max-w-xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl">
             Từ landing vào app không bị hụt nhịp.
           </h2>
           <p className="landing-preview-muted mt-5 max-w-xl text-base leading-8">
-            EduPro gom AI Tutor, flashcards, quiz và coach thành một lộ trình học
+            LinguaAI gom AI Tutor, flashcards, quiz và coach thành một lộ trình học
             mỗi ngày. Giao diện rõ mục tiêu, dễ bắt đầu.
           </p>
           <Link to="/education" className="landing-preview-cta mt-7">
@@ -38,14 +38,14 @@ const LearningPreview = () => {
           </Link>
         </div>
 
-        <div className="landing-preview-card rounded-[2rem] p-5 shadow-[0_28px_80px_rgba(0,0,0,0.25)] backdrop-blur">
-          <div className="rounded-[1.5rem] bg-black/40 p-5">
+        <div className="landing-preview-card rounded-[2rem] p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+          <div className="rounded-[1.5rem] bg-slate-900 p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-bold tracking-[0.16em] text-emerald-300 uppercase">
                   Today plan
                 </p>
-                <h3 className="mt-2 text-2xl font-black">3 bước giữ streak</h3>
+                <h3 className="mt-2 text-2xl font-black text-white">3 bước giữ streak</h3>
               </div>
               <div className="grid h-16 w-16 place-items-center rounded-full bg-emerald-400 text-lg font-black text-emerald-950">
                 72%
@@ -54,16 +54,13 @@ const LearningPreview = () => {
           </div>
           <div className="mt-4 grid gap-3">
             {previewCards.map((card) => (
-              <div
-                key={card.title}
-                className="landing-preview-card flex gap-3 rounded-2xl p-4"
-              >
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-emerald-500/15 text-emerald-400">
+              <div key={card.title} className="landing-preview-card flex gap-3 rounded-2xl p-4">
+                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-emerald-500/15 text-emerald-600">
                   <card.icon className="h-5 w-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="font-bold">{card.title}</h4>
+                    <h4 className="font-bold text-slate-900">{card.title}</h4>
                     <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                   </div>
                   <p className="landing-preview-muted mt-1 text-sm leading-6">

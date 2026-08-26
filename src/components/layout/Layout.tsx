@@ -92,7 +92,7 @@ export const Layout = ({ children }: LayoutProps) => {
         >
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
             <p className="text-sm" style={{ color: 'var(--stock-text-tertiary)' }}>
-              © 2026 <span className="font-semibold stock-gradient-text">EduPro</span>. Nền tảng học tập tập trung cho người học.
+              © 2026 <span className="font-semibold stock-gradient-text">LinguaAI</span>. Nền tảng học tập tập trung cho người học.
             </p>
             <div className="flex gap-4">
               <Link

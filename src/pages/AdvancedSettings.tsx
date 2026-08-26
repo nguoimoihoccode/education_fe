@@ -149,7 +149,6 @@ export default function AdvancedSettings() {
   const showProgressBar = s.showProgressBar; const setShowProgressBar = (v: boolean) => setSetting('showProgressBar', v);
   const autoSubmitQuiz = s.autoSubmitQuiz; const setAutoSubmitQuiz = (v: boolean) => setSetting('autoSubmitQuiz', v);
   const profileVisibility = s.profileVisibility; const setProfileVisibility = (v: string) => setSetting('profileVisibility', v);
-  const showOnLeaderboard = s.showOnLeaderboard; const setShowOnLeaderboard = (v: boolean) => setSetting('showOnLeaderboard', v);
   const activityStatus = s.activityStatus; const setActivityStatus = (v: boolean) => setSetting('activityStatus', v);
   const shareProgress = s.shareProgress; const setShareProgress = (v: boolean) => setSetting('shareProgress', v);
   const twoFactorAuth = s.twoFactorAuth; const setTwoFactorAuth = (v: boolean) => setSetting('twoFactorAuth', v);
@@ -496,8 +495,6 @@ export default function AdvancedSettings() {
                   </div>
                 </SettingRow>
 
-                <ToggleRow label="Show on Leaderboard" description="Display your rank on public leaderboards" icon={BarChart2}
-                  checked={showOnLeaderboard} onChange={() => { setShowOnLeaderboard(!showOnLeaderboard); markChanged(); }} />
                 <ToggleRow label="Activity Status" description="Show when you're online to other users" icon={Wifi}
                   checked={activityStatus} onChange={() => { setActivityStatus(!activityStatus); markChanged(); }} />
                 <ToggleRow label="Share Learning Progress" description="Allow others to see your course progress" icon={Globe}

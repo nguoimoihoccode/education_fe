@@ -65,7 +65,7 @@ export function Header({
               placeholder="Tìm khóa học, flashcard, quiz..."
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              aria-label="Tìm kiếm trong EduPro"
+              aria-label="Tìm kiếm trong LinguaAI"
             />
           </form>
         </div>
@@ -180,10 +180,10 @@ export function Header({
             <Search size={16} className="search-icon" />
             <input
               type="search"
-              placeholder="Tìm trong EduPro..."
+              placeholder="Tìm trong LinguaAI..."
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              aria-label="Tìm kiếm trong EduPro"
+              aria-label="Tìm kiếm trong LinguaAI"
               autoFocus
             />
           </div>

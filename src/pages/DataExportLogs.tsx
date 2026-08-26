@@ -139,8 +139,7 @@ export default function DataExportLogs() {
     profile: true,
     progress: true,
     flashcards: true,
-    quizzes: true,
-    forum: false
+    quizzes: true
   });
 
   // Logs State
@@ -314,7 +313,6 @@ export default function DataExportLogs() {
                         { id: 'progress', label: 'Course Progress & Certificates' },
                         { id: 'flashcards', label: 'Flashcard Decks & Review History' },
                         { id: 'quizzes', label: 'Quiz & Exam Results' },
-                        { id: 'forum', label: 'Forum Posts & Contributions' },
                       ].map((item) => (
                         <label key={item.id} className="flex items-center gap-3 p-3 rounded-xl bg-black/10 border border-white/5 cursor-pointer hover:bg-white/5 transition-colors">
                           <input 

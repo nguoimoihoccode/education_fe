@@ -81,7 +81,4 @@ export const QUERY_KEYS = {
   WRONG_ANSWERS: (sessionId?: string) => {
     return ['quiz', 'wrong', sessionId ?? 'all'] as const;
   },
-  LEADERBOARD: (quizId: string, page?: number, limit?: number) => {
-    return ['quiz', quizId, 'leaderboard', page ?? 1, limit ?? 20] as const;
-  },
 } as const;

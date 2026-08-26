@@ -61,7 +61,7 @@ export default function DashboardLanding() {
             <div className="flex min-h-[380px] flex-col justify-between">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-white shadow-lg shadow-slate-950/20">
-                  <Sparkles className="h-4 w-4" /> EduPro Dashboard
+                  <Sparkles className="h-4 w-4" /> LinguaAI Dashboard
                 </div>
                 <h1 className="mt-6 max-w-3xl text-4xl font-black leading-[0.98] tracking-tight text-slate-950 sm:text-6xl">
                   Một nơi để biết hôm nay học gì.

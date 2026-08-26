@@ -13,7 +13,6 @@ describe('globalSearch', () => {
     expect(getGlobalSearchDestination('flashcard')?.path).toBe('/flashcards');
     expect(getGlobalSearchDestination('bài tập')?.path).toBe('/quiz');
     expect(getGlobalSearchDestination('tài liệu')?.path).toBe('/flashcards/document-import');
-    expect(getGlobalSearchDestination('cộng đồng')?.path).toBe('/community');
     expect(getGlobalSearchDestination('coach học tập')?.path).toBe('/learning-coach');
   });
 

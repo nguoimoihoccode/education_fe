@@ -74,7 +74,7 @@ export default function Education() {
       <div className="dashboard-wrapper relative z-10">
         <header className="edu-path-hero">
           <div>
-            <p className="edu-kicker">EduPro Learning Path</p>
+            <p className="edu-kicker">LinguaAI Learning Path</p>
             <h1>Hôm nay học gì?</h1>
             <p>
               Một lộ trình rõ ràng cho buổi học hôm nay: học bài tiếp theo,
@@ -99,7 +99,7 @@ export default function Education() {
             <section className="today-plan-empty">
               <Sparkles className="h-10 w-10 text-emerald-600" />
               <h2>Đăng nhập để nhận kế hoạch học mỗi ngày</h2>
-              <p>EduPro sẽ gom bài học, flashcards và quiz thành một checklist ngắn gọn cho hôm nay.</p>
+              <p>LinguaAI sẽ gom bài học, flashcards và quiz thành một checklist ngắn gọn cho hôm nay.</p>
               <Link to="/login" className="edu-primary-action">Đăng nhập</Link>
             </section>
           ) : isLoadingTodayPlan ? (
@@ -110,7 +110,7 @@ export default function Education() {
           ) : isTodayPlanError ? (
             <section className="today-plan-error">
               <h2>Không tải được kế hoạch hôm nay</h2>
-              <p>Thử lại để EduPro tạo checklist học tập mới nhất cho bạn.</p>
+              <p>Thử lại để LinguaAI tạo checklist học tập mới nhất cho bạn.</p>
               <button type="button" className="edu-primary-action" onClick={() => refetchTodayPlan()}>
                 <RefreshCw className="h-4 w-4" />
                 Thử lại
@@ -120,7 +120,7 @@ export default function Education() {
             <section className="today-plan-empty">
               <BookOpen className="h-10 w-10 text-emerald-600" />
               <h2>Hôm nay chưa có nhiệm vụ</h2>
-              <p>Khám phá khóa học hoặc làm một quiz ngắn để EduPro tạo kế hoạch phù hợp hơn.</p>
+              <p>Khám phá khóa học hoặc làm một quiz ngắn để LinguaAI tạo kế hoạch phù hợp hơn.</p>
               <Link to="/quiz" className="edu-primary-action">Làm quiz ngắn</Link>
             </section>
           ) : todayPlan ? (

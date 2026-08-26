@@ -35,10 +35,6 @@ vi.mock('@/api/education.api', () => ({
   submitExercises: vi.fn(),
 }));
 
-vi.mock('@/api/slides.api', () => ({
-  getPublishedLessonSlideDecks: vi.fn().mockResolvedValue([]),
-}));
-
 function renderLesson() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },

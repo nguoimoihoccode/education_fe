@@ -30,21 +30,6 @@ const destinations: Array<GlobalSearchDestination & { keywords: string[] }> = [
     keywords: ['coach', 'learning coach', 'hoc tap', 'lo trinh', 'ke hoach'],
   },
   {
-    path: '/leaderboard',
-    label: 'Bảng xếp hạng',
-    keywords: ['bang xep hang', 'leaderboard', 'rank', 'ranking'],
-  },
-  {
-    path: '/community',
-    label: 'Cộng đồng',
-    keywords: ['cong dong', 'community', 'group', 'forum'],
-  },
-  {
-    path: '/social',
-    label: 'Social Feed',
-    keywords: ['social', 'feed', 'bai viet', 'chia se'],
-  },
-  {
     path: '/settings',
     label: 'Cài đặt',
     keywords: ['setting', 'settings', 'cai dat', 'preferences'],

@@ -1,0 +1,913 @@
+/* ============================================
+   ONBOARDING — Language Passport
+   ============================================ */
+
+.ob-shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  min-height: calc(100vh - 160px);
+}
+
+@media (min-width: 1024px) {
+  .ob-shell {
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+/* ---------- Left rail ---------- */
+
+.ob-rail {
+  position: relative;
+  display: none;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid var(--app-border);
+  background:
+    radial-gradient(130% 90% at 0% 0%, color-mix(in srgb, var(--app-primary) 16%, transparent), transparent 55%),
+    radial-gradient(130% 100% at 100% 100%, color-mix(in srgb, var(--app-accent) 20%, transparent), transparent 55%),
+    var(--app-surface);
+}
+
+@media (min-width: 1024px) {
+  .ob-rail {
+    display: flex;
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+    min-height: calc(100vh - 190px);
+  }
+}
+
+.ob-rail::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(color-mix(in srgb, var(--app-text) 12%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 80%);
+  mask-image: linear-gradient(to bottom, black, transparent 80%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.ob-glyphs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ob-glyph {
+  position: absolute;
+  font-family: 'Instrument Serif', serif;
+  color: color-mix(in srgb, var(--app-text) 13%, transparent);
+  user-select: none;
+  animation: ob-float 9s ease-in-out infinite alternate;
+}
+
+.ob-glyph--p {
+  color: color-mix(in srgb, var(--app-primary) 24%, transparent);
+}
+
+.ob-glyph--a {
+  color: color-mix(in srgb, var(--app-accent) 24%, transparent);
+}
+
+@keyframes ob-float {
+  from {
+    transform: translateY(0) rotate(-4deg);
+  }
+  to {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+.ob-rail-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1.75rem;
+}
+
+.ob-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ob-brand-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--app-primary), var(--app-accent));
+  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--app-primary) 55%, transparent);
+}
+
+.ob-brand-name {
+  font-family: 'Manrope', 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.ob-brand-tag {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--app-text-subtle);
+  border: 1px solid var(--app-border);
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+
+.ob-greet {
+  margin-top: 2.4rem;
+  min-height: 92px;
+}
+
+.ob-greet-word {
+  font-family: 'Manrope', 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.2rem, 2.6vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.ob-greet-sub {
+  margin: 0.6rem 0 0;
+  font-size: 12px;
+  color: var(--app-text-subtle);
+}
+
+.ob-track {
+  list-style: none;
+  margin: 2.4rem 0 0;
+  padding: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ob-track::before {
+  content: '';
+  position: absolute;
+  left: 26px;
+  top: 26px;
+  bottom: 26px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--app-border);
+}
+
+.ob-track-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.ob-track-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--app-text) 6%, transparent);
+}
+
+.ob-track-btn:disabled {
+  cursor: default;
+}
+
+.ob-track-dot {
+  position: relative;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text-subtle);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.25s ease;
+}
+
+.ob-track-item.is-done .ob-track-dot {
+  background: color-mix(in srgb, var(--app-primary) 16%, var(--app-surface));
+  border-color: color-mix(in srgb, var(--app-primary) 40%, transparent);
+  color: var(--app-primary);
+}
+
+.ob-track-item.is-active .ob-track-dot {
+  background: var(--app-primary);
+  border-color: transparent;
+  color: #04120c;
+  animation: ob-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes ob-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--app-primary) 40%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+
+.ob-track-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--app-text-subtle);
+  transition: color 0.2s ease;
+}
+
+.ob-track-item.is-active .ob-track-label {
+  color: var(--app-text);
+  font-weight: 700;
+}
+
+.ob-track-item.is-done .ob-track-label {
+  color: var(--app-text-muted);
+}
+
+.ob-rail-foot {
+  margin-top: auto;
+  padding-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ob-foot-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--app-text-subtle);
+  border: 1px solid var(--app-border);
+  background: color-mix(in srgb, var(--app-surface) 65%, transparent);
+  padding: 6px 11px;
+  border-radius: 999px;
+}
+
+/* ---------- Main column ---------- */
+
+.ob-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  max-width: 760px;
+  justify-self: center;
+}
+
+.ob-topline {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.ob-stepcount {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.ob-stepcount em {
+  font-style: normal;
+  color: var(--app-text-subtle);
+}
+
+.ob-steplabel {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--app-primary);
+}
+
+.ob-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-text) 9%, transparent);
+  overflow: hidden;
+  margin-bottom: 1.75rem;
+}
+
+.ob-progress > i {
+  position: relative;
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--app-primary), #2dd4bf);
+  overflow: hidden;
+}
+
+.ob-progress > i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-100%);
+  animation: ob-shimmer 2.4s ease infinite;
+}
+
+@keyframes ob-shimmer {
+  60%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.ob-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+
+.ob-step {
+  width: 100%;
+  margin: auto 0;
+  padding: 0.5rem 0 1.5rem;
+}
+
+/* ---------- Typography ---------- */
+
+.ob-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--app-primary);
+  background: color-mix(in srgb, var(--app-primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--app-primary) 28%, transparent);
+}
+
+.ob-h1 {
+  margin: 1.4rem 0 0;
+  font-family: 'Manrope', 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.1rem, 3vw + 1rem, 3.3rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  max-width: 15ch;
+}
+
+.ob-serif {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  padding-right: 0.06em;
+  color: var(--app-primary);
+}
+
+.ob-lede {
+  margin: 1.1rem 0 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--app-text-muted);
+  max-width: 46ch;
+}
+
+.ob-h2-wrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 1.25rem;
+}
+
+.ob-h2 {
+  margin: 0;
+  font-family: 'Manrope', 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 1.4vw + 1rem, 2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.ob-h2-sub {
+  margin: 0.4rem 0 0;
+  font-size: 13px;
+  color: var(--app-text-muted);
+}
+
+.ob-count {
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 999px;
+  color: var(--app-primary);
+  background: color-mix(in srgb, var(--app-primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--app-primary) 30%, transparent);
+}
+
+/* ---------- Welcome perks ---------- */
+
+.ob-perks {
+  list-style: none;
+  margin: 1.6rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 480px;
+}
+
+.ob-perk {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.ob-perk:hover {
+  transform: translateX(5px);
+  background: var(--app-surface);
+  border-color: var(--app-border);
+}
+
+.ob-perk-ic {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+}
+
+.ob-perk b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.ob-perk span {
+  font-size: 12px;
+  color: var(--app-text-subtle);
+}
+
+.ob-welcome-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 1.9rem;
+}
+
+/* ---------- Option cards ---------- */
+
+.ob-grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ob-grid-goals {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+  .ob-grid-goals {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .ob-grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ob-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ob-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--app-border-strong);
+  background: var(--app-surface-hover);
+  box-shadow: 0 12px 26px -16px rgba(0, 0, 0, 0.55);
+}
+
+.ob-card:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.ob-card.is-selected {
+  background: color-mix(in srgb, var(--app-primary) 9%, var(--app-surface));
+  border-color: color-mix(in srgb, var(--app-primary) 48%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--app-primary) 32%, transparent),
+    0 12px 30px -14px color-mix(in srgb, var(--app-primary) 40%, transparent);
+}
+
+.ob-flag {
+  width: 42px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.ob-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ob-card-body b {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--app-text-muted);
+  transition: color 0.18s ease;
+}
+
+.ob-card.is-selected .ob-card-body b {
+  color: var(--app-text);
+}
+
+.ob-card-body small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--app-text-subtle);
+}
+
+.ob-tag {
+  display: inline-block;
+  margin-top: 5px;
+  font-style: normal;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--app-warning);
+  background: color-mix(in srgb, var(--app-warning) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--app-warning) 28%, transparent);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.ob-check-wrap {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1.5px solid var(--app-border-strong);
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.ob-card.is-selected .ob-check-wrap {
+  background: var(--app-primary);
+  border-color: var(--app-primary);
+}
+
+.ob-check-wrap svg {
+  color: #04120c;
+}
+
+.ob-cefr {
+  flex-shrink: 0;
+  width: 42px;
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 0;
+  border-radius: 9px;
+  border: 1px solid;
+}
+
+.ob-level-ic {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--app-surface-hover);
+  color: var(--app-text-muted);
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.ob-card.is-selected .ob-level-ic {
+  background: var(--app-primary);
+  color: #04120c;
+}
+
+.ob-levels {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ob-goal {
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  padding: 20px 14px;
+  gap: 11px;
+}
+
+.ob-goal-ic {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.ob-card:hover .ob-goal-ic {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.ob-goal .ob-card-body {
+  text-align: center;
+}
+
+.ob-time {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 22px 14px;
+  gap: 4px;
+}
+
+.ob-time-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--app-text-subtle);
+  transition: color 0.18s ease;
+}
+
+.ob-card.is-selected .ob-time-num {
+  color: var(--app-primary);
+}
+
+.ob-time-unit {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--app-text-subtle);
+}
+
+.ob-time .ob-card-body {
+  text-align: center;
+  margin-top: 6px;
+}
+
+/* ---------- Ticket summary ---------- */
+
+.ob-ticket {
+  margin-top: 1.5rem;
+  border-radius: 18px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  overflow: hidden;
+}
+
+.ob-ticket-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  background: color-mix(in srgb, var(--app-primary) 7%, transparent);
+  border-bottom: 1px dashed var(--app-border-strong);
+}
+
+.ob-ticket-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--app-text-muted);
+}
+
+.ob-ticket-title svg {
+  color: var(--app-primary);
+}
+
+.ob-ticket-code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--app-text-subtle);
+}
+
+.ob-ticket-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 18px 20px;
+}
+
+.ob-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--app-text-muted);
+  background: color-mix(in srgb, var(--app-text) 6%, transparent);
+  border: 1px solid var(--app-border);
+}
+
+.ob-barcode {
+  height: 36px;
+  margin: 4px 20px 18px;
+  border-radius: 2px;
+  opacity: 0.45;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--app-text) 55%, transparent) 0 2px,
+    transparent 2px 5px,
+    color-mix(in srgb, var(--app-text) 55%, transparent) 5px 6px,
+    transparent 6px 10px
+  );
+}
+
+/* ---------- Buttons & nav ---------- */
+
+.ob-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0.8rem 1.45rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease,
+    border-color 0.18s ease, color 0.18s ease, filter 0.18s ease;
+}
+
+.ob-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ob-btn-primary {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+  background: linear-gradient(135deg, var(--app-primary) 0%, #0d9488 100%);
+  box-shadow: 0 14px 30px -12px color-mix(in srgb, var(--app-primary) 60%, transparent);
+}
+
+.ob-btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.07);
+  box-shadow: 0 18px 38px -12px color-mix(in srgb, var(--app-primary) 65%, transparent);
+}
+
+.ob-btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.ob-btn-lg {
+  padding: 1rem 1.9rem;
+  font-size: 1rem;
+  border-radius: 14px;
+}
+
+.ob-btn-ghost {
+  background: transparent;
+  border-color: var(--app-border);
+  color: var(--app-text-muted);
+}
+
+.ob-btn-ghost:hover {
+  border-color: var(--app-border-strong);
+  background: var(--app-surface);
+  color: var(--app-text);
+}
+
+.ob-arrow {
+  transition: transform 0.18s ease;
+}
+
+.ob-btn:hover:not(:disabled) .ob-arrow {
+  transform: translateX(3px);
+}
+
+.ob-btn:hover:not(:disabled) .ob-arrow-back {
+  transform: translateX(-3px);
+}
+
+.ob-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 1.25rem;
+  margin-top: auto;
+  border-top: 1px solid var(--app-border);
+}
+
+.ob-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.ob-skip {
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--app-text-subtle);
+  cursor: pointer;
+  padding: 6px 2px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+
+.ob-skip:hover {
+  color: var(--app-text);
+  border-color: var(--app-border-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-glyph,
+  .ob-progress > i::after,
+  .ob-track-item.is-active .ob-track-dot {
+    animation: none;
+  }
+
+  .ob-card,
+  .ob-btn,
+  .ob-perk {
+    transition: none;
+  }
+}

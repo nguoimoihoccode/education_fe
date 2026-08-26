@@ -1,33 +1,27 @@
-import { lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import LearningPreview from './components/LearningPreview';
-import StartSection from './components/StartSection';
 import FeaturesGrid from './components/FeaturesGrid';
+import FeaturesChess from './components/FeaturesChess';
+import LearningPreview from './components/LearningPreview';
 import Stats from './components/Stats';
-import Testimonials from './components/Testimonials';
+import StartSection from './components/StartSection';
 import CtaFooter from './components/CtaFooter';
 import './Landing.css';
-
-const FeaturesChess = lazy(() => import('./components/FeaturesChess'));
 
 const LandingPageNew = () => {
   return (
     <div className="landing-page-root min-h-screen">
       <div className="relative z-10">
         <Navbar />
-        <Hero />
-        <LearningPreview />
-        <div>
-          <StartSection />
-          <Suspense fallback={<div className="h-96" aria-hidden="true" />}>
-            <FeaturesChess />
-          </Suspense>
+        <main>
+          <Hero />
           <FeaturesGrid />
+          <FeaturesChess />
+          <LearningPreview />
           <Stats />
-          <Testimonials />
-          <CtaFooter />
-        </div>
+          <StartSection />
+        </main>
+        <CtaFooter />
       </div>
     </div>
   );

@@ -12,10 +12,7 @@ describe('ROUTES', () => {
     expect(ROUTES.PROFILE).toBe('/profile');
     expect(ROUTES.AI_TUTOR).toBe('/ai-tutor');
     expect(ROUTES.LEARNING_COACH).toBe('/learning-coach');
-    expect(ROUTES.LEADERBOARD).toBe('/leaderboard');
-    expect(ROUTES.SOCIAL).toBe('/social');
     expect(ROUTES.PREMIUM).toBe('/premium');
-    expect(ROUTES.COMMUNITY).toBe('/community');
     expect(ROUTES.SETTINGS).toBe('/settings');
     expect(ROUTES.SESSIONS).toBe('/settings/sessions');
     expect(ROUTES.ADMIN_SESSIONS).toBe('/admin/sessions');

@@ -22,7 +22,6 @@ export interface SettingsState {
   showProgressBar: boolean;
   autoSubmitQuiz: boolean;
   profileVisibility: string;
-  showOnLeaderboard: boolean;
   activityStatus: boolean;
   shareProgress: boolean;
   twoFactorAuth: boolean;
@@ -70,7 +69,6 @@ export const useSettingsStore = create<SettingsState>()(
       autoSubmitQuiz: false,
 
       profileVisibility: 'public',
-      showOnLeaderboard: true,
       activityStatus: true,
       shareProgress: true,
       twoFactorAuth: false,

@@ -85,8 +85,6 @@ export default function NotFoundPage() {
                   { label: 'Flashcards', to: '/flashcards' },
                   { label: 'AI Tutor', to: '/ai-tutor' },
                   { label: 'Quiz Center', to: '/quiz' },
-                  { label: 'Community', to: '/community' },
-                  { label: 'Leaderboard', to: '/leaderboard' },
                   { label: 'Settings', to: '/settings' },
                 ].map((link) => (
                   <Link

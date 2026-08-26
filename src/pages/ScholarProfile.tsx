@@ -86,8 +86,8 @@ export default function ScholarProfile() {
           <Users className="w-16 h-16 text-slate-600 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-3">Profile Not Found</h2>
           <p className="text-slate-400 text-sm mb-6">The scholar profile for @{username} could not be loaded.</p>
-          <Link to="/social" className="px-6 py-3 rounded-full bg-accent-600 text-white font-bold text-sm hover:bg-accent-700 transition-all">
-            Back to Community
+          <Link to="/education" className="px-6 py-3 rounded-full bg-accent-600 text-white font-bold text-sm hover:bg-accent-700 transition-all">
+            Back to Courses
           </Link>
         </div>
       </div>

@@ -16,7 +16,6 @@ import type {
   TopicStats,
   QuizHistoryItem,
   WrongAnswer,
-  LeaderboardEntry,
   CreateQuizDto,
   UpdateQuizDto,
   CreateQuizQuestionDto,
@@ -27,7 +26,6 @@ import type {
   PaginatedQuizResponse,
   PaginatedQuizSessionResponse,
   PaginatedQuizHistoryResponse,
-  PaginatedLeaderboardResponse,
   SubmitAnswerResult,
 } from "@/types/quiz.types";
 
@@ -372,26 +370,4 @@ export const getWrongAnswers = async (
     CACHE_PROFILES.NO_CACHE,
   );
   return normalizeWrongAnswers(response.data);
-};
-
-export const getLeaderboard = async (
-  quizId: string,
-  params?: { page?: number; limit?: number },
-): Promise<PaginatedLeaderboardResponse> => {
-  const response = await apiClient.get(`/quizzes/${quizId}/leaderboard`, {
-    params,
-    ...CACHE_PROFILES.DYNAMIC,
-  });
-  const normalized = normalizeCollectionPage<
-    LeaderboardEntry & { username?: string }
-  >(response.data, "leaderboard");
-
-  return {
-    ...normalized,
-    items: normalized.items.map((entry) => ({
-      ...entry,
-      userName: entry.userName ?? entry.username ?? "",
-      accuracy: entry.accuracy ?? 0,
-    })),
-  };
 };

@@ -31,11 +31,6 @@ const Today = lazy(() => import('@/pages/Today'));
 const LearningCoach = lazy(() => import('@/pages/LearningCoach'));
 const CourseDetail = lazy(() => import('@/pages/CourseDetail'));
 const LessonView = lazy(() => import('@/pages/LessonView'));
-const Slides = lazy(() => import('@/pages/Slides'));
-const SlideCreate = lazy(() => import('@/pages/SlideCreate'));
-const SlideEdit = lazy(() => import('@/pages/SlideEdit'));
-const SlidePresent = lazy(() => import('@/pages/SlidePresent'));
-const SlideDemo = lazy(() => import('@/pages/SlideDemo'));
 
 // Flashcards
 const FlashcardDecks = lazy(() => import('@/pages/FlashcardDecks'));
@@ -53,9 +48,6 @@ const QuizStatsPage = lazy(() => import('@/pages/quiz/QuizStatsPage'));
 // Social & Community
 const UserProfile = lazy(() => import('@/pages/UserProfile'));
 const AiTutor = lazy(() => import('@/pages/AiTutor'));
-const Leaderboard = lazy(() => import('@/pages/Leaderboard'));
-const Social = lazy(() => import('@/pages/Social'));
-const CommunityHub = lazy(() => import('@/pages/CommunityHub'));
 const ScholarProfile = lazy(() => import('@/pages/ScholarProfile'));
 
 // Settings & Misc
@@ -270,11 +262,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/education/slides" element={<ProtectedRoute><Slides /></ProtectedRoute>} />
-              <Route path="/education/slides/create" element={<ProtectedRoute><SlideCreate /></ProtectedRoute>} />
-              <Route path="/education/slides/demo" element={<ProtectedRoute><SlideDemo /></ProtectedRoute>} />
-              <Route path="/education/slides/:id/edit" element={<ProtectedRoute><SlideEdit /></ProtectedRoute>} />
-              <Route path="/education/slides/:id/present" element={<ProtectedRoute><SlidePresent /></ProtectedRoute>} />
               <Route
                 path="/flashcards"
                 element={
@@ -380,34 +367,10 @@ function App() {
                 }
               />
               <Route
-                path="/leaderboard"
-                element={
-                  <ProtectedRoute>
-                    <Leaderboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/social"
-                element={
-                  <ProtectedRoute>
-                    <Social />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
                 path="/premium"
                 element={
                   <ProtectedRoute>
                     <PremiumUpgrade />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/community"
-                element={
-                  <ProtectedRoute>
-                    <CommunityHub />
                   </ProtectedRoute>
                 }
               />
