@@ -110,8 +110,8 @@ export default defineConfig({
     },
   },
 
-  // ============================================
-  // Build optimization — manual chunks
+// ============================================
+  // Build optimization — safe vendor splitting
   // ============================================
   build: {
     // Target modern browsers for smaller output
@@ -120,47 +120,50 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // React core — shared by everything, cached long-term
-          if (id.includes('node_modules/react/') ||
-              id.includes('node_modules/react-dom/') ||
-              id.includes('node_modules/react-router')) {
+          if (!id.includes('node_modules')) return;
+
+          // React core + its full interop closure. Keeping every module React
+          // (and react-dom) depends on in the SAME chunk is what prevents the
+          // circular-chunk race that crashed `React.memo` on reload. Do NOT
+          // move scheduler / use-sync-external-store / react-router away.
+          if (id.includes('/react/') ||
+              id.includes('/react-dom/') ||
+              id.includes('/react-router') ||
+              id.includes('/scheduler/') ||
+              id.includes('/use-sync-external-store/') ||
+              id.includes('/react-hot-toast/') ||
+              id.includes('/goober/')) {
             return 'vendor-react';
           }
 
-          // Framer Motion — large animation lib, lazy pages only
-          if (id.includes('node_modules/framer-motion') || id.includes('node_modules/motion')) {
-            return 'vendor-motion';
+          // Charts/visualization — imported only by lazy page components.
+          if (id.includes('/recharts/') ||
+              id.includes('/d3') ||
+              id.includes('/@nivo/') ||
+              id.includes('/react-redux/')) {
+            return 'vendor-charts';
           }
 
-          // TanStack Query
-          if (id.includes('node_modules/@tanstack')) {
+          // Motion/animation.
+          if (id.includes('/framer-motion/') ||
+              id.includes('/motion/') ||
+              id.includes('/animejs/')) {
+            return 'vendor-animation';
+          }
+
+          // TanStack (react-query etc.) — depends on react core only.
+          if (id.includes('/@tanstack/')) {
             return 'vendor-query';
           }
 
-          // Axios + cache
-          if (id.includes('node_modules/axios')) {
-            return 'vendor-axios';
+          // Network layer.
+          if (id.includes('/axios')) {
+            return 'vendor-network';
           }
 
-          // HLS.js is dynamically imported only by landing video components.
-          if (id.includes('node_modules/hls.js')) {
-            return 'hls-light';
-          }
-
-          // Lucide icons
-          if (id.includes('node_modules/lucide-react')) {
+          // Icons — leaf, imports react core only.
+          if (id.includes('/lucide-react/')) {
             return 'vendor-icons';
-          }
-
-          if (id.includes('node_modules/vite-plugin-pwa') ||
-              id.includes('node_modules/workbox-') ||
-              id.includes('node_modules/idb/')) {
-            return 'vendor-pwa';
-          }
-
-          // All other node_modules
-          if (id.includes('node_modules/')) {
-            return 'vendor-misc';
           }
         },
       },
