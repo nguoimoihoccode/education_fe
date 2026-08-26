@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import {
   Sparkles,
   ChevronRight,
@@ -17,13 +19,15 @@ import {
   Coffee,
   Gem,
   Flame,
+  Clock,
+  Compass,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore } from '@/store/settings.store';
+import { markOnboarded } from '@/utils/onboarding';
 import './Education.css';
-
-const ONBOARDING_STORAGE_KEY = 'edupro-onboarding';
+import './Onboarding.css';
 
 const LANGUAGES = [
   { id: 'english', label: 'Tiếng Anh', flag: '🇺🇸', popular: true },
@@ -36,20 +40,27 @@ const LANGUAGES = [
   { id: 'vietnamese', label: 'Tiếng Việt', flag: '🇻🇳', popular: false },
 ];
 
-const SKILL_LEVELS: Array<{ id: string; label: string; icon: LucideIcon; description: string }> = [
-  { id: 'beginner', label: 'Mới bắt đầu', icon: Sprout, description: 'Chưa có nền tảng, học từ con số 0' },
-  { id: 'elementary', label: 'Cơ bản', icon: BookOpen, description: 'Biết một số từ vựng và ngữ pháp' },
-  { id: 'intermediate', label: 'Trung cấp', icon: GraduationCap, description: 'Giao tiếp được ở mức độ vừa' },
-  { id: 'advanced', label: 'Nâng cao', icon: Trophy, description: 'Gần thành thạo, muốn luyện tập thêm' },
+const SKILL_LEVELS: Array<{
+  id: string;
+  label: string;
+  cefr: string;
+  color: string;
+  icon: LucideIcon;
+  description: string;
+}> = [
+  { id: 'beginner', label: 'Mới bắt đầu', cefr: 'A1', color: '#10b981', icon: Sprout, description: 'Chưa có nền tảng, học từ con số 0' },
+  { id: 'elementary', label: 'Cơ bản', cefr: 'A2', color: '#14b8a6', icon: BookOpen, description: 'Biết một số từ vựng và ngữ pháp' },
+  { id: 'intermediate', label: 'Trung cấp', cefr: 'B1', color: '#8b5cf6', icon: GraduationCap, description: 'Giao tiếp được ở mức độ vừa' },
+  { id: 'advanced', label: 'Nâng cao', cefr: 'C1', color: '#f59e0b', icon: Trophy, description: 'Gần thành thạo, muốn luyện tập thêm' },
 ];
 
-const GOALS = [
-  { id: 'travel', label: 'Du lịch', icon: Globe, description: 'Giao tiếp khi đi nước ngoài' },
-  { id: 'career', label: 'Công việc', icon: Target, description: 'Phát triển kỹ năng nghề nghiệp' },
-  { id: 'exam', label: 'Thi chứng chỉ', icon: Trophy, description: 'TOEIC, IELTS, JLPT, HSK...' },
-  { id: 'culture', label: 'Văn hoá', icon: BookOpen, description: 'Xem phim, đọc sách bằng ngôn ngữ gốc' },
-  { id: 'brain', label: 'Rèn não', icon: Brain, description: 'Giữ trí não sắc bén' },
-  { id: 'social', label: 'Kết bạn', icon: Languages, description: 'Kết nối với bạn bè quốc tế' },
+const GOALS: Array<{ id: string; label: string; icon: LucideIcon; color: string; description: string }> = [
+  { id: 'travel', label: 'Du lịch', icon: Globe, color: '#06b6d4', description: 'Giao tiếp khi đi nước ngoài' },
+  { id: 'career', label: 'Công việc', icon: Target, color: '#10b981', description: 'Phát triển kỹ năng nghề nghiệp' },
+  { id: 'exam', label: 'Thi chứng chỉ', icon: Trophy, color: '#f59e0b', description: 'TOEIC, IELTS, JLPT, HSK...' },
+  { id: 'culture', label: 'Văn hoá', icon: BookOpen, color: '#8b5cf6', description: 'Xem phim, đọc sách gốc' },
+  { id: 'brain', label: 'Rèn não', icon: Brain, color: '#f43f5e', description: 'Giữ trí não sắc bén' },
+  { id: 'social', label: 'Kết bạn', icon: Languages, color: '#3b82f6', description: 'Kết nối bạn bè quốc tế' },
 ];
 
 const DAILY_TIMES: Array<{ id: string; label: string; description: string; icon: LucideIcon }> = [
@@ -59,20 +70,73 @@ const DAILY_TIMES: Array<{ id: string; label: string; description: string; icon:
   { id: '60', label: '60 phút', description: 'Học chuyên sâu', icon: Gem },
 ];
 
+const GREETINGS = [
+  { text: 'Xin chào', lang: 'Tiếng Việt' },
+  { text: 'Hello', lang: 'Tiếng Anh' },
+  { text: 'こんにちは', lang: 'Tiếng Nhật' },
+  { text: '안녕하세요', lang: 'Tiếng Hàn' },
+  { text: '你好', lang: 'Tiếng Trung' },
+  { text: 'Hola', lang: 'Tiếng Tây Ban Nha' },
+  { text: 'Bonjour', lang: 'Tiếng Pháp' },
+  { text: 'Hallo', lang: 'Tiếng Đức' },
+];
+
+const GLYPHS: Array<{ ch: string; top: string; left: string; size: string; delay: string; dur: string; tint?: 'p' | 'a' }> = [
+  { ch: 'あ', top: '6%', left: '68%', size: '2.6rem', delay: '0s', dur: '9s', tint: 'a' },
+  { ch: 'A', top: '16%', left: '12%', size: '2rem', delay: '0.8s', dur: '11s' },
+  { ch: '你', top: '30%', left: '78%', size: '2.2rem', delay: '1.6s', dur: '8s', tint: 'p' },
+  { ch: '한', top: '44%', left: '8%', size: '2.4rem', delay: '0.4s', dur: '10s' },
+  { ch: 'Ñ', top: '58%', left: '70%', size: '1.9rem', delay: '2.2s', dur: '9.5s' },
+  { ch: 'é', top: '70%', left: '16%', size: '2.1rem', delay: '1.2s', dur: '8.5s', tint: 'p' },
+  { ch: 'ß', top: '82%', left: '62%', size: '2.3rem', delay: '0.2s', dur: '10.5s' },
+  { ch: 'ع', top: '88%', left: '28%', size: '1.8rem', delay: '1.9s', dur: '9s', tint: 'a' },
+  { ch: 'я', top: '38%', left: '42%', size: '1.6rem', delay: '2.6s', dur: '12s' },
+  { ch: 'ฮ', top: '12%', left: '44%', size: '1.7rem', delay: '3s', dur: '11s', tint: 'p' },
+];
+
+const PERKS: Array<{ icon: LucideIcon; color: string; title: string; description: string }> = [
+  { icon: Compass, color: '#10b981', title: 'Lộ trình riêng', description: 'May đo theo trình độ và mục tiêu của bạn' },
+  { icon: Brain, color: '#8b5cf6', title: 'Ôn tập ngắt quãng', description: 'Ghi nhớ từ vựng lâu hơn với SRS' },
+  { icon: Flame, color: '#f59e0b', title: 'Streak & XP', description: 'Giữ lửa học tập mỗi ngày cùng phần thưởng' },
+];
+
 const TOTAL_STEPS = 5;
 
 const STEP_LABELS = ['Chào mừng', 'Ngôn ngữ', 'Trình độ', 'Mục tiêu', 'Thời gian'];
+
+const stepVariants: Variants = {
+  enter: (dir: number) => ({ x: dir * 56, opacity: 0 }),
+  center: { x: 0, opacity: 1, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
+  exit: (dir: number) => ({ x: dir * -56, opacity: 0, transition: { duration: 0.22, ease: 'easeIn' } }),
+};
+
+const listVariants: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.055 } },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.32, ease: 'easeOut' } },
+};
 
 export default function Onboarding() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const updateSetting = useSettingsStore((s) => s.updateSetting);
   const [step, setStep] = useState(0);
+  const [dir, setDir] = useState(1);
+  const [greetIdx, setGreetIdx] = useState(0);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [skillLevel, setSkillLevel] = useState('');
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [dailyTime, setDailyTime] = useState('15');
   const displayName = user?.displayName || '';
+
+  useEffect(() => {
+    const timer = setInterval(() => setGreetIdx((i) => (i + 1) % GREETINGS.length), 2400);
+    return () => clearInterval(timer);
+  }, []);
 
   const toggleLanguage = (id: string) => {
     setSelectedLanguages((prev) =>
@@ -103,442 +167,457 @@ export default function Onboarding() {
       skillLevel,
       goals: selectedGoals,
       dailyTime,
-      completedAt: new Date().toISOString(),
     };
-    try {
-      localStorage.setItem(ONBOARDING_STORAGE_KEY, JSON.stringify(payload));
-    } catch {
-      // ignore
-    }
+    markOnboarded(payload);
     if (dailyTime) {
       updateSetting('dailyGoal', dailyTime);
     }
-    navigate('/education');
+    navigate('/today');
   };
 
-  const progress = ((step + 1) / TOTAL_STEPS) * 100;
+  const handleSkip = () => {
+    markOnboarded({ skipped: true });
+    navigate('/today');
+  };
+
+  const goTo = (next: number) => {
+    setDir(next > step ? 1 : -1);
+    setStep(next);
+  };
+
+  const goNext = () => goTo(step + 1);
+  const goBack = () => goTo(step - 1);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' || e.target instanceof HTMLButtonElement) return;
+      if (step === TOTAL_STEPS - 1) handleFinish();
+      else if (canProceed()) goNext();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
+  const progress = (step / (TOTAL_STEPS - 1)) * 100;
+  const selectedLevel = SKILL_LEVELS.find((s) => s.id === skillLevel);
+  const ticketCode = `EDU-${selectedLanguages.length}${skillLevel ? selectedLevel?.cefr : 'A1'}-${dailyTime}`;
 
   return (
-    <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
-      <div className="dashboard-wrapper">
-        <div className="max-w-2xl mx-auto min-h-[80vh] flex flex-col">
+    <MotionConfig reducedMotion="user">
+      <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
+        <div className="dashboard-wrapper">
+          <div className="ob-shell">
 
-          {/* Step indicator */}
-          {step > 0 && (
-            <div className="mb-10">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--app-text-subtle)' }}>
-                  Bước {step} / {TOTAL_STEPS - 1}
-                </span>
-                <span className="text-xs font-bold" style={{ color: 'var(--app-primary)' }}>
-                  {Math.round(progress)}%
-                </span>
-              </div>
-              <div className="flex gap-2">
-                {Array.from({ length: TOTAL_STEPS - 1 }, (_, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 h-1.5 rounded-full transition-colors"
-                    style={{
-                      background: i < step ? 'var(--app-primary)' : i === step - 1 ? 'var(--app-primary)' : 'var(--app-surface-hover)',
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="flex gap-2 mt-2">
-                {STEP_LABELS.slice(1).map((label, i) => (
-                  <div key={label} className="flex-1 text-center">
-                    <span
-                      className="text-[10px] font-bold uppercase tracking-wider"
-                      style={{ color: i === step - 1 ? 'var(--app-primary)' : 'var(--app-text-subtle)' }}
-                    >
-                      {label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Content */}
-          <div className="flex-1 flex flex-col items-center justify-center">
-
-            {/* ======== STEP 0: Welcome ======== */}
-            {step === 0 && (
-              <div className="text-center">
-                <div
-                  className="w-28 h-28 rounded-[2rem] flex items-center justify-center mx-auto mb-10"
-                  style={{
-                    background: 'linear-gradient(135deg, var(--app-accent), var(--app-primary))',
-                    boxShadow: '0 20px 60px rgba(139,92,246,0.25)',
-                  }}
-                >
-                  <GraduationCap className="w-14 h-14 text-white" />
-                </div>
-
-                <div
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8"
-                  style={{
-                    background: 'color-mix(in srgb, var(--app-accent) 12%, transparent)',
-                    border: '1px solid color-mix(in srgb, var(--app-accent) 25%, transparent)',
-                  }}
-                >
-                  <Sparkles className="w-4 h-4" style={{ color: 'var(--app-accent)' }} />
-                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--app-accent)' }}>
-                    EduPro Learning
-                  </span>
-                </div>
-
-                <h1 className="text-4xl md:text-5xl font-black mb-5 leading-tight" style={{ color: 'var(--app-text)' }}>
-                  Cá nhân hoá
-                  <br />
+            <aside className="ob-rail">
+              <div className="ob-glyphs" aria-hidden="true">
+                {GLYPHS.map((g) => (
                   <span
-                    style={{
-                      background: 'linear-gradient(135deg, var(--app-accent), var(--app-primary))',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
+                    key={g.ch}
+                    className={`ob-glyph${g.tint === 'p' ? ' ob-glyph--p' : g.tint === 'a' ? ' ob-glyph--a' : ''}`}
+                    style={{ top: g.top, left: g.left, fontSize: g.size, animationDelay: g.delay, animationDuration: g.dur }}
                   >
-                    hành trình học
+                    {g.ch}
                   </span>
-                </h1>
-
-                <p className="text-sm max-w-md mx-auto leading-relaxed mb-6" style={{ color: 'var(--app-text-muted)' }}>
-                  Trả lời vài câu hỏi nhanh để chúng tôi thiết kế lộ trình học phù hợp nhất với bạn. Chỉ mất khoảng 30 giây.
-                </p>
-
-                {displayName && (
-                  <p className="text-xs font-bold" style={{ color: 'var(--app-text-subtle)' }}>
-                    Xin chào, <span style={{ color: 'var(--app-text)' }}>{displayName}</span>!
-                  </p>
-                )}
+                ))}
               </div>
-            )}
 
-            {/* ======== STEP 1: Language ======== */}
-            {step === 1 && (
-              <div className="w-full">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl md:text-3xl font-black mb-2" style={{ color: 'var(--app-text)' }}>
-                    Bạn muốn học gì?
-                  </h2>
-                  <p className="text-sm" style={{ color: 'var(--app-text-muted)' }}>
-                    Chọn một hoặc nhiều ngôn ngữ
+              <div className="ob-rail-inner">
+                <div className="ob-brand">
+                  <span className="ob-brand-mark">
+                    <GraduationCap className="w-5 h-5 text-white" />
+                  </span>
+                  <span className="ob-brand-name">LinguaAI</span>
+                  <span className="ob-brand-tag">Learning</span>
+                </div>
+
+                <div className="ob-greet">
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={greetIdx}
+                      className="ob-greet-word"
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -20, opacity: 0 }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      {GREETINGS[greetIdx].text}
+                    </motion.p>
+                  </AnimatePresence>
+                  <p className="ob-greet-sub">
+                    {GREETINGS[greetIdx].lang} · {GREETINGS.length} ngôn ngữ đang chờ bạn
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {LANGUAGES.map((lang) => {
-                    const selected = selectedLanguages.includes(lang.id);
+
+                <ol className="ob-track">
+                  {STEP_LABELS.map((label, i) => {
+                    const state = i < step ? 'is-done' : i === step ? 'is-active' : '';
                     return (
-                      <button
-                        key={lang.id}
-                        onClick={() => toggleLanguage(lang.id)}
-                        className="flex items-center gap-4 p-5 rounded-2xl border text-left transition-colors"
-                        style={{
-                          background: selected
-                            ? 'color-mix(in srgb, var(--app-accent) 10%, var(--app-surface))'
-                            : 'var(--app-surface)',
-                          borderColor: selected
-                            ? 'color-mix(in srgb, var(--app-accent) 35%, transparent)'
-                            : 'var(--app-border)',
-                        }}
-                      >
-                        <span className="text-3xl">{lang.flag}</span>
-                        <div className="flex-1">
-                          <p className="text-sm font-bold" style={{ color: selected ? 'var(--app-text)' : 'var(--app-text-muted)' }}>
-                            {lang.label}
-                          </p>
-                          {lang.popular && (
-                            <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--app-text-subtle)' }}>
-                              Phổ biến
-                            </span>
-                          )}
-                        </div>
-                        {selected && (
-                          <div
-                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-                            style={{ background: 'var(--app-accent)' }}
-                          >
-                            <Check className="w-3.5 h-3.5 text-white" />
-                          </div>
-                        )}
-                      </button>
+                      <li key={label} className={`ob-track-item ${state}`}>
+                        <button
+                          type="button"
+                          className="ob-track-btn"
+                          disabled={i >= step}
+                          onClick={() => goTo(i)}
+                        >
+                          <span className="ob-track-dot">
+                            {i < step ? <Check className="w-4 h-4" strokeWidth={3} /> : String(i + 1).padStart(2, '0')}
+                          </span>
+                          <span className="ob-track-label">{label}</span>
+                        </button>
+                      </li>
                     );
                   })}
+                </ol>
+
+                <div className="ob-rail-foot">
+                  <span className="ob-foot-chip">
+                    <Clock className="w-3.5 h-3.5" /> ~30 giây
+                  </span>
+                  <span className="ob-foot-chip">
+                    <Sparkles className="w-3.5 h-3.5" /> Tuỳ chỉnh lại bất cứ lúc nào
+                  </span>
                 </div>
               </div>
-            )}
+            </aside>
 
-            {/* ======== STEP 2: Skill Level ======== */}
-            {step === 2 && (
-              <div className="w-full">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl md:text-3xl font-black mb-2" style={{ color: 'var(--app-text)' }}>
-                    Trình độ hiện tại?
-                  </h2>
-                  <p className="text-sm" style={{ color: 'var(--app-text-muted)' }}>
-                    Giúp chúng tôi tìm điểm bắt đầu phù hợp
-                  </p>
-                </div>
-                <div className="space-y-3">
-                  {SKILL_LEVELS.map((level) => {
-                    const selected = skillLevel === level.id;
-                    const LevelIcon = level.icon;
-                    return (
-                      <button
-                        key={level.id}
-                        onClick={() => setSkillLevel(level.id)}
-                        className="w-full flex items-center gap-5 p-5 rounded-2xl border text-left transition-colors"
-                        style={{
-                          background: selected
-                            ? 'color-mix(in srgb, var(--app-accent) 10%, var(--app-surface))'
-                            : 'var(--app-surface)',
-                          borderColor: selected
-                            ? 'color-mix(in srgb, var(--app-accent) 35%, transparent)'
-                            : 'var(--app-border)',
-                        }}
-                      >
-                        <div
-                          className="grid h-11 w-11 place-items-center rounded-xl"
-                          style={{ background: selected ? 'var(--app-accent)' : 'var(--app-surface-hover)' }}
-                        >
-                          <LevelIcon className="h-5 w-5 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-base font-bold" style={{ color: selected ? 'var(--app-text)' : 'var(--app-text-muted)' }}>
-                            {level.label}
-                          </p>
-                          <p className="text-xs mt-0.5" style={{ color: 'var(--app-text-subtle)' }}>
-                            {level.description}
-                          </p>
-                        </div>
-                        {selected && (
-                          <div
-                            className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-                            style={{ background: 'var(--app-accent)' }}
-                          >
-                            <Check className="w-3.5 h-3.5 text-white" />
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+            <main className="ob-main">
+              <div className="ob-topline">
+                <span className="ob-stepcount">
+                  BƯỚC {String(step).padStart(2, '0')}<em> / 0{TOTAL_STEPS - 1}</em>
+                </span>
+                <span className="ob-steplabel">{STEP_LABELS[step]}</span>
               </div>
-            )}
-
-            {/* ======== STEP 3: Goals ======== */}
-            {step === 3 && (
-              <div className="w-full">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl md:text-3xl font-black mb-2" style={{ color: 'var(--app-text)' }}>
-                    Mục tiêu của bạn?
-                  </h2>
-                  <p className="text-sm" style={{ color: 'var(--app-text-muted)' }}>
-                    Chọn tất cả mục tiêu phù hợp — chúng tôi sẽ gợi ý nội dung
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {GOALS.map((goal) => {
-                    const selected = selectedGoals.includes(goal.id);
-                    const GoalIcon = goal.icon;
-                    return (
-                      <button
-                        key={goal.id}
-                        onClick={() => toggleGoal(goal.id)}
-                        className="flex flex-col items-center gap-3 p-6 rounded-2xl border text-center transition-colors"
-                        style={{
-                          background: selected
-                            ? 'color-mix(in srgb, var(--app-accent) 10%, var(--app-surface))'
-                            : 'var(--app-surface)',
-                          borderColor: selected
-                            ? 'color-mix(in srgb, var(--app-accent) 35%, transparent)'
-                            : 'var(--app-border)',
-                        }}
-                      >
-                        <div
-                          className="w-12 h-12 rounded-xl flex items-center justify-center"
-                          style={{ background: selected ? 'var(--app-accent)' : 'var(--app-surface-hover)' }}
-                        >
-                          <GoalIcon className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold" style={{ color: selected ? 'var(--app-text)' : 'var(--app-text-muted)' }}>
-                            {goal.label}
-                          </p>
-                          <p className="text-[10px] mt-0.5" style={{ color: 'var(--app-text-subtle)' }}>
-                            {goal.description}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="ob-progress" aria-hidden="true">
+                <motion.i animate={{ width: `${progress}%` }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} />
               </div>
-            )}
 
-            {/* ======== STEP 4: Daily Time + Summary ======== */}
-            {step === 4 && (
-              <div className="w-full">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl md:text-3xl font-black mb-2" style={{ color: 'var(--app-text)' }}>
-                    Thời gian mỗi ngày?
-                  </h2>
-                  <p className="text-sm" style={{ color: 'var(--app-text-muted)' }}>
-                    Đặt mục tiêu thực tế — bạn có thể thay đổi sau
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  {DAILY_TIMES.map((time) => {
-                    const selected = dailyTime === time.id;
-                    const TimeIcon = time.icon;
-                    return (
-                      <button
-                        key={time.id}
-                        onClick={() => setDailyTime(time.id)}
-                        className="flex flex-col items-center gap-3 p-8 rounded-2xl border text-center transition-colors"
-                        style={{
-                          background: selected
-                            ? 'color-mix(in srgb, var(--app-accent) 10%, var(--app-surface))'
-                            : 'var(--app-surface)',
-                          borderColor: selected
-                            ? 'color-mix(in srgb, var(--app-accent) 35%, transparent)'
-                            : 'var(--app-border)',
-                        }}
-                      >
-                        <div
-                          className="grid h-14 w-14 place-items-center rounded-2xl"
-                          style={{ background: selected ? 'var(--app-accent)' : 'var(--app-surface-hover)' }}
-                        >
-                          <TimeIcon className="h-7 w-7 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-xl font-black font-mono" style={{ color: selected ? 'var(--app-text)' : 'var(--app-text-muted)' }}>
-                            {time.label}
-                          </p>
-                          <p className="text-xs font-bold mt-1" style={{ color: 'var(--app-text-subtle)' }}>
-                            {time.description}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="ob-stage">
+                <AnimatePresence mode="wait" custom={dir}>
+                  <motion.div
+                    key={step}
+                    className="ob-step"
+                    custom={dir}
+                    variants={stepVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                  >
 
-                {/* Summary */}
-                <div
-                  className="mt-8 p-6 rounded-2xl border"
-                  style={{
-                    background: 'var(--app-surface)',
-                    borderColor: 'var(--app-border)',
-                  }}
-                >
-                  <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--app-text-subtle)' }}>
-                    Lộ trình học của bạn
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedLanguages.map((l) => {
-                      const lang = LANGUAGES.find((la) => la.id === l);
-                      return lang ? (
-                        <span
-                          key={l}
-                          className="px-3 py-1.5 rounded-lg text-xs font-bold"
-                          style={{
-                            background: 'color-mix(in srgb, var(--app-accent) 12%, transparent)',
-                            color: 'var(--app-accent)',
-                            border: '1px solid color-mix(in srgb, var(--app-accent) 25%, transparent)',
-                          }}
-                        >
-                          {lang.flag} {lang.label}
+                    {step === 0 && (
+                      <div>
+                        <span className="ob-kicker">
+                          <Sparkles className="w-3.5 h-3.5" /> Cá nhân hoá lộ trình
                         </span>
-                      ) : null;
-                    })}
-                    <span
-                      className="px-3 py-1.5 rounded-lg text-xs font-bold"
-                      style={{
-                        background: 'color-mix(in srgb, var(--app-primary) 12%, transparent)',
-                        color: 'var(--app-primary)',
-                        border: '1px solid color-mix(in srgb, var(--app-primary) 25%, transparent)',
-                      }}
-                    >
-                      {SKILL_LEVELS.find((s) => s.id === skillLevel)?.label || 'Mới bắt đầu'}
-                    </span>
-                    <span
-                      className="px-3 py-1.5 rounded-lg text-xs font-bold"
-                      style={{
-                        background: 'color-mix(in srgb, var(--app-warning) 12%, transparent)',
-                        color: 'var(--app-warning)',
-                        border: '1px solid color-mix(in srgb, var(--app-warning) 25%, transparent)',
-                      }}
-                    >
-                      {dailyTime} phút/ngày
-                    </span>
-                  </div>
-                </div>
+                        <h1 className="ob-h1">
+                          {displayName ? `Chào ${displayName}, ` : 'Hành trình học '}
+                          <span className="ob-serif">may đo</span>
+                          {displayName ? ' hành trình học cho bạn.' : ' bắt đầu từ bạn.'}
+                        </h1>
+                        <p className="ob-lede">
+                          Trả lời 4 câu hỏi nhanh để LinguaAI thiết kế con đường ngắn nhất tới ngôn ngữ bạn mơ ước.
+                        </p>
+                        <ul className="ob-perks">
+                          {PERKS.map((perk) => {
+                            const PerkIcon = perk.icon;
+                            return (
+                              <li key={perk.title} className="ob-perk">
+                                <span
+                                  className="ob-perk-ic"
+                                  style={{
+                                    background: `color-mix(in srgb, ${perk.color} 15%, transparent)`,
+                                    color: perk.color,
+                                  }}
+                                >
+                                  <PerkIcon className="w-5 h-5" />
+                                </span>
+                                <div>
+                                  <b>{perk.title}</b>
+                                  <span>{perk.description}</span>
+                                </div>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                        <div className="ob-welcome-cta">
+                          <button type="button" className="ob-btn ob-btn-primary ob-btn-lg" onClick={goNext}>
+                            Bắt đầu <ChevronRight className="w-4 h-4 ob-arrow" />
+                          </button>
+                          <button type="button" className="ob-btn ob-btn-ghost" onClick={handleSkip}>
+                            Bỏ qua, vào học luôn
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {step === 1 && (
+                      <div>
+                        <div className="ob-h2-wrap">
+                          <div>
+                            <h2 className="ob-h2">Bạn muốn học ngôn ngữ nào?</h2>
+                            <p className="ob-h2-sub">Chọn một hoặc nhiều — học song song cũng được</p>
+                          </div>
+                          <span className="ob-count">Đã chọn {selectedLanguages.length}</span>
+                        </div>
+                        <motion.div
+                          className="ob-grid2"
+                          variants={listVariants}
+                          initial="hidden"
+                          animate="show"
+                        >
+                          {LANGUAGES.map((lang) => {
+                            const selected = selectedLanguages.includes(lang.id);
+                            return (
+                              <motion.button
+                                key={lang.id}
+                                type="button"
+                                variants={itemVariants}
+                                whileTap={{ scale: 0.97 }}
+                                aria-pressed={selected}
+                                onClick={() => toggleLanguage(lang.id)}
+                                className={`ob-card${selected ? ' is-selected' : ''}`}
+                              >
+                                <span className="ob-flag">{lang.flag}</span>
+                                <span className="ob-card-body">
+                                  <b>{lang.label}</b>
+                                  {lang.popular && <i className="ob-tag">Phổ biến</i>}
+                                </span>
+                                <span className="ob-check-wrap">
+                                  <AnimatePresence>
+                                    {selected && (
+                                      <motion.span
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        exit={{ scale: 0 }}
+                                        transition={{ type: 'spring', stiffness: 520, damping: 26 }}
+                                      >
+                                        <Check className="w-3.5 h-3.5" strokeWidth={3.5} />
+                                      </motion.span>
+                                    )}
+                                  </AnimatePresence>
+                                </span>
+                              </motion.button>
+                            );
+                          })}
+                        </motion.div>
+                      </div>
+                    )}
+
+                    {step === 2 && (
+                      <div>
+                        <div className="ob-h2-wrap">
+                          <div>
+                            <h2 className="ob-h2">Trình độ hiện tại của bạn?</h2>
+                            <p className="ob-h2-sub">Giúp chúng tôi tìm điểm xuất phát phù hợp nhất</p>
+                          </div>
+                        </div>
+                        <motion.div
+                          className="ob-levels"
+                          variants={listVariants}
+                          initial="hidden"
+                          animate="show"
+                        >
+                          {SKILL_LEVELS.map((level) => {
+                            const selected = skillLevel === level.id;
+                            const LevelIcon = level.icon;
+                            return (
+                              <motion.button
+                                key={level.id}
+                                type="button"
+                                variants={itemVariants}
+                                whileTap={{ scale: 0.98 }}
+                                aria-pressed={selected}
+                                onClick={() => setSkillLevel(level.id)}
+                                className={`ob-card${selected ? ' is-selected' : ''}`}
+                              >
+                                <span
+                                  className="ob-cefr"
+                                  style={{
+                                    color: level.color,
+                                    background: `color-mix(in srgb, ${level.color} 12%, transparent)`,
+                                    borderColor: `color-mix(in srgb, ${level.color} 32%, transparent)`,
+                                  }}
+                                >
+                                  {level.cefr}
+                                </span>
+                                <span className="ob-level-ic">
+                                  <LevelIcon className="w-5 h-5" />
+                                </span>
+                                <span className="ob-card-body">
+                                  <b>{level.label}</b>
+                                  <small>{level.description}</small>
+                                </span>
+                                <span className="ob-check-wrap">
+                                  <AnimatePresence>
+                                    {selected && (
+                                      <motion.span
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        exit={{ scale: 0 }}
+                                        transition={{ type: 'spring', stiffness: 520, damping: 26 }}
+                                      >
+                                        <Check className="w-3.5 h-3.5" strokeWidth={3.5} />
+                                      </motion.span>
+                                    )}
+                                  </AnimatePresence>
+                                </span>
+                              </motion.button>
+                            );
+                          })}
+                        </motion.div>
+                      </div>
+                    )}
+
+                    {step === 3 && (
+                      <div>
+                        <div className="ob-h2-wrap">
+                          <div>
+                            <h2 className="ob-h2">Mục tiêu của bạn là gì?</h2>
+                            <p className="ob-h2-sub">Chọn tất cả những gì phù hợp — chúng tôi sẽ gợi ý nội dung</p>
+                          </div>
+                          <span className="ob-count">Đã chọn {selectedGoals.length}</span>
+                        </div>
+                        <motion.div
+                          className="ob-grid2 ob-grid-goals"
+                          variants={listVariants}
+                          initial="hidden"
+                          animate="show"
+                        >
+                          {GOALS.map((goal) => {
+                            const selected = selectedGoals.includes(goal.id);
+                            const GoalIcon = goal.icon;
+                            return (
+                              <motion.button
+                                key={goal.id}
+                                type="button"
+                                variants={itemVariants}
+                                whileTap={{ scale: 0.96 }}
+                                aria-pressed={selected}
+                                onClick={() => toggleGoal(goal.id)}
+                                className={`ob-card ob-goal${selected ? ' is-selected' : ''}`}
+                              >
+                                <span className="ob-goal-ic" style={{ background: goal.color }}>
+                                  <GoalIcon className="w-5 h-5" />
+                                </span>
+                                <span className="ob-card-body">
+                                  <b>{goal.label}</b>
+                                  <small>{goal.description}</small>
+                                </span>
+                              </motion.button>
+                            );
+                          })}
+                        </motion.div>
+                      </div>
+                    )}
+
+                    {step === 4 && (
+                      <div>
+                        <div className="ob-h2-wrap">
+                          <div>
+                            <h2 className="ob-h2">Mỗi ngày dành bao nhiêu phút?</h2>
+                            <p className="ob-h2-sub">Đặt mục tiêu thực tế — bạn luôn có thể đổi sau</p>
+                          </div>
+                        </div>
+                        <motion.div
+                          className="ob-grid2"
+                          variants={listVariants}
+                          initial="hidden"
+                          animate="show"
+                        >
+                          {DAILY_TIMES.map((time) => {
+                            const selected = dailyTime === time.id;
+                            const TimeIcon = time.icon;
+                            return (
+                              <motion.button
+                                key={time.id}
+                                type="button"
+                                variants={itemVariants}
+                                whileTap={{ scale: 0.97 }}
+                                aria-pressed={selected}
+                                onClick={() => setDailyTime(time.id)}
+                                className={`ob-card ob-time${selected ? ' is-selected' : ''}`}
+                              >
+                                <TimeIcon
+                                  className="w-5 h-5"
+                                  style={{ color: selected ? 'var(--app-primary)' : 'var(--app-text-subtle)' }}
+                                />
+                                <span className="ob-time-num">{time.id.padStart(2, '0')}</span>
+                                <span className="ob-time-unit">phút / ngày</span>
+                                <span className="ob-card-body">
+                                  <small>{time.description}</small>
+                                </span>
+                              </motion.button>
+                            );
+                          })}
+                        </motion.div>
+
+                        <div className="ob-ticket">
+                          <div className="ob-ticket-head">
+                            <span className="ob-ticket-title">
+                              <Compass className="w-4 h-4" /> Vé khởi hành · Lộ trình của bạn
+                            </span>
+                            <span className="ob-ticket-code">{ticketCode}</span>
+                          </div>
+                          <div className="ob-ticket-body">
+                            {selectedLanguages.map((l) => {
+                              const lang = LANGUAGES.find((la) => la.id === l);
+                              return lang ? (
+                                <span key={l} className="ob-chip">
+                                  {lang.flag} {lang.label}
+                                </span>
+                              ) : null;
+                            })}
+                            {selectedLevel && (
+                              <span className="ob-chip">
+                                {selectedLevel.cefr} · {selectedLevel.label}
+                              </span>
+                            )}
+                            <span className="ob-chip">{selectedGoals.length} mục tiêu</span>
+                            <span className="ob-chip">
+                              <Clock className="w-3 h-3" /> {dailyTime} phút/ngày
+                            </span>
+                          </div>
+                          <div className="ob-barcode" aria-hidden="true" />
+                        </div>
+                      </div>
+                    )}
+
+                  </motion.div>
+                </AnimatePresence>
               </div>
-            )}
+
+              {step > 0 && (
+                <footer className="ob-nav">
+                  <button type="button" className="ob-btn ob-btn-ghost" onClick={goBack}>
+                    <ChevronLeft className="w-4 h-4 ob-arrow-back" /> Quay lại
+                  </button>
+                  <div className="ob-nav-right">
+                    {step < TOTAL_STEPS - 1 && (
+                      <button type="button" className="ob-skip" onClick={handleSkip}>
+                        Bỏ qua bước này
+                      </button>
+                    )}
+                    {step < TOTAL_STEPS - 1 ? (
+                      <button
+                        type="button"
+                        className="ob-btn ob-btn-primary"
+                        disabled={!canProceed()}
+                        onClick={goNext}
+                      >
+                        Tiếp tục <ChevronRight className="w-4 h-4 ob-arrow" />
+                      </button>
+                    ) : (
+                      <button type="button" className="ob-btn ob-btn-primary ob-btn-lg" onClick={handleFinish}>
+                        <Rocket className="w-5 h-5" /> Bắt đầu học!
+                      </button>
+                    )}
+                  </div>
+                </footer>
+              )}
+            </main>
+
           </div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between pt-8 pb-4 mt-auto">
-            {step > 0 ? (
-              <button
-                onClick={() => setStep(step - 1)}
-                className="flex items-center gap-2 px-5 py-3.5 rounded-xl border text-sm font-bold transition-colors"
-                style={{
-                  background: 'var(--app-surface)',
-                  borderColor: 'var(--app-border)',
-                  color: 'var(--app-text)',
-                }}
-              >
-                <ChevronLeft className="w-4 h-4" /> Quay lại
-              </button>
-            ) : (
-              <div />
-            )}
-
-            {step < TOTAL_STEPS - 1 ? (
-              <button
-                onClick={() => setStep(step + 1)}
-                disabled={!canProceed()}
-                className="flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
-                style={{
-                  background: 'linear-gradient(135deg, var(--app-accent), var(--app-primary))',
-                  boxShadow: '0 8px 25px color-mix(in srgb, var(--app-accent) 25%, transparent)',
-                }}
-              >
-                {step === 0 ? 'Bắt đầu' : 'Tiếp tục'}
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            ) : (
-              <button
-                onClick={handleFinish}
-                className="flex items-center gap-2 px-8 py-4 rounded-xl text-base font-bold text-white transition-transform hover:scale-[1.03] active:scale-95"
-                style={{
-                  background: 'linear-gradient(135deg, var(--app-primary), #0d9488)',
-                  boxShadow: '0 8px 30px color-mix(in srgb, var(--app-primary) 30%, transparent)',
-                }}
-              >
-                <Rocket className="w-5 h-5" /> Bắt đầu học!
-              </button>
-            )}
-          </div>
-
-          {/* Skip */}
-          {step > 0 && step < TOTAL_STEPS - 1 && (
-            <div className="text-center pb-4">
-              <button
-                onClick={() => navigate('/education')}
-                className="text-xs font-bold transition-colors"
-                style={{ color: 'var(--app-text-subtle)' }}
-              >
-                Bỏ qua bước này
-              </button>
-            </div>
-          )}
         </div>
       </div>
-    </div>
+    </MotionConfig>
   );
 }

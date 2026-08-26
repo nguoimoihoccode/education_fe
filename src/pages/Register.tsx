@@ -49,7 +49,7 @@ export const Register = () => {
     try {
       await register(email, password);
       toast.success('Tạo tài khoản thành công!');
-      navigate('/education');
+      navigate('/onboarding');
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'response' in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
+import { isOnboarded } from '../utils/onboarding';
 import { Lock, Mail, ArrowRight, GraduationCap, Eye, EyeOff } from 'lucide-react';
 import '../styles/stock-redesign.css';
 import './Login.css';
@@ -43,7 +44,7 @@ export const Login = () => {
     try {
       await login(identifier, password);
       toast.success('Welcome back!');
-      navigate('/education');
+      navigate(isOnboarded() ? '/today' : '/onboarding');
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'response' in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message

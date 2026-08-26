@@ -84,7 +84,7 @@ function SidebarLogo({ isSidebarOpen, onClick }: { isSidebarOpen: boolean; onCli
 
   if (!isSidebarOpen) {
     return (
-      <Link to="/education" onClick={onClick}
+      <Link to="/today" onClick={onClick}
         className="w-9 h-9 rounded-lg flex items-center justify-center shadow-lg transition-transform hover:scale-105"
         style={{ background: 'linear-gradient(135deg, #2CB34A 0%, #0d9488 100%)' }}>
         <GraduationCap size={18} color="white" />
@@ -93,10 +93,10 @@ function SidebarLogo({ isSidebarOpen, onClick }: { isSidebarOpen: boolean; onCli
   }
 
   return (
-    <Link to="/education" onClick={onClick} className="flex items-center gap-2.5 stock-fade-in">
+    <Link to="/today" onClick={onClick} className="flex items-center gap-2.5 stock-fade-in">
       {logoIcon}
       <div>
-        <h1 className="font-bold text-base leading-tight" style={{ color: 'var(--stock-text-primary)' }}>EduPro</h1>
+        <h1 className="font-bold text-base leading-tight" style={{ color: 'var(--stock-text-primary)' }}>LinguaAI</h1>
         <p className="text-xs font-medium" style={{ color: 'var(--stock-primary-400)' }}>Lộ trình học tập</p>
       </div>
     </Link>

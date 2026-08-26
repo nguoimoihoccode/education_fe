@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/auth.store';
 import toast from 'react-hot-toast';
+import { isOnboarded } from '../utils/onboarding';
 
 export const GoogleCallback = () => {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export const GoogleCallback = () => {
       );
       setTokens(accessToken, refreshToken);
       toast.success('Đăng nhập Google thành công!');
-      navigate('/education');
+      navigate(isOnboarded() ? '/today' : '/onboarding');
     } else {
       toast.error('Không nhận được token từ Google. Vui lòng thử lại.');
       navigate('/login');

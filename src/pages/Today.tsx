@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { ArrowRight, BookOpen, Flame, RotateCcw, Sparkles, Target, Trophy } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, BookOpen, Flame, RotateCcw, Sparkles, Target, Trophy, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getTodayLearningHub } from '@/api/education.api';
 import { QUERY_KEYS } from '@/config';
+import { isOnboarded } from '@/utils/onboarding';
 import type { TodayLearningHubTask } from '@/types/education.types';
 import './Education.css';
 
@@ -15,6 +17,15 @@ const actionIcons: Record<TodayLearningHubTask['type'], ReactNode> = {
 };
 
 export default function Today() {
+  const [showOnboardingBanner, setShowOnboardingBanner] = useState(() => {
+    let dismissed = false;
+    try {
+      dismissed = localStorage.getItem('edupro-onboarding-dismissed') === '1';
+    } catch {
+      // ignore
+    }
+    return !isOnboarded() && !dismissed;
+  });
   const { data: hub, isError, isLoading, refetch } = useQuery({
     queryKey: QUERY_KEYS.TODAY_HUB,
     queryFn: getTodayLearningHub,
@@ -30,6 +41,43 @@ export default function Today() {
   return (
     <div className="education-container education-path-page min-h-screen">
       <div className="dashboard-wrapper relative z-10">
+        {showOnboardingBanner && (
+          <section
+            className="today-onboarding-banner"
+            style={{
+              display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap',
+              padding: '12px 16px', borderRadius: '16px', marginBottom: '20px',
+              background: 'linear-gradient(135deg, rgba(139,92,246,0.14), rgba(16,185,129,0.12))',
+              border: '1px solid var(--app-border, rgba(255,255,255,0.12))',
+              color: 'var(--app-text)',
+            }}
+          >
+            <Sparkles className="h-5 w-5" style={{ color: 'var(--app-primary, #8b5cf6)' }} />
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <strong className="block">Cá nhân hoá lộ trình của bạn</strong>
+              <span className="text-sm" style={{ opacity: 0.8 }}>
+                Chọn ngôn ngữ, trình độ và mục tiêu trong 30 giây để nhận kế hoạch phù hợp.
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <Link to="/onboarding" className="btn-primary">
+                Cá nhân hoá
+              </Link>
+              <button
+                type="button"
+                aria-label="Đóng"
+                className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                style={{ color: 'var(--app-text-subtle)' }}
+                onClick={() => {
+                  localStorage.setItem('edupro-onboarding-dismissed', '1');
+                  setShowOnboardingBanner(false);
+                }}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </section>
+        )}
         <header className="edu-path-hero">
           <div>
             <p className="edu-kicker">Personal Learning Hub</p>
