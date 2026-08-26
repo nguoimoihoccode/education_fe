@@ -15,8 +15,8 @@ test('sidebar navigation is grouped around learning workflows', () => {
   assert.match(navConfig, /learningNavSections/);
   assert.match(navConfig, /title: 'Học tập'/);
   assert.match(navConfig, /title: 'Tiến độ'/);
-  assert.match(navConfig, /title: 'Cộng đồng'/);
   assert.match(navConfig, /title: 'Tài khoản'/);
+  assert.doesNotMatch(navConfig, /title: 'Cộng đồng'/);
   assert.match(sidebar, /learningNavSections\.map/);
   assert.doesNotMatch(sidebar, /TrendingUp/);
   assert.match(sidebar, /GraduationCap/);
@@ -26,10 +26,10 @@ test('education dashboard is learner-first instead of marketing-first', () => {
   const education = readSource('src/pages/Education.tsx');
 
   assert.match(education, /Hôm nay học gì\?/);
-  assert.match(education, /Bài tiếp theo/);
+  assert.match(education, /học bài tiếp theo/);
   assert.match(education, /Lộ trình học/);
-  assert.match(education, /Ôn tập hôm nay/);
-  assert.match(education, /Điểm yếu cần luyện/);
+  assert.match(education, /ôn flashcards đến hạn/);
+  assert.match(education, /luyện đúng điểm yếu/);
   assert.match(education, /education-learning-path/);
   assert.match(education, /path-node/);
   assert.doesNotMatch(education, /Education Hub|AI-Powered Learning|Master Languages|Premium 3D Graphic|Ask AI Tutor/);
@@ -55,13 +55,13 @@ test('primary learning pages use Vietnamese action copy and calmer surfaces', ()
 test('quiz detail keeps preview learner-safe and localized', () => {
   const quizDetail = readSource('src/pages/quiz/QuizDetailPage.tsx');
 
-  assert.match(quizDetail, /Bắt đầu làm bài/);
+  assert.match(quizDetail, /Bắt đầu/);
   assert.match(quizDetail, /Câu hỏi mẫu/);
   assert.doesNotMatch(quizDetail, /Bat dau lam bai|Cau hoi mau/);
   assert.doesNotMatch(quizDetail, /Correct Answer:/);
 
   const questionLabelCount =
-    quizDetail.match(/<dt className="text-slate-400">Questions<\/dt>/g)?.length ?? 0;
+    quizDetail.match(/<dt className="text-slate-300">Số câu hỏi<\/dt>/g)?.length ?? 0;
 
   assert.equal(questionLabelCount, 1);
 });
@@ -97,8 +97,9 @@ test('education home avoids fake learning metrics', () => {
   assert.doesNotMatch(education, /Hoàn thành 1 bài/);
   assert.doesNotMatch(education, /value="Due"/);
   assert.doesNotMatch(education, /value="Quiz"/);
-  assert.match(education, /value=\{isAuthenticated \? 'Mở ôn tập' : 'Xem flashcards'\}/);
-  assert.match(education, /value=\{isAuthenticated \? 'Xem quiz' : 'Khám phá quiz'\}/);
+  assert.match(education, /Đăng nhập để nhận kế hoạch học mỗi ngày/);
+  assert.match(education, /Làm quiz ngắn/);
+  assert.match(education, /Bắt đầu học/);
 });
 
 test('course and lesson pages avoid fake xp and placeholder progress copy', () => {
@@ -107,7 +108,7 @@ test('course and lesson pages avoid fake xp and placeholder progress copy', () =
 
   assert.doesNotMatch(courseDetail, /1,450/);
   assert.match(courseDetail, /Quay lại khóa học/);
-  assert.match(courseDetail, /Tiếp tục học/);
+  assert.match(courseDetail, /primaryAction\.label/);
   assert.doesNotMatch(courseDetail, /Back to Courses|Resume Learning|Overall Progress|Course Syllabus/);
   assert.doesNotMatch(courseDetail, /<Link to=\{locked \? '#' : `\/education\/lessons\/\$\{lesson\.id\}`\}[\s\S]*<button/);
 

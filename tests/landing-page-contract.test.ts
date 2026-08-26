@@ -37,13 +37,16 @@ test('landing feature calls to action navigate to product routes', () => {
   assert.match(features, /<Link/);
 });
 
-test('landing hero has an internal visual fallback for the video', () => {
+test('landing hero does not depend on a remote video background', () => {
   const hero = readSource('src/pages/landing/components/Hero.tsx');
+  const css = readSource('src/pages/landing/Landing.css');
 
   assert.doesNotMatch(hero, /\/images\/hero_bg\.jpeg/);
-  assert.match(hero, /heroFallbackImage/);
-  assert.match(hero, /poster=\{heroFallbackImage\}/);
-  assert.match(hero, /<img[\s\S]+heroFallbackImage/);
+  assert.doesNotMatch(hero, /HERO_VIDEO_URL|poster=|heroFallbackImage/);
+  assert.doesNotMatch(hero, /[<>]video/);
+  assert.doesNotMatch(hero, /hero_bg/);
+  assert.match(hero, /landing-hero-bg/);
+  assert.match(css, /\.landing-hero-bg/);
 });
 
 test('landing root uses app background token in CSS', () => {

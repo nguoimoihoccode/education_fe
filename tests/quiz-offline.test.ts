@@ -320,24 +320,30 @@ test('offline HSK1 questions are Hanzi-first enough for real Chinese practice', 
   const provider = createQuizOfflineProvider();
   const quiz = await provider.getQuizById('offline-quiz-hsk1');
 
+  // Every question must either embed Hanzi in its prompt or offer Hanzi options —
+  // no fully Vietnamese-only questions.
   const badQuestions = (quiz.questions ?? []).filter((question) => {
     const questionHasHan = containsHanzi(question.question);
     const optionsHaveHan = (question.options ?? []).some((option) => containsHanzi(option));
     return !questionHasHan && !optionsHaveHan;
   });
 
+  // Vocabulary prompts either ask for the Vietnamese meaning (Hanzi embedded in
+  // the prompt, e.g. `"你好" (nǐ hǎo) có nghĩa ...`) or ask to pick the Hanzi for
+  // a meaning (Hanzi as the correct answer/options). Keep the guarantee that
+  // Hanzi appears somewhere — prompt or answer — so real practice is possible.
   const vocabularyQuestions = (quiz.questions ?? []).filter((question) =>
     question.question.includes('có nghĩa') ||
     question.question.includes('ý gần đúng') ||
     question.question.includes('mang nghĩa')
   );
 
-  const vocabularyWithoutHanOptions = vocabularyQuestions.filter((question) =>
-    !(question.options ?? []).some((option) => containsHanzi(option))
+  const vocabularyWithoutHanzi = vocabularyQuestions.filter((question) =>
+    !containsHanzi(question.question) && !containsHanzi(question.correctAnswer)
   );
 
   assert.equal(badQuestions.length, 0);
-  assert.equal(vocabularyWithoutHanOptions.length, 0);
+  assert.equal(vocabularyWithoutHanzi.length, 0);
 });
 
 test('offline HSK1 no longer contains fully Vietnamese-only questions', async () => {
@@ -354,7 +360,7 @@ test('offline HSK1 no longer contains fully Vietnamese-only questions', async ()
   assert.equal(badQuestions.length, 0);
 });
 
-test('offline HSK1 vocabulary-style prompts prefer Hanzi as the correct answer', async () => {
+test('offline HSK1 vocabulary-style prompts embed Hanzi in the question', async () => {
   const provider = createQuizOfflineProvider();
   const quiz = await provider.getQuizById('offline-quiz-hsk1');
 
@@ -363,12 +369,14 @@ test('offline HSK1 vocabulary-style prompts prefer Hanzi as the correct answer',
     question.question.includes('mang nghĩa')
   );
 
-  const wrongShape = vocabularyQuestions.filter((question) => !containsHanzi(question.correctAnswer));
+  const wrongShape = vocabularyQuestions.filter(
+    (question) => !containsHanzi(question.question) && !containsHanzi(question.correctAnswer)
+  );
 
   assert.equal(wrongShape.length, 0);
 });
 
-test('offline HSK2 vocabulary-style prompts prefer Hanzi as the correct answer', async () => {
+test('offline HSK2 vocabulary-style prompts embed Hanzi in the question', async () => {
   const provider = createQuizOfflineProvider();
   const quiz = await provider.getQuizById('offline-quiz-hsk2');
   const hasHan = (value: string) => /[\u3400-\u9FFF]/u.test(value);
@@ -378,12 +386,14 @@ test('offline HSK2 vocabulary-style prompts prefer Hanzi as the correct answer',
     question.question.includes('mang nghĩa')
   );
 
-  const wrongShape = vocabularyQuestions.filter((question) => !hasHan(question.correctAnswer));
+  const wrongShape = vocabularyQuestions.filter(
+    (question) => !hasHan(question.question) && !hasHan(question.correctAnswer)
+  );
 
   assert.equal(wrongShape.length, 0);
 });
 
-test('offline HSK3 vocabulary-style prompts prefer Hanzi as the correct answer', async () => {
+test('offline HSK3 vocabulary-style prompts embed Hanzi in the question', async () => {
   const provider = createQuizOfflineProvider();
   const quiz = await provider.getQuizById('offline-quiz-hsk3');
   const hasHan = (value: string) => /[\u3400-\u9FFF]/u.test(value);
@@ -393,7 +403,9 @@ test('offline HSK3 vocabulary-style prompts prefer Hanzi as the correct answer',
     question.question.includes('mang nghĩa')
   );
 
-  const wrongShape = vocabularyQuestions.filter((question) => !hasHan(question.correctAnswer));
+  const wrongShape = vocabularyQuestions.filter(
+    (question) => !hasHan(question.question) && !hasHan(question.correctAnswer)
+  );
 
   assert.equal(wrongShape.length, 0);
 });

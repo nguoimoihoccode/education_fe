@@ -14,7 +14,6 @@ test('routes global search terms to the right learning areas', () => {
   assert.equal(getGlobalSearchDestination('flashcard')?.path, '/flashcards');
   assert.equal(getGlobalSearchDestination('bài tập')?.path, '/quiz');
   assert.equal(getGlobalSearchDestination('tài liệu')?.path, '/flashcards/document-import');
-  assert.equal(getGlobalSearchDestination('cộng đồng')?.path, '/community');
 });
 
 test('falls back to education hub for unknown non-empty searches', () => {

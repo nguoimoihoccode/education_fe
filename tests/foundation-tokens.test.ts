@@ -17,7 +17,7 @@ describe('Dark Learning foundation tokens', () => {
   });
 
   it('defines dark muted/subtle floors for contrast', () => {
-    assert.match(indexCss, /--app-text-subtle:\s*#c4c4c4/);
+    assert.match(indexCss, /--app-text-subtle:\s*#9ca3af/);
     assert.match(indexCss, /--app-text-muted:\s*#d4d4d4/);
   });
 

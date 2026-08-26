@@ -15,5 +15,5 @@ test('nginx proxies api traffic to backend with rate limit zones', () => {
 
 test('docker frontend calls api through nginx and backend is host-local only', () => {
   assert.match(composeConfig, /VITE_API_URL=\/api/);
-  assert.match(composeConfig, /127\.0\.0\.1:3000:3000/);
+  assert.match(composeConfig, /127\.0\.0\.1:\$\{BACKEND_PORT\}:3000/);
 });
