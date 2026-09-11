@@ -108,11 +108,11 @@ jobs:
               export IMAGE_TAG="$previous_tag"
               docker compose -f docker-compose.prod.yml --env-file .env.prod pull frontend
               docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans frontend
-              curl --fail --show-error --silent --retry 10 --retry-delay 5 http://127.0.0.1/nginx-health
+              curl --fail --show-error --silent --retry 10 --retry-delay 5 http://127.0.0.1:8080/nginx-health
               exit 1
             }
 
-            curl --fail --show-error --silent --retry 10 --retry-delay 5 http://127.0.0.1/nginx-health || rollback
+            curl --fail --show-error --silent --retry 10 --retry-delay 5 http://127.0.0.1:8080/nginx-health || rollback
 
             printf '%s' "$IMAGE_TAG" > .last-frontend-tag
             docker image prune -f --filter "until=168h"
