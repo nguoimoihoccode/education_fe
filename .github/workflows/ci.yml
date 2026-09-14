@@ -10,6 +10,8 @@ on:
   push:
     branches:
       - main
+      - phuc_v2026
+      - feat/ai-provider-settings
       - master
       - develop
 

@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - master
+      - phuc_v2026
+      - feat/ai-provider-settings
   workflow_dispatch:
 
 concurrency:
