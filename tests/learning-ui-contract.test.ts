@@ -13,13 +13,163 @@ test('sidebar navigation is grouped around learning workflows', () => {
   const sidebar = readSource('src/components/layout/Sidebar.tsx');
 
   assert.match(navConfig, /learningNavSections/);
-  assert.match(navConfig, /title: 'Học tập'/);
-  assert.match(navConfig, /title: 'Tiến độ'/);
+  assert.match(navConfig, /title: 'Học hôm nay'/);
+  assert.match(navConfig, /label: 'Tiến độ'/);
   assert.match(navConfig, /title: 'Tài khoản'/);
   assert.doesNotMatch(navConfig, /title: 'Cộng đồng'/);
   assert.match(sidebar, /learningNavSections\.map/);
   assert.doesNotMatch(sidebar, /TrendingUp/);
   assert.match(sidebar, /GraduationCap/);
+
+  // admin areas must be role-gated: principal nav items carry roles and the
+  // sidebar filters against the signed-in user's roles (SCHOOL_PLATFORM_PLAN Phase 1)
+  assert.match(navConfig, /title: 'Quản trị trường'/);
+  assert.match(navConfig, /roles\?: string\[\]/);
+  assert.match(navConfig, /to: '\/principal'[\s\S]*roles: \['principal', 'admin'\]/);
+  assert.match(sidebar, /item\.roles/);
+  assert.match(sidebar, /useAuthStore/);
+});
+
+test('phase 2 teaching hub and parent portal are role-aware', () => {
+  const navConfig = readSource('src/components/layout/navConfig.tsx');
+  const routes = readSource('src/config/routes.ts');
+  const api = readSource('src/api/school.api.ts');
+  const app = readSource('src/App.tsx');
+
+  // GVCN hub is guarded (teacher + school admins); the parent portal is
+  // intentionally open to any authenticated user until the invite is claimed
+  assert.match(navConfig, /title: 'Lớp của tôi'/);
+  assert.match(navConfig, /to: '\/teaching', roles: \['teacher', 'principal', 'admin'\]/);
+  assert.match(navConfig, /title: 'Con của tôi'/);
+  assert.match(navConfig, /to: '\/parent', roles: \['parent', 'admin'\]/);
+  assert.match(routes, /TEACHING_CLASS: \(id: string\) => `\/teaching\/classes\/\$\{id\}`/);
+  assert.match(routes, /PARENT_CHILD: \(id: number \| string\) => `\/parent\/children\/\$\{id\}`/);
+  assert.match(app, /roles=\{\['teacher', 'principal', 'admin'\]\}/);
+  assert.match(
+    app,
+    /path="\/parent\/children\/:studentId"\s*\n\s*element=\{\s*\n\s*<ProtectedRoute>/,
+  );
+
+  // API surface mirrors the backend (school/teaching + parent controllers)
+  assert.match(api, /\/school\/teaching\/classes/);
+  assert.match(api, /parents\/invite/);
+  assert.match(api, /\/parent\/claim/);
+});
+
+test('phase 3 timetable builder and attendance are wired end-to-end', () => {
+  const navConfig = readSource('src/components/layout/navConfig.tsx');
+  const routes = readSource('src/config/routes.ts');
+  const api = readSource('src/api/school.api.ts');
+  const app = readSource('src/App.tsx');
+  const query = readSource('src/config/query.ts');
+  const types = readSource('src/types/school.types.ts');
+  const grid = readSource('src/components/school/timetable-meta.ts');
+
+  // Routes + guards: only school admins build the timetable; teachers see
+  // their own grid + attendance sheets; students get a read-only view.
+  assert.match(navConfig, /to: '\/principal\/timetable', roles: \['principal', 'admin'\]/);
+  assert.match(navConfig, /to: '\/teaching\/timetable', roles: \['teacher', 'principal', 'admin'\]/);
+  assert.match(navConfig, /to: '\/me\/school', roles: \['student', 'admin'\]/);
+  assert.match(routes, /TEACHING_ATTENDANCE: \(id: string\) => `\/teaching\/classes\/\$\{id\}\/attendance`/);
+  assert.match(app, /path="\/principal\/timetable"/);
+  assert.match(app, /path="\/teaching\/classes\/:id\/attendance"/);
+  assert.match(app, /path="\/me\/school"\s*\n\s*element=\{\s*\n\s*<ProtectedRoute roles=\{\['student', 'admin'\]\}>/);
+
+  // API + query keys mirror the BE timetable/attendance controllers
+  assert.match(api, /apiClient\.get\(\s*"\/timetable",\s*\{\s*params: \{ classId \}/);
+  assert.match(api, /\/timetable\/slots/);
+  assert.match(api, /\/timetable\/validate/);
+  assert.match(api, /school\/period-config/);
+  assert.match(api, /\/attendance\/session/);
+  assert.match(api, /\/attendance\/take/);
+  assert.match(api, /\/parent\/children\/\$\{studentId\}\/timetable/);
+  assert.match(query, /ATTENDANCE_SESSION: \(classId: string, date: string, period: number\)/);
+  assert.match(types, /export type AttendanceStatus = 'present' \| 'absent' \| 'late' \| 'excused'/);
+
+  // Weekday numbering must match the BE policy: 1 = Chủ nhật, 2..7 = Thứ 2..7
+  assert.match(grid, /1: 'CN'/);
+  assert.match(grid, /2: 'Thứ 2'/);
+});
+
+test('phase 4 gradebook, homework assignment and two-way parent/student views are wired', () => {
+  const routes = readSource('src/config/routes.ts');
+  const api = readSource('src/api/school.api.ts');
+  const app = readSource('src/App.tsx');
+  const query = readSource('src/config/query.ts');
+  const types = readSource('src/types/school.types.ts');
+  const meta = readSource('src/components/school/grades-meta.ts');
+  const gradebook = readSource('src/pages/teacher/GradebookPage.tsx');
+  const gradesPanel = readSource('src/components/school/StudentGradesPanel.tsx');
+  const homework = readSource('src/pages/teacher/HomeworkPage.tsx');
+  const classDetail = readSource('src/pages/teacher/TeacherClassDetailPage.tsx');
+  const mySchool = readSource('src/pages/student/MySchoolPage.tsx');
+  const childPage = readSource('src/pages/parent/ParentChildPage.tsx');
+  const dashboard = readSource('src/pages/principal/PrincipalDashboard.tsx');
+
+  // Routes + guards: gradebook/homework are staff-only per-class pages,
+  // reachable from the homeroom class detail (Phase 4 plan §4.1/§4.5).
+  assert.match(routes, /TEACHING_GRADES: \(id: string\) => `\/teaching\/classes\/\$\{id\}\/grades`/);
+  assert.match(routes, /TEACHING_HOMEWORK: \(id: string\) => `\/teaching\/classes\/\$\{id\}\/homework`/);
+  assert.match(routes, /return 'Sổ điểm';/);
+  assert.match(routes, /return 'Giao bài tập';/);
+  assert.match(app, /path="\/teaching\/classes\/:id\/grades"/);
+  assert.match(app, /path="\/teaching\/classes\/:id\/homework"/);
+  assert.match(classDetail, /ROUTES\.TEACHING_GRADES\(id\)/);
+  assert.match(classDetail, /ROUTES\.TEACHING_HOMEWORK\(id\)/);
+
+  // API surface mirrors the BE grades/homework controllers + quiz bridge paths.
+  assert.match(api, /"\/grades"/);
+  assert.match(api, /"\/grades\/report"/);
+  assert.match(api, /"\/grades\/me"/);
+  assert.match(api, /"\/grades\/ranking"/);
+  assert.match(api, /\/parent\/children\/\$\{studentId\}\/grades/);
+  assert.match(api, /"\/homework"/);
+  assert.match(api, /"\/me\/homework"/);
+  assert.match(api, /\/parent\/children\/\$\{studentId\}\/homework/);
+
+  // Query keys + mirrored types (testType union matches BE GradeTestType)
+  assert.match(query, /GRADE_REPORT: \(classId: string, subjectId: string, term\?: number\)/);
+  assert.match(
+    query,
+    /GRADE_RANKING: \(classId: string, subjectId\?: string, term\?: number\)/,
+  );
+  assert.match(query, /MY_HOMEWORK: \['me', 'homework'\]/);
+  assert.match(query, /CHILD_GRADES: \(studentId: number\)/);
+  assert.match(types, /export type GradeTestType = 'oral' \| '15min' \| '45min' \| 'final'/);
+  // Ranking contract: rows carry competition rank (null = chưa xếp hạng) and the
+  // peer count; SubjectGrades rows embed rank so students/parents see it too.
+  assert.match(types, /export interface GradeRanking \{/);
+  assert.match(types, /rank: number \| null;/);
+  assert.match(types, /rankedCount: number;/);
+  // Coefficients must match DEFAULT_COEFFICIENT in education_be (15p/miệng ×1, 45p/cuối ×2)
+  assert.match(meta, /'15min': 1/);
+  assert.match(meta, /'45min': 2/);
+  assert.match(meta, /final: 2/);
+
+  // Gradebook computes midterm/year server-side; homework picks Learning Hub targets.
+  assert.match(gradebook, /getGradeReport/);
+  assert.match(gradebook, /TB giữa kỳ/);
+  // Gradebook reuses subject/term pickers for the ranking panel (theo môn | toàn lớp).
+  assert.match(gradebook, /getClassRanking/);
+  assert.match(gradebook, /GRADE_RANKING/);
+  assert.match(gradebook, /Xếp hạng/);
+  assert.match(gradebook, /Toàn lớp/);
+  // Students and parents get an inline "Hạng X/N" chip per subject card.
+  assert.match(gradesPanel, /Hạng \{s\.rank\}\/\{s\.rankedCount\}/);
+  assert.match(homework, /getQuizzes/);
+  assert.match(homework, /getFlashcardDecks/);
+  assert.match(homework, /countsAsGrade/);
+
+  // Student sees Điểm + BTVN with a direct "Làm bài" CTA; parent gets both tabs too.
+  assert.match(mySchool, /getMyGrades/);
+  assert.match(mySchool, /getMyHomework/);
+  assert.match(mySchool, /Làm bài/);
+  assert.match(childPage, /getChildGrades/);
+  assert.match(childPage, /getChildHomework/);
+
+  // Principal dashboard shows the new school-wide quality stats.
+  assert.match(dashboard, /avgScore/);
+  assert.match(dashboard, /attendanceRate/);
 });
 
 test('education dashboard is learner-first instead of marketing-first', () => {
@@ -84,7 +234,7 @@ test('shared shell is education-first instead of stock-first', () => {
   assert.doesNotMatch(header, /portfolio|market|trading|watchlist/i);
   assert.match(layout, /if \(authPaths\.includes\(location\.pathname\)\) \{/);
   assert.doesNotMatch(layout, /if \(!isAuthenticated && authPaths\.includes\(location\.pathname\)\) \{/);
-  assert.match(navConfig, /label: 'Hôm nay',[\s\S]*to: '\/education',[\s\S]*matcher: \(\{ pathname, search \}\) => pathname === '\/education' && search !== '\?view=courses'/);
+  assert.match(navConfig, /label: 'Hôm nay',[\s\S]*to: '\/today'/);
   assert.match(navConfig, /label: 'Khóa học',[\s\S]*to: '\/education\?view=courses',[\s\S]*matcher: \(\{ pathname, search \}\) => pathname === '\/education' && search === '\?view=courses'/);
   assert.doesNotMatch(navConfig, /to: '\/education\/courses\/all'/);
   assert.match(sidebar, /item\.matcher\s*\?\s*item\.matcher\(\{ pathname: location\.pathname, search: location\.search \}\)\s*:\s*routeIsActive/);

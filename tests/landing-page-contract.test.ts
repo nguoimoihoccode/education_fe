@@ -49,14 +49,14 @@ test('landing hero does not depend on a remote video background', () => {
   assert.match(css, /\.landing-hero-bg/);
 });
 
-test('landing root uses app background token in CSS', () => {
+test('landing root uses the light landing background token in CSS', () => {
   const css = readSource('src/pages/landing/Landing.css');
-  assert.match(css, /\.landing-page-root\s*\{[^}]*background(?:-color)?:\s*var\(--app-bg\)/s);
+  assert.match(css, /\.landing-page-root\s*\{[^}]*background(?:-color)?:\s*var\(--lp-bg\)/s);
 });
 
-test('landing liquid-glass uses app surface or border tokens', () => {
+test('landing liquid-glass uses landing surface or border tokens', () => {
   const css = readSource('src/pages/landing/Landing.css');
-  assert.match(css, /\.liquid-glass\s*\{[\s\S]*?var\(--app-(?:surface|border|glass)/);
+  assert.match(css, /\.liquid-glass\s*\{[\s\S]*?var\(--lp-(?:surface|border)/);
 });
 
 test('landing hero ambient uses app primary/accent tokens', () => {
