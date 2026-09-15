@@ -97,7 +97,10 @@ jobs:
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
             export FRONTEND_IMAGE IMAGE_TAG
             docker compose -f docker-compose.prod.yml --env-file .env.prod pull frontend
-            docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans frontend
+            # --no-deps: the backend image tag in this compose file is the backend's own
+            # sha, which this job does not know. Without it compose resolves the backend
+            # image against our sha, finds no such manifest and aborts the frontend deploy.
+            docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans --no-deps frontend
 
             wait_healthy() {
               for _ in $(seq 1 30); do
@@ -117,7 +120,7 @@ jobs:
               echo "Health check failed. Rolling back to $previous_tag." >&2
               export IMAGE_TAG="$previous_tag"
               docker compose -f docker-compose.prod.yml --env-file .env.prod pull frontend
-              docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans frontend
+              docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --remove-orphans --no-deps frontend
               wait_healthy
               exit 1
             }
