@@ -4,273 +4,112 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Education Platform Frontend - A React TypeScript application for language learning and education. Features interactive courses, lessons, vocabulary learning with spaced repetition, exercises, progress tracking, and gamification with streaks and XP.
+React frontend for a **language-learning education platform** (Vietnamese product), backed by the NestJS API in `../education_be` (`VITE_API_URL`, default `http://localhost:3000`, no URL prefix). Features: course catalog & lessons, flashcards with spaced repetition, quizzes (incl. AI-generated), AI Tutor chat (server-side or BYOK), document→content import, daily learning plan / coach, streaks/XP/leaderboard, session management, PWA.
 
 ## Commands
 
 ```bash
-npm run dev      # Start Vite dev server (http://localhost:5173)
-npm run build    # TypeScript check + Vite production build
-npm run lint     # ESLint check
-npm run preview  # Preview production build
+npm run dev              # Vite dev server (http://localhost:5173)
+npm run build            # tsc -b && vite build
+npm run lint             # eslint .
+npm run test             # vitest (watch)
+npm run test:run         # vitest run
+npm run test:contracts   # node --test tests/*.test.ts (contract tests, no jsdom)
+npm run ci               # lint + test:run + test:contracts + build
+npm run preview          # preview production build
 ```
 
-## Architecture
+## Tech Stack
 
-### Tech Stack
-- **React 19** with TypeScript
-- **Vite 7** for build tooling
-- **Tailwind CSS 3** for styling (`tailwindcss ^3.4.19`)
-- **TanStack Query** for server state management
-- **Zustand** for client state (auth store)
-- **React Router DOM** for routing
-- **Axios** for API calls with token refresh interceptor
-- **React Hot Toast** for notifications
+- **React 19** + TypeScript, **Vite 7**, **React Router 7**
+- **Tailwind CSS 3** + custom CSS design tokens
+- **TanStack Query 5** (server state) + **Zustand 5** (client state)
+- **Axios** + `axios-cache-interceptor` (HTTP + client-side caching)
+- Charts: `recharts`, `@nivo/heatmap` (streak heatmap), `d3`; animation: `framer-motion`, `animejs`; icons: `lucide-react`; `react-markdown` (lesson/AI content), `react-hot-toast`
+- **PWA** via `vite-plugin-pwa` (`registerType: 'autoUpdate'`, workbox precache, CacheFirst for fonts/images; API responses are cached by axios/TanStack Query instead)
+- Path alias: `@/` → `./src/`
 
-### Path Alias
-`@/` maps to `./src/` (configured in vite.config.ts)
-
-### Directory Structure
+## Directory Structure
 
 ```
 src/
-├── api/           # API layer - one file per domain (client.ts has axios config)
-│   ├── client.ts              # Axios client with interceptors
-│   ├── auth.api.ts            # Authentication endpoints
-│   └── education.api.ts       # Education platform endpoints
-├── components/    # Reusable components organized by category
-│   ├── auth/      # ProtectedRoute
-│   ├── effects/   # NeonBackground, animations
-│   ├── layout/    # Layout wrapper
-│   └── ui/        # Button, Card, Badge, Input, SearchBar
-├── config/        # App configuration (query.ts has React Query setup + QUERY_KEYS)
-│   ├── query.ts               # React Query config and keys
-│   ├── routes.ts              # Routes configuration
-│   └── index.ts               # Config exports
-├── hooks/         # Custom hooks (useAuth, useResponsive)
-├── pages/         # Route components
-│   ├── LandingPage.tsx        # Home page
-│   ├── Login.tsx              # Login page
-│   ├── Register.tsx           # Register page
-│   ├── GoogleCallback.tsx     # Google OAuth callback
-│   ├── Education.tsx          # Education platform home
-│   ├── CourseDetail.tsx       # Course detail page
-│   └── LessonView.tsx         # Lesson viewer page
-├── store/         # Zustand stores (auth.store.ts)
-├── styles/        # CSS files (animations.css)
-├── types/         # TypeScript types organized by domain
-│   ├── common.types.ts        # Shared types
-│   ├── education.types.ts     # Education platform types
-│   └── api/                   # API types
-└── utils/         # Utility functions (formatters, validators, constants)
+├── api/          # One file per domain: auth, education, flashcard, quiz, ai, aiDirect, document, school
+│                 # + client.ts (axios instance), normalizers.ts (API response → view models),
+│                 # + path helpers (documentImportPaths, quizSessionQuestionsPath…), session-cleanup.ts
+├── components/   # ai/ auth/ document/ flashcard/ layout/ (Layout, Sidebar, Header) quiz/ school/ (TimetableGrid, MyTimetablePanel, StudentGradesPanel, timetable-meta, attendance-status, grades-meta) ui/ effects/
+├── config/       # routes.ts (ROUTES + ROUTE_TITLES), query.ts (queryClient + central QUERY_KEYS), index.ts
+├── hooks/        # useAuth, useResponsive, useRateLimit
+├── pages/        # Route components, lazy-loaded from App.tsx; subdirs: landing/ premium/ quiz/ user-profile/ principal/ teacher/ parent/ student/
+├── store/        # auth.store.ts, settings.store.ts, aiProvider.store.ts (BYOK config), quizOfflineAuth.ts
+├── styles/       # animations.css
+├── test/         # vitest setup.ts (jsdom)
+├── types/        # common.types.ts, education.types.ts, api/, models/
+└── utils/        # formatters, validators, constants (STORAGE_KEYS, PAGINATION, COLORS)
 ```
 
-### Key Patterns
+`__tests__/` at repo root is an empty placeholder tree (.gitkeep) — **do not** add tests there; colocate in `src/`.
 
-**API Layer**: Each domain has its own API file that uses the shared `apiClient` from `client.ts`. The client handles JWT token attachment and automatic refresh on 401 responses.
+## Routing (`src/App.tsx` + `src/config/routes.ts`)
 
-**State Management**:
-- Server state: TanStack Query with centralized `QUERY_KEYS` in `config/query.ts`
-- Auth state: Zustand with localStorage persistence (`auth.store.ts`)
+All pages are `React.lazy` + `Suspense`; everything sits in a shared `Layout` (Sidebar/Header). `ProtectedRoute` (from `components/auth`) guards authenticated routes; `/admin/sessions` is admin-only. Main routes:
 
-**Authentication**: `useAuth` hook wraps the Zustand store. `ProtectedRoute` component guards authenticated routes.
-
-**Styling**: Dark cyberpunk theme with neon colors. CSS variables defined in `index.css`. Use existing glass-card, btn-primary, stat-card classes. Tailwind for layout and spacing.
-
-### Environment Variables
-- `VITE_API_URL` - Backend API base URL (defaults to http://localhost:3000)
-- `VITE_GOOGLE_CLIENT_ID` - Google OAuth client ID (optional)
-
-### Backend Integration
-The frontend expects a NestJS backend at the API URL with endpoints for:
-- `/auth/*` - Authentication (login, register, refresh, Google OAuth)
-- `/education/*` - Courses, lessons, vocabulary, exercises, progress, streaks
-
-## API Layer Architecture
-
-### Client Configuration (`src/api/client.ts`)
-The `apiClient` is configured with two interceptors:
-1. **Request interceptor**: Automatically attaches JWT tokens from Zustand store or localStorage
-2. **Response interceptor**: Handles 401 errors by attempting token refresh, then retrying the original request
-
-### Education Platform API (`src/api/education.api.ts`)
-
-#### Public Endpoints
-- `getLanguages()` - Get all available languages
-- `getCourses(params)` - Get courses with optional filtering (languageId, level, pagination)
-- `getCourseById(id)` - Get course details
-- `getLanguageById(id)` - Get language details
-
-#### Protected Endpoints
-- `enrollCourse(courseId)` - Enroll in a course
-- `getMyCourses()` - Get user's enrolled courses
-- `getLessonsByCourse(courseId)` - Get all lessons in a course
-- `getLessonById(id)` - Get lesson details
-- `completeLesson(lessonId, data)` - Mark lesson as complete with time spent and exercise score
-- `getVocabularyByLesson(lessonId)` - Get vocabulary for a lesson
-- `getVocabularyToReview(limit)` - Get vocabulary due for review (spaced repetition)
-- `reviewVocabulary(vocabularyId, quality)` - Submit vocabulary review with quality rating
-- `getExercisesByLesson(lessonId)` - Get exercises for a lesson
-- `submitExercises(lessonId, answers)` - Submit exercise answers
-- `getUserProgress()` - Get overall user progress
-- `getUserStreak()` - Get user streak information
+| Route | Page | Notes |
+|---|---|---|
+| `/` | landing (`pages/landing/LandingPageNew`, `LandingPage`) | marketing |
+| `/login` `/register` `/auth/callback` | auth pages | Google OAuth callback |
+| `/forgot-password` | `ComingSoon` | **not implemented** |
+| `/education`, `/education/courses/:id`, `/education/lessons/:id` | catalog → course → lesson | lesson protected |
+| `/today` | Today | daily learning hub (from `education/today-plan`) |
+| `/learning-coach` | LearningCoach | AI coach summary (Vietnamese) |
+| `/flashcards`, `/flashcards/decks|review|stats`, `/flashcards/document-import` | flashcard suite | SRS review |
+| `/quiz`, `/quiz/stats`, `/quiz/history`, `/quiz/:id`, `/quiz/:id/session`, `/quiz/session/:id/result` | quiz suite (`pages/quiz/`) | incl. AI-generated quizzes |
+| `/ai-tutor` | AiTutor | server chat or BYOK |
+| `/profile`, `/scholar/:username` | UserProfile, ScholarProfile | public scholar profile |
+| `/premium` | PremiumUpgrade | **UI only — billing disabled** |
+| `/settings`, `/settings/sessions`, `/admin/sessions` | AdvancedSettings, SessionManagement, AdminSessions | |
+| `/data-logs` | DataExportLogs | exports + activity logs |
+| `/principal`, `/principal/classes`, `/principal/subjects`, `/principal/teachers` | `pages/principal/` | school admin (Phase 1 of `docs/SCHOOL_PLATFORM_PLAN.md`); routes use `<ProtectedRoute roles={['principal','admin']}>`, sidebar section "Quản trị trường" is role-gated via `NavItem.roles` |
+| `/teaching`, `/teaching/classes/:id` | `pages/teacher/` | GVCN hub (Phase 2): homeroom classes, roster, parent invites (generate code / approve / revoke); `roles={['teacher','principal','admin']}`, sidebar "Lớp của tôi". Class detail links to `/teaching/classes/:id/attendance` (Phase 3) and the Phase 4 pages below |
+| `/principal/timetable` | `pages/principal/TimetablePage` | Timetable builder (Phase 3): class picker, click empty cell → add slot (subject+teacher come from the class's teaching assignments), period-config editor; `roles={['principal','admin']}` |
+| `/teaching/timetable`, `/me/school` | `pages/teacher/MyTimetablePage`, `pages/student/MySchoolPage` | Read-only weekly grid from `GET /timetable/me` (`components/school/MyTimetablePanel`); staff roles vs `['student','admin']`. `MySchoolPage` (Phase 4) has tabs **Thời khoá biểu | Điểm | BTVN** — `GET /grades/me` (via shared `StudentGradesPanel`) + `GET /me/homework` with "Làm bài" CTA to `/quiz/:targetId`, overdue badges, "Đã làm" tick from the auto-grade join, pending-count badge on the tab |
+| `/teaching/classes/:id/grades` | `pages/teacher/GradebookPage` | Sổ điểm (Phase 4): subject picker = principal/admin all subjects vs teacher own assignments for the class, term picker (Cả năm/HK I/HK II), grid HS × loại điểm (miệng/15p/45p/cuối kỳ) with click-to-add/edit/delete grade modal (coefficient auto-hint from `components/school/grades-meta` DEFAULT_COEFFICIENT), TB giữa kỳ / cả năm tính server-side (`GET /grades/report`); bên dưới là panel **Xếp hạng** (`GET /grades/ranking`, toggle *Theo môn | Toàn lớp*, 🥇🥈🥉, đồng hạng kiểu 1-1-3, reuse đúng subject/term đang chọn; hạng toàn lớp chỉ GVCN/HQ/admin xem được — BE 404, FE hiện hint); `roles={['teacher','principal','admin']}`, linked from class detail |
+| `/teaching/classes/:id/homework` | `pages/teacher/HomeworkPage` | Giao BTVN (Phase 4): `POST /homework` picking an existing Learning Hub quiz/deck (`getQuizzes`/`getFlashcardDecks` `{items}`), datetime-local deadline → ISO, "Đầu điểm 15p" checkbox (quiz only — completing the quiz auto-creates a grade), list + delete ("thu hồi") for the class; `roles={['teacher','principal','admin']}` |
+| `/teaching/classes/:id/attendance` | `pages/teacher/ClassAttendancePage` | Quick attendance sheet (Phase 3): date + period → per-student Có mặt/Trễ/Vắng/Có phép + note + save, 30-day history |
+| `/parent`, `/parent/children/:studentId` | `pages/parent/` | parent portal (Phase 2): claim invite code + children list (pending/approved); child page has 5 tabs **Hồ sơ / Thời khoá biểu / Điểm danh / Điểm / BTVN** (Phase 3–4 reads via `/parent/children/:id/{timetable,attendance,grades,homework}`, approved links only — grades render through `StudentGradesPanel`, which now also shows a per-subject "🏅 Hạng X/N" chip (`rank`/`rankedCount` come from BE per subject×term, competition ranking with ties); homework is read-only; error copies the "chưa duyệt liên kết" pattern when the link is still pending); plain `ProtectedRoute` on purpose — a fresh parent account has no `parent` role until the claim succeeds, sidebar "Con của tôi" appears once `parent` is in roles |
+| `/onboarding`, `/dashboard-landing`, `/coming-soon`, `/unauthorized` | misc | |
 
 ## State Management
 
-### TanStack Query Configuration (`src/config/query.ts`)
-- Pre-configured `queryClient` with sensible defaults
-- Centralized `QUERY_KEYS` object for cache management
-- 5-minute stale time, 10-minute garbage collection time
-- Automatic retry on failure (1 attempt)
-
-### Zustand Store (`src/store/auth.store.ts`)
-Authentication state management with:
-- `accessToken`, `refreshToken`, `user` state
-- `isAuthenticated`, `isLoading`, `error` flags
-- `login`, `logout`, `register`, `setTokens`, `setUser` actions
-- localStorage persistence for backup
-
-### useAuth Hook (`src/hooks/useAuth.ts`)
-Convenience wrapper around the auth store that exports all state and actions.
-
-## Type System
-
-### Type Organization
-Types are organized by domain in `src/types/`:
-- `common.types.ts` - Shared types (ApiResponse, PaginatedResponse, ErrorResponse)
-- `education.types.ts` - Education platform types
-
-### Education Types (`src/types/education.types.ts`)
-
-#### Core Types
-- `Language` - Language information (id, code, name, flag, etc.)
-- `Course` - Course details with level, duration, pricing
-- `Lesson` - Lesson content with type, duration, order
-- `Vocabulary` - Vocabulary items with pronunciation, examples, difficulty
-- `Exercise` - Exercise questions with type, options, points
-
-#### Enums
-- `CourseLevel` - BEGINNER, ELEMENTARY, INTERMEDIATE, UPPER_INTERMEDIATE, ADVANCED
-- `LessonType` - VOCABULARY, GRAMMAR, READING, LISTENING, SPEAKING, PRACTICE, QUIZ
-- `ExerciseType` - MULTIPLE_CHOICE, FILL_BLANK, MATCHING, TRANSLATION, LISTENING, SPEAKING, ORDERING, TRUE_FALSE
-- `EnrollmentStatus` - ENROLLED, IN_PROGRESS, COMPLETED, PAUSED
-
-#### User Progress Types
-- `UserCourse` - User's enrollment in a course with progress tracking
-- `UserStreak` - Streak information (current, longest, total days, XP, level)
-- `UserProgress` - Overall progress summary
-- `ExerciseResult` - Result of a single exercise
-- `SubmitExercisesResult` - Complete exercise submission results
-
-#### API Response Types
-- `CoursesResponse` - Paginated courses response
-
-## Utility Functions
-
-### Formatters (`src/utils/formatters.ts`)
-- `formatCurrency()` - Format as VND
-- `formatNumber()` - Format with separators
-- `formatPercent()` - Format percentage
-- `formatCompactNumber()` - Format with K, M, B
-- `formatDate()` - Format dates
-- `formatRelativeTime()` - Relative time (e.g., "2 hours ago")
-
-### Validators (`src/utils/validators.ts`)
-- `isValidEmail()` - Email validation
-- `isValidPassword()` - Password strength
-- `isValidStockSymbol()` - Stock symbol format
-- `isPositiveNumber()` - Number validation
-- `isInRange()` - Range validation
-
-### Constants (`src/utils/constants.ts`)
-- `API_CONFIG` - API timeout and retry settings
-- `PAGINATION` - Page size options
-- `COLORS` - Color scheme constants
-- `STORAGE_KEYS` - LocalStorage key names
-
-## Custom Hooks
-
-### useAuth (`src/hooks/useAuth.ts`)
-Wraps the auth store for convenient access to authentication state and actions.
-
-### useResponsive (`src/hooks/useResponsive.ts`)
-Provides responsive design utilities.
-
-## Routing Configuration
-
-### Routes (`src/config/routes.ts`)
-Centralized route definitions with:
-- `ROUTES` object with all route paths
-- `ROUTE_TITLES` object with route titles
-- Dynamic route functions
-
-### Current Routes
-- `/` - Landing page
-- `/login` - Login page
-- `/register` - Register page
-- `/auth/callback` - Google OAuth callback
-- `/education` - Education platform home
-- `/education/courses/:id` - Course detail page
-- `/education/lessons/:id` - Lesson viewer (protected)
-
-## Development Commands
-
-```bash
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Run linting
-npm run lint
-
-# Preview production build
-npm run preview
-```
-
-## Key Components
-
-### API Layer (`src/api/`)
-- `client.ts` - Configures axios with interceptors for auth token management
-- `auth.api.ts` - Authentication endpoints
-- `education.api.ts` - Education platform endpoints
-
-### State Management
-- **Zustand**: Authentication state stored in `auth.store.ts` with localStorage persistence
-- **TanStack Query**: Server state management with automatic caching and refetching
-
-### UI Components
-- **Layout**: Modern fintech app design with glassmorphism effects
-- **Animations**: Cyberpunk-inspired animations (glitch effects, neon glow, floating animations)
-
-### Styling System
-- **Design System**: Custom CSS variables for colors, typography, and effects
-- **Animations**: Extensive animation library in `animations.css`
-- **Responsive**: Mobile-first design with appropriate fallbacks
-
-### Education Platform Features
-The education section features:
-- Interactive course catalog with filtering by language and level
-- Lesson viewing with progress tracking
-- Vocabulary learning with spaced repetition system
-- Interactive exercises with multiple types (multiple choice, fill blank, matching, etc.)
-- User progress tracking with streaks and XP
-- Gamification with levels and achievements
-- Animated transitions and glass morphism UI
-- Dark theme with violet/amber accent colors
+- **Server state**: TanStack Query — one `useQuery` per endpoint group, cache keys centralized in `QUERY_KEYS` (`config/query.ts`), 5 min staleTime. Invalidate via QUERY_KEYS after mutations.
+- **Auth**: Zustand `auth.store.ts` (tokens + user, localStorage-persisted backup); `useAuth` hook wraps it.
+- **AI BYOK**: `aiProvider.store.ts` persists user's own `apiKey/baseUrl/model/maxTokens/temperature` (defaults to Groq `llama-3.3-70b-versatile`); `api/aiDirect.api.ts` calls OpenAI-compatible `/chat/completions` straight from the browser, bypassing the backend.
+- `settings.store.ts` for app preferences; `useRateLimit` hook for client-side throttle feedback.
 
 ## Authentication Flow
 
-1. User logs in via `/auth/login` or Google OAuth
-2. Tokens stored in Zustand store and localStorage (backup)
-3. `apiClient` automatically attaches tokens to requests
-4. On 401 error, automatic token refresh attempted
-5. If refresh fails, user logged out and redirected to login
+1. Login via `/auth/login` or Google OAuth → tokens in Zustand (+ localStorage backup).
+2. `api/client.ts` request interceptor attaches access token; response interceptor refreshes on 401 and replays the request; on refresh failure → logout + redirect to login.
+3. `session-cleanup.ts` handles stale session storage on logout.
 
-## Performance Considerations
+## Styling
 
-- TanStack Query caching reduces API calls
-- Code splitting ready for optimization
-- Lazy loading for large components
-- Optimistic updates for better UX
+Dark theme via CSS custom properties in `index.css`: near-black background (`--app-bg: #000000`), **violet accent `#8b5cf6`**, glassmorphism surfaces (`--app-glass-bg`). Shared education styles in `pages/Education.css`. Prefer existing token vars and `glass-card`/`btn-primary`-style utility classes over new one-off colors. Note legacy `--stock-*` aliases still exist (see below).
+
+## Testing
+
+- **Unit/component**: 24 files colocated as `src/**/*.test.{ts,tsx}` — run by **vitest** with jsdom (`src/test/setup.ts`), Testing Library. Includes memory/perf-oriented tests (`AdvancedSettings.memory.test.tsx`, `useWebSocket.memory.test.tsx`).
+- **Contract**: 20 files in `tests/` — plain `node --test`, no DOM; they pin API paths, normalizers, offline-quiz behavior, landing/UI contracts, and even `nginx.conf` API proxying (`nginx-api-proxy.test.ts`). Update these when you change endpoint shapes.
+- CI script: `npm run ci`.
+
+## Backend Integration
+
+API domains: `/auth/*`, `/users/*`, `/education/*` (+`/today`, `/today-plan`, `/coach/summary`, `/learning-plan`, `/streak`, `/progress`, `/logs`, `/exports`), `/flashcards/*`, `/quizzes/*`, `/ai/*`, `/document-import/*`, `/education/leaderboard`, `/school/*` + `/school/classes/*` + `/school/teaching/*` + `/parent/*` + `/timetable/*` + `/attendance/*` + `/grades/*` + `/homework/*` + `/me/homework` (school platform — `api/school.api.ts`, types mirrored in `types/school.types.ts`; responses are plain entities/arrays, no pagination, so most endpoints skip normalizers). All request/response DTOs mirrored in `src/types/`. **Normalizers** in `api/normalizers.ts` convert raw API payloads into view models — keep API-layer changes and `tests/` contract updates in sync.
+
+## Notes / Known Legacy & Gaps
+
+- **Stock-app cleanup (done)**: the dead `useWebSocket.ts` hook (socket.io OHLC feed), `pages/Stock.css`, `isValidStockSymbol()`, the VND `formatCurrency` + `trade-*` color helpers, `hls.js`/`socket.io-client` deps, and root `backup_stockvn_*.dump` files have been removed. Register's ambient/glass styles were extracted into `pages/Register.css`. **Still present by design**: `--stock-*` CSS variables and `stock-*` classes (sidebar/glass/fade) in `index.css`, `styles/education-shell.css`, `styles/stock-redesign.css` — they are the app's live design system despite the legacy name; renaming them is an open refactor, treat the names as historical.
+- **Premium/billing is not wired**: `PremiumUpgrade.tsx` shows plans with a "Billing is not enabled yet" toast; there is no subscription/payment backend.
+- **Forgot password** routes to `ComingSoon`.
+- **AI chat is not streamed** anywhere (no SSE/`getReader`) — responses render only when complete.
+- Offline quiz demo mode: `store/quizOfflineAuth.ts` + `mocks/quizOffline.ts` (guarded by `shouldEnableQuizOfflineAuth`).
+- `nginx.conf` (prod serving + API proxy) and `API_DOCUMENTATION.md`, `PAGINATION_GUIDE.md` live in this folder for extra context.

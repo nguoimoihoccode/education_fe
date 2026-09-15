@@ -11,18 +11,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Format number as currency (VND)
- * @param value - Number to format
- * @returns Formatted currency string
- */
-export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-  }).format(value);
-}
-
-/**
  * Format number with compact notation (K, M, B)
  * @param value - Number to format
  * @returns Compact formatted string
@@ -32,49 +20,6 @@ export function formatCompactNumber(value: number): string {
     notation: 'compact',
     compactDisplay: 'short',
   }).format(value);
-}
-
-/**
- * Format percentage
- * @param value - Number to format as percentage
- * @param decimals - Number of decimal places (default: 2)
- * @returns Formatted percentage string
- */
-export function formatPercentage(value: number, decimals: number = 2): string {
-  return `${value >= 0 ? '+' : ''}${value.toFixed(decimals)}%`;
-}
-
-/**
- * Get color class based on value (for stock price changes)
- * @param value - Number value
- * @returns Tailwind color class
- */
-export function getColorClass(value: number): string {
-  if (value > 0) return 'text-trade-up';
-  if (value < 0) return 'text-trade-down';
-  return 'text-trade-neutral';
-}
-
-/**
- * Get background color class based on value
- * @param value - Number value
- * @returns Tailwind background color class
- */
-export function getBgColorClass(value: number): string {
-  if (value > 0) return 'bg-trade-up/10';
-  if (value < 0) return 'bg-trade-down/10';
-  return 'bg-trade-neutral/10';
-}
-
-/**
- * Get neon glow class based on value
- * @param value - Number value
- * @returns Tailwind shadow class
- */
-export function getGlowClass(value: number): string {
-  if (value > 0) return 'shadow-neon-green';
-  if (value < 0) return 'shadow-neon-red';
-  return 'shadow-neon-purple';
 }
 
 /**
@@ -162,17 +107,6 @@ export function sleep(ms: number): Promise<void> {
  */
 export function inRange(value: number, min: number, max: number): boolean {
   return value >= min && value <= max;
-}
-
-/**
- * Calculate percentage change
- * @param oldValue - Old value
- * @param newValue - New value
- * @returns Percentage change
- */
-export function percentageChange(oldValue: number, newValue: number): number {
-  if (oldValue === 0) return 0;
-  return ((newValue - oldValue) / oldValue) * 100;
 }
 
 /**

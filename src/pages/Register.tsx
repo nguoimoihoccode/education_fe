@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
 import { Lock, Mail, UserPlus, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import './Stock.css';
+import './Register.css';
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ export const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [localError, setLocalError] = useState('');
+  const [asParent, setAsParent] = useState(false);
 
   const checkStrength = (pass: string) => {
     let score = 0;
@@ -49,7 +50,8 @@ export const Register = () => {
     try {
       await register(email, password);
       toast.success('Tạo tài khoản thành công!');
-      navigate('/onboarding');
+      // Parents go straight to the invite-code screen (SCHOOL_PLATFORM_PLAN Phase 2)
+      navigate(asParent ? '/parent' : '/onboarding');
     } catch (err: unknown) {
       const msg = err && typeof err === 'object' && 'response' in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
@@ -60,15 +62,15 @@ export const Register = () => {
   };
 
   return (
-    <div className="stock-page-container flex items-center justify-center min-h-screen relative overflow-hidden">
+    <div className="register-page flex items-center justify-center min-h-screen relative overflow-hidden">
       {/* Ambient Background */}
-      <div className="stock-ambient-bg">
-        <div className="stock-orb stock-orb-1" style={{ width: '60vw', background: 'rgba(245, 158, 11, 0.2)' }}></div>
-        <div className="stock-orb stock-orb-2" style={{ width: '50vw', background: 'rgba(139, 92, 246, 0.2)' }}></div>
+      <div className="register-ambient">
+        <div className="register-orb register-orb--1" style={{ width: '60vw', background: 'rgba(245, 158, 11, 0.2)' }}></div>
+        <div className="register-orb register-orb--2" style={{ width: '50vw', background: 'rgba(139, 92, 246, 0.2)' }}></div>
       </div>
 
       <div className="w-full max-w-md p-6 relative z-10 fade-in-entry">
-        <div className="stock-glass-card p-8 shadow-2xl border-slate-700/30 bg-slate-900/60 backdrop-blur-xl">
+        <div className="register-glass-card p-8 shadow-2xl border-slate-700/30 bg-slate-900/60 backdrop-blur-xl">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-600 flex items-center justify-center shadow-lg shadow-primary-500/20">
@@ -151,6 +153,19 @@ export const Register = () => {
                 />
               </div>
             </div>
+
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={asParent}
+                onChange={e => setAsParent(e.target.checked)}
+                className="mt-0.5 w-5 h-5 rounded bg-slate-900/50 border-slate-700/50 accent-violet-500"
+              />
+              <span className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
+                Tôi là <span className="font-bold text-primary-400">phụ huynh</span>, muốn liên kết với con bằng mã mời
+                của giáo viên chủ nhiệm
+              </span>
+            </label>
 
             <button
               type="submit"

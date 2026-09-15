@@ -55,6 +55,24 @@ const PremiumUpgrade = lazy(() => import('@/pages/PremiumUpgrade'));
 const AdvancedSettings = lazy(() => import('@/pages/AdvancedSettings'));
 const SessionManagement = lazy(() => import('@/pages/SessionManagement'));
 const AdminSessions = lazy(() => import('@/pages/AdminSessions'));
+
+// School administration (principal area — Phase 1)
+const PrincipalDashboard = lazy(() => import('@/pages/principal/PrincipalDashboard'));
+const SubjectsPage = lazy(() => import('@/pages/principal/SubjectsPage'));
+const ClassesPage = lazy(() => import('@/pages/principal/ClassesPage'));
+const TeachersPage = lazy(() => import('@/pages/principal/TeachersPage'));
+// Teaching hub + parent portal (Phase 2)
+const TeacherClassesPage = lazy(() => import('@/pages/teacher/TeacherClassesPage'));
+const TeacherClassDetailPage = lazy(() => import('@/pages/teacher/TeacherClassDetailPage'));
+const ParentChildrenPage = lazy(() => import('@/pages/parent/ParentChildrenPage'));
+const ParentChildPage = lazy(() => import('@/pages/parent/ParentChildPage'));
+// Timetable + attendance (Phase 3)
+const TimetablePage = lazy(() => import('@/pages/principal/TimetablePage'));
+const MyTimetablePage = lazy(() => import('@/pages/teacher/MyTimetablePage'));
+const ClassAttendancePage = lazy(() => import('@/pages/teacher/ClassAttendancePage'));
+const MySchoolPage = lazy(() => import('@/pages/student/MySchoolPage'));
+const GradebookPage = lazy(() => import('@/pages/teacher/GradebookPage'));
+const HomeworkPage = lazy(() => import('@/pages/teacher/HomeworkPage'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
 const DataExportLogs = lazy(() => import('@/pages/DataExportLogs'));
 const ComingSoon = lazy(() => import('@/pages/ComingSoon'));
@@ -395,6 +413,125 @@ function App() {
                 element={
                   <ProtectedRoute roles={['admin']}>
                     <AdminSessions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/principal"
+                element={
+                  <ProtectedRoute roles={['principal', 'admin']}>
+                    <PrincipalDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/principal/subjects"
+                element={
+                  <ProtectedRoute roles={['principal', 'admin']}>
+                    <SubjectsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/principal/classes"
+                element={
+                  <ProtectedRoute roles={['principal', 'admin']}>
+                    <ClassesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/principal/teachers"
+                element={
+                  <ProtectedRoute roles={['principal', 'admin']}>
+                    <TeachersPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Timetable builder — Phase 3 (only principal/admin writes slots). */}
+              <Route
+                path="/principal/timetable"
+                element={
+                  <ProtectedRoute roles={['principal', 'admin']}>
+                    <TimetablePage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Teaching hub (GVCN) — Phase 2. Principal/admin may preview. */}
+              <Route
+                path="/teaching"
+                element={
+                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                    <TeacherClassesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teaching/classes/:id"
+                element={
+                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                    <TeacherClassDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* My weekly grid + quick attendance — Phase 3. */}
+              <Route
+                path="/teaching/timetable"
+                element={
+                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                    <MyTimetablePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teaching/classes/:id/attendance"
+                element={
+                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                    <ClassAttendancePage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Sổ điểm + giao BTVN theo lớp — Phase 4. */}
+              <Route
+                path="/teaching/classes/:id/grades"
+                element={
+                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                    <GradebookPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/teaching/classes/:id/homework"
+                element={
+                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                    <HomeworkPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Parent portal — plain ProtectedRoute: a fresh account claiming
+                  an invite code does not have the `parent` role yet. */}
+              <Route
+                path="/parent"
+                element={
+                  <ProtectedRoute>
+                    <ParentChildrenPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/parent/children/:studentId"
+                element={
+                  <ProtectedRoute>
+                    <ParentChildPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Student: own timetable + attendance summary — Phase 3. */}
+              <Route
+                path="/me/school"
+                element={
+                  <ProtectedRoute roles={['student', 'admin']}>
+                    <MySchoolPage />
                   </ProtectedRoute>
                 }
               />

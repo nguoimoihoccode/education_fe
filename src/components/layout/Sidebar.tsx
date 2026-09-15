@@ -1,6 +1,9 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { GraduationCap, ChevronLeft, ChevronRight, LogOut, User, X } from 'lucide-react';
 import { learningNavSections, type NavItem } from './navConfig';
+import { useAuthStore } from '@/store/auth.store';
+
+const NO_ROLES: string[] = [];
 
 /* ============================================
  * NavSection — renders a group of nav links
@@ -11,6 +14,13 @@ function NavSection({
   title: string; items: NavItem[]; isSidebarOpen: boolean; onLinkClick?: () => void;
 }) {
   const location = useLocation();
+  const userRoles = useAuthStore((state) => state.user?.roles ?? NO_ROLES);
+
+  // role-gated items (e.g. principal area) hide until the user matches
+  const visibleItems = items.filter(
+    (item) => !item.roles || item.roles.some((role) => userRoles.includes(role)),
+  );
+  if (visibleItems.length === 0) return null;
 
   return (
     <div className={`stock-sidebar-group ${!isSidebarOpen ? 'collapsed' : ''}`}>
@@ -20,7 +30,7 @@ function NavSection({
         </p>
       )}
       <div className="space-y-1">
-      {items.map((item) => (
+      {visibleItems.map((item) => (
         (() => {
           return (
             <NavLink

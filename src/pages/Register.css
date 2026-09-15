@@ -1,0 +1,50 @@
+/* Register page chrome — extracted from the legacy stock-app theme (Stock.css).
+   Only the rules Register actually uses; cyan financial colors replaced with
+   the platform's violet accent. */
+
+.register-page {
+  min-height: 100vh;
+  background-color: #020405;
+  color: #e2e8f0;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.register-ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.register-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+}
+
+.register-orb--1 {
+  top: -20%;
+  right: -10%;
+  height: 50vw;
+}
+
+.register-orb--2 {
+  bottom: -20%;
+  left: -10%;
+  height: 60vw;
+}
+
+.register-glass-card {
+  background-color: #0a0c10;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.register-glass-card:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.06);
+}

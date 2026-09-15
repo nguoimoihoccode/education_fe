@@ -1,16 +1,6 @@
 // Number and currency formatting utilities
 
 /**
- * Format number as currency (VND)
- */
-export const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-  }).format(value);
-};
-
-/**
  * Format number with thousands separator
  */
 export const formatNumber = (value: number, decimals: number = 0): string => {

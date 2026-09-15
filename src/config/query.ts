@@ -81,4 +81,43 @@ export const QUERY_KEYS = {
   WRONG_ANSWERS: (sessionId?: string) => {
     return ['quiz', 'wrong', sessionId ?? 'all'] as const;
   },
+  // School platform (principal) query keys
+  SCHOOL_ME: ['school', 'me'] as const,
+  SCHOOL_STATS: ['school', 'stats'] as const,
+  SCHOOL_TEACHERS: ['school', 'teachers'] as const,
+  SCHOOL_ACADEMIC_YEARS: ['school', 'academic-years'] as const,
+  SCHOOL_SUBJECTS: ['school', 'subjects'] as const,
+  SCHOOL_CLASSES: ['school', 'classes'] as const,
+  SCHOOL_ASSIGNMENTS: ['school', 'assignments'] as const,
+  CLASS_STUDENTS: (classId: string) => ['school', 'classes', classId, 'students'] as const,
+  // Teaching hub (GVCN — Phase 2)
+  TEACHER_CLASSES: ['school', 'teaching', 'classes'] as const,
+  TEACHER_CLASS_STUDENTS: (classId: string) =>
+    ['school', 'teaching', 'classes', classId, 'students'] as const,
+  CLASS_PARENTS: (classId: string) =>
+    ['school', 'teaching', 'classes', classId, 'parents'] as const,
+  // Parent portal (Phase 2)
+  PARENT_CHILDREN: ['parent', 'children'] as const,
+  PARENT_CHILD: (studentId: number) => ['parent', 'children', studentId] as const,
+  // Timetable (Phase 3)
+  TIMETABLE: (classId: string) => ['timetable', classId] as const,
+  MY_TIMETABLE: ['timetable', 'me'] as const,
+  // Attendance (Phase 3)
+  ATTENDANCE_SESSION: (classId: string, date: string, period: number) =>
+    ['attendance', 'session', classId, date, period] as const,
+  ATTENDANCE_HISTORY: (classId: string) => ['attendance', 'history', classId] as const,
+  CHILD_TIMETABLE: (studentId: number) => ['parent', 'children', studentId, 'timetable'] as const,
+  CHILD_ATTENDANCE: (studentId: number) => ['parent', 'children', studentId, 'attendance'] as const,
+  // Grades (Phase 4)
+  GRADES: ['grades'] as const,
+  GRADE_REPORT: (classId: string, subjectId: string, term?: number) =>
+    ['grades', 'report', classId, subjectId, term ?? 'all'] as const,
+  GRADE_RANKING: (classId: string, subjectId?: string, term?: number) =>
+    ['grades', 'ranking', classId, subjectId ?? 'all', term ?? 'all'] as const,
+  MY_GRADES: ['grades', 'me'] as const,
+  CHILD_GRADES: (studentId: number) => ['parent', 'children', studentId, 'grades'] as const,
+  // Homework (Phase 4)
+  HOMEWORK: ['homework'] as const,
+  MY_HOMEWORK: ['me', 'homework'] as const,
+  CHILD_HOMEWORK: (studentId: number) => ['parent', 'children', studentId, 'homework'] as const,
 } as const;

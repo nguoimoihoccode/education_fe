@@ -22,15 +22,6 @@ export const isValidPassword = (password: string): {
 };
 
 /**
- * Validate stock symbol
- */
-export const isValidStockSymbol = (symbol: string): boolean => {
-  // Vietnamese stock symbols are typically 3 uppercase letters
-  const symbolRegex = /^[A-Z]{3}$/;
-  return symbolRegex.test(symbol);
-};
-
-/**
  * Validate positive number
  */
 export const isPositiveNumber = (value: number): boolean => {

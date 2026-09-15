@@ -26,6 +26,27 @@ export const ROUTES = {
   QUIZ_SESSION: (quizId: string) => `/quiz/${quizId}/session`,
   QUIZ_RESULT: (sessionId: string) => `/quiz/session/${sessionId}/result`,
 
+  // School administration (principal area — docs/SCHOOL_PLATFORM_PLAN.md Phase 1)
+  PRINCIPAL: '/principal',
+  PRINCIPAL_SUBJECTS: '/principal/subjects',
+  PRINCIPAL_CLASSES: '/principal/classes',
+  PRINCIPAL_TEACHERS: '/principal/teachers',
+  PRINCIPAL_TIMETABLE: '/principal/timetable',
+
+  // Teaching hub (GVCN) + parent portal — SCHOOL_PLATFORM_PLAN.md Phase 2–3
+  TEACHING: '/teaching',
+  TEACHING_CLASS: (id: string) => `/teaching/classes/${id}`,
+  TEACHING_TIMETABLE: '/teaching/timetable',
+  TEACHING_ATTENDANCE: (id: string) => `/teaching/classes/${id}/attendance`,
+  // Sổ điểm + giao BTVN theo lớp (Phase 4)
+  TEACHING_GRADES: (id: string) => `/teaching/classes/${id}/grades`,
+  TEACHING_HOMEWORK: (id: string) => `/teaching/classes/${id}/homework`,
+  PARENT: '/parent',
+  PARENT_CHILD: (id: number | string) => `/parent/children/${id}`,
+
+  // Student school view (own timetable — Phase 3)
+  ME_SCHOOL: '/me/school',
+
   // Social, account, and utilities
   PROFILE: '/profile',
   AI_TUTOR: '/ai-tutor',
@@ -65,6 +86,15 @@ export const ROUTE_TITLES: Record<string, string> = {
   [ROUTES.SETTINGS]: 'Cài đặt',
   [ROUTES.SESSIONS]: 'Phiên đăng nhập',
   [ROUTES.ADMIN_SESSIONS]: 'Quản lý phiên đăng nhập',
+  [ROUTES.PRINCIPAL]: 'Tổng quan trường',
+  [ROUTES.PRINCIPAL_SUBJECTS]: 'Môn học',
+  [ROUTES.PRINCIPAL_CLASSES]: 'Lớp học',
+  [ROUTES.PRINCIPAL_TEACHERS]: 'Giáo viên',
+  [ROUTES.PRINCIPAL_TIMETABLE]: 'Thời khoá biểu',
+  [ROUTES.TEACHING]: 'Lớp chủ nhiệm',
+  [ROUTES.TEACHING_TIMETABLE]: 'TKK của tôi',
+  [ROUTES.PARENT]: 'Con của tôi',
+  [ROUTES.ME_SCHOOL]: 'Trường của tôi',
   [ROUTES.DATA_LOGS]: 'Data Logs',
   [ROUTES.ONBOARDING]: 'Onboarding',
   [ROUTES.COMING_SOON]: 'Coming Soon',
@@ -94,6 +124,18 @@ export function getRouteTitle(pathname: string): string | undefined {
   }
   if (/^\/scholar\/[^/]+$/.test(pathname)) {
     return 'Hồ sơ học giả';
+  }
+  if (/^\/teaching\/classes\/[^/]+$/.test(pathname)) {
+    return 'Chi tiết lớp chủ nhiệm';
+  }
+  if (/^\/teaching\/classes\/[^/]+\/grades$/.test(pathname)) {
+    return 'Sổ điểm';
+  }
+  if (/^\/teaching\/classes\/[^/]+\/homework$/.test(pathname)) {
+    return 'Giao bài tập';
+  }
+  if (/^\/parent\/children\/[^/]+$/.test(pathname)) {
+    return 'Hồ sơ con';
   }
 
   return undefined;
