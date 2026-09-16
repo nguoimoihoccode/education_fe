@@ -12,11 +12,14 @@ test('root route uses the education-only landing page', () => {
   const app = readSource('src/App.tsx');
   const legacyLanding = readSource('src/pages/LandingPage.tsx');
   const layout = readSource('src/components/layout/Layout.tsx');
+  const routes = readSource('src/config/routes.ts');
 
   assert.match(app, /path="\/"\s+element=\{<LandingPageNew \/>\}/);
   assert.doesNotMatch(app, /path="\/"\s+element=\{<LandingPage \/>\}/);
   assert.doesNotMatch(legacyLanding, /StockPro|Nexus|Markets|portfolio|VN30|backtesting/i);
-  assert.match(layout, /noLayoutPaths = \['\/', '\/dashboard-landing'\]/);
+  // The shell is skipped on the landing route and /dashboard-landing.
+  assert.match(layout, /noLayoutPaths(?::\s*string\[\])?\s*=\s*\[ROUTES\.HOME,\s*ROUTES\.DASHBOARD_LANDING\]/);
+  assert.match(routes, /HOME: '\/',/);
 });
 
 test('landing mobile navigation exposes a working menu', () => {

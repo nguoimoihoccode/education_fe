@@ -26,13 +26,20 @@ export const Layout = ({ children }: LayoutProps) => {
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [isNotificationsOpen, setNotificationsOpen] = useState(false);
 
-  // Skip layout for auth pages and standalone pages
-  const authPaths = ['/login', '/register', '/auth/callback'];
-  const noLayoutPaths = ['/', '/dashboard-landing'];
-  if (authPaths.includes(location.pathname)) {
-    return <>{children}</>;
-  }
-  if (noLayoutPaths.includes(location.pathname)) {
+  // Skip layout for auth pages and standalone pages.
+  // location.pathname is raw, while React Router matches paths case-insensitively
+  // and ignores a trailing slash: "/Login/" resolves to the "/login" route but a
+  // bare includes() misses it, so the page gets wrapped in the app shell
+  // (sidebar + header) instead of rendering standalone -- which looks like a
+  // second, different login page. Normalize before comparing.
+  const normalizePath = (path: string) => {
+    const trimmed = path.replace(/\/+$/, '').toLowerCase();
+    return trimmed === '' ? '/' : trimmed;
+  };
+  const currentPath = normalizePath(location.pathname);
+  const authPaths: string[] = [ROUTES.LOGIN, ROUTES.REGISTER, ROUTES.AUTH_CALLBACK];
+  const noLayoutPaths: string[] = [ROUTES.HOME, ROUTES.DASHBOARD_LANDING];
+  if (authPaths.includes(currentPath) || noLayoutPaths.includes(currentPath)) {
     return <>{children}</>;
   }
 

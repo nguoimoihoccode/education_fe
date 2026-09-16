@@ -232,7 +232,11 @@ test('shared shell is education-first instead of stock-first', () => {
   assert.doesNotMatch(layout, /stock-redesign\.css/);
   assert.match(navConfig, /Hôm nay|Khóa học|Flashcards|Quiz|Tài liệu|Tiến độ/);
   assert.doesNotMatch(header, /portfolio|market|trading|watchlist/i);
-  assert.match(layout, /if \(authPaths\.includes\(location\.pathname\)\) \{/);
+  // Auth pages bypass the shell. The comparison must run on a normalized path,
+  // because React Router resolves "/Login/" to path="/login" but a raw
+  // location.pathname comparison would not match it.
+  assert.match(layout, /const currentPath = normalizePath\(location\.pathname\)/);
+  assert.match(layout, /if \(authPaths\.includes\(currentPath\) \|\| noLayoutPaths\.includes\(currentPath\)\) \{/);
   assert.doesNotMatch(layout, /if \(!isAuthenticated && authPaths\.includes\(location\.pathname\)\) \{/);
   assert.match(navConfig, /label: 'Hôm nay',[\s\S]*to: '\/today'/);
   assert.match(navConfig, /label: 'Khóa học',[\s\S]*to: '\/education\?view=courses',[\s\S]*matcher: \(\{ pathname, search \}\) => pathname === '\/education' && search === '\?view=courses'/);
