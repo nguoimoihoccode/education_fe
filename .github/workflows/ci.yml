@@ -2,11 +2,14 @@ name: CI
 
 on:
   workflow_call:
+  # phuc_v2026 is the branch everything merges into and the only one that
+  # deploys, so a PR targeting it must be checked like any other.
   pull_request:
     branches:
       - main
       - master
       - develop
+      - phuc_v2026
   push:
     branches:
       - main
