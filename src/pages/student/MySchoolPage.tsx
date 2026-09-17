@@ -6,6 +6,7 @@ import {
   GraduationCap, Loader2, Sparkles, Layers,
 } from 'lucide-react';
 import MyTimetablePanel from '@/components/school/MyTimetablePanel';
+import NoSchoolNotice from '@/components/school/NoSchoolNotice';
 import StudentGradesPanel from '@/components/school/StudentGradesPanel';
 import { getMyGrades, getMyHomework } from '@/api/school.api';
 import { QUERY_KEYS } from '@/config/query';
@@ -102,13 +103,8 @@ export default function MySchoolPage() {
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
             )}
-            {gradesQuery.isError && (
-              <div className="rounded-3xl border border-dashed border-white/10 p-10 text-center">
-                <p className="text-sm font-medium text-slate-500">
-                  Không tải được sổ điểm của bạn.
-                </p>
-              </div>
-            )}
+            {/* GET /grades/me 404s only when resolveSchoolIdForUser finds no school */}
+            {gradesQuery.isError && <NoSchoolNotice />}
             {gradesQuery.data && <StudentGradesPanel subjects={gradesQuery.data.subjects} />}
           </div>
         )}
@@ -121,9 +117,11 @@ export default function MySchoolPage() {
               </div>
             )}
             {homeworkQuery.isError && (
-              <div className="rounded-3xl border border-dashed border-white/10 p-10 text-center">
-                <p className="text-sm font-medium text-slate-500">Không tải được bài tập về nhà.</p>
-              </div>
+              <NoSchoolNotice
+                title="Không tải được bài tập về nhà"
+                description="Có lỗi khi tải danh sách bài tập. Thử tải lại trang."
+                icon={<BookOpenCheck className="mx-auto h-8 w-8 text-slate-700" aria-hidden="true" />}
+              />
             )}
             {homeworkQuery.data && (
               <HomeworkRows

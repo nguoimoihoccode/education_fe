@@ -36,15 +36,20 @@ test('phase 2 teaching hub and parent portal are role-aware', () => {
   const api = readSource('src/api/school.api.ts');
   const app = readSource('src/App.tsx');
 
-  // GVCN hub is guarded (teacher + school admins); the parent portal is
-  // intentionally open to any authenticated user until the invite is claimed
+  // The GVCN hub and the parent portal are deliberately NOT role-gated: reads
+  // are open to any signed-in user and the server scopes them per relationship,
+  // so a caller with no school sees an empty notice instead of a hidden menu.
+  // The write affordances are gated client-side instead (see the test below).
   assert.match(navConfig, /title: 'Lớp của tôi'/);
-  assert.match(navConfig, /to: '\/teaching', roles: \['teacher', 'principal', 'admin'\]/);
+  assert.match(navConfig, /to: '\/teaching' \}/);
+  assert.doesNotMatch(navConfig, /to: '\/teaching', roles/);
   assert.match(navConfig, /title: 'Con của tôi'/);
-  assert.match(navConfig, /to: '\/parent', roles: \['parent', 'admin'\]/);
+  assert.match(navConfig, /to: '\/parent' \}/);
+  assert.doesNotMatch(navConfig, /to: '\/parent', roles/);
   assert.match(routes, /TEACHING_CLASS: \(id: string\) => `\/teaching\/classes\/\$\{id\}`/);
   assert.match(routes, /PARENT_CHILD: \(id: number \| string\) => `\/parent\/children\/\$\{id\}`/);
-  assert.match(app, /roles=\{\['teacher', 'principal', 'admin'\]\}/);
+  assert.doesNotMatch(app, /roles=\{\['teacher', 'principal', 'admin'\]\}/);
+  assert.match(app, /path="\/teaching"\s*\n\s*element=\{\s*\n\s*<ProtectedRoute>/);
   assert.match(
     app,
     /path="\/parent\/children\/:studentId"\s*\n\s*element=\{\s*\n\s*<ProtectedRoute>/,
@@ -65,15 +70,18 @@ test('phase 3 timetable builder and attendance are wired end-to-end', () => {
   const types = readSource('src/types/school.types.ts');
   const grid = readSource('src/components/school/timetable-meta.ts');
 
-  // Routes + guards: only school admins build the timetable; teachers see
-  // their own grid + attendance sheets; students get a read-only view.
+  // Routes + guards: only school admins build the timetable; everyone signed in
+  // reads their own grid (teachers their slots, students their class) and the
+  // attendance sheet stays relationship-scoped on the BE.
   assert.match(navConfig, /to: '\/principal\/timetable', roles: \['principal', 'admin'\]/);
-  assert.match(navConfig, /to: '\/teaching\/timetable', roles: \['teacher', 'principal', 'admin'\]/);
-  assert.match(navConfig, /to: '\/me\/school', roles: \['student', 'admin'\]/);
+  assert.match(navConfig, /to: '\/teaching\/timetable' \}/);
+  assert.doesNotMatch(navConfig, /to: '\/teaching\/timetable', roles/);
+  assert.match(navConfig, /to: '\/me\/school' \}/);
+  assert.doesNotMatch(navConfig, /to: '\/me\/school', roles/);
   assert.match(routes, /TEACHING_ATTENDANCE: \(id: string\) => `\/teaching\/classes\/\$\{id\}\/attendance`/);
   assert.match(app, /path="\/principal\/timetable"/);
   assert.match(app, /path="\/teaching\/classes\/:id\/attendance"/);
-  assert.match(app, /path="\/me\/school"\s*\n\s*element=\{\s*\n\s*<ProtectedRoute roles=\{\['student', 'admin'\]\}>/);
+  assert.match(app, /path="\/me\/school"\s*\n\s*element=\{\s*\n\s*<ProtectedRoute>/);
 
   // API + query keys mirror the BE timetable/attendance controllers
   assert.match(api, /apiClient\.get\(\s*"\/timetable",\s*\{\s*params: \{ classId \}/);
@@ -290,4 +298,41 @@ test('core quiz flow is localized for learners', () => {
   assert.match(quizStats, /Thống kê quiz|Theo dõi kết quả và tiến độ của bạn|Lịch sử điểm số|Lần làm bài gần đây|Bạn chưa làm quiz nào|Bắt đầu quiz đầu tiên|Chủ đề|Ngày|Điểm|Kết quả|Thời gian/);
   assert.doesNotMatch(quizCard, /label: 'Easy'|label: 'Medium'|label: 'Hard'|label: 'Mixed'|return 'Multiple Choice'|return 'Fill Blank'|>Questions<|>Time<|>Pass<|\? 'Public' : 'Private'|>Start</);
   assert.match(quizCard, /'Dễ'|'Trung bình'|'Khó'|'Tổng hợp'|'Trắc nghiệm'|'Điền vào chỗ trống'|'Câu hỏi'|'Thời gian'|'Đạt'|'Công khai'|'Riêng tư'|'Bắt đầu'/);
+});
+
+test('school reads are open to any signed-in user while writes stay staff-only', () => {
+  const app = readSource('src/App.tsx');
+  const navConfig = readSource('src/components/layout/navConfig.tsx');
+  const hook = readSource('src/hooks/useCanWriteSchool.ts');
+  const notice = readSource('src/components/school/NoSchoolNotice.tsx');
+  const mySchool = readSource('src/pages/student/MySchoolPage.tsx');
+  const gradebook = readSource('src/pages/teacher/GradebookPage.tsx');
+  const homework = readSource('src/pages/teacher/HomeworkPage.tsx');
+  const classDetail = readSource('src/pages/teacher/TeacherClassDetailPage.tsx');
+
+  // No relationship-scoped route keeps a role list: the BE confines those reads
+  // (and 404s a denial), and a caller with no school gets an empty notice rather
+  // than a hidden menu. The school-wide /principal routes keep theirs, because
+  // their reads have no per-object check -- GET /school/classes/:id/students
+  // returns every student's email.
+  assert.doesNotMatch(app, /roles=\{\['teacher', 'principal', 'admin'\]\}/);
+  assert.doesNotMatch(app, /roles=\{\['student', 'admin'\]\}/);
+  assert.match(app, /roles=\{\['principal', 'admin'\]\}/);
+  assert.match(navConfig, /to: '\/principal\/classes', roles: \['principal', 'admin'\]/);
+
+  // Writes mirror the BE @Roles(TEACHER, ...SCHOOL_ADMIN_ROLES) — hidden only so
+  // the button cannot 404, never as the access decision itself.
+  assert.match(hook, /SCHOOL_WRITE_ROLES = \['teacher', 'principal', 'admin'\]/);
+  for (const page of [gradebook, homework, classDetail]) {
+    assert.match(page, /useCanWriteSchool\(\)/);
+  }
+  // ClassAttendancePage has no gate on purpose: reading the sheet and saving it
+  // run the same assertManageAccess, so any viewer is already a writer.
+  assert.match(
+    readSource('src/pages/teacher/ClassAttendancePage.tsx'),
+    /No client-side write gate on this page/,
+  );
+
+  assert.match(notice, /Bạn chưa thuộc trường nào/);
+  assert.match(mySchool, /NoSchoolNotice/);
 });

@@ -24,6 +24,7 @@ import {
 import { QUERY_KEYS } from '@/config/query';
 import { ROUTES } from '@/config/routes';
 import { useAuthStore } from '@/store/auth.store';
+import { useCanWriteSchool } from '@/hooks/useCanWriteSchool';
 import type {
   CreateGradeInput,
   GradeEntryView,
@@ -64,6 +65,9 @@ export default function GradebookPage() {
   const { id = '' } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
   const userRoles = useAuthStore((state) => state.user?.roles ?? []);
+  // Reads are open to everyone; POST/PATCH/DELETE /grades and the ranking panel
+  // stay staff-only on the BE, so hide those affordances from a read-only visitor.
+  const canWrite = useCanWriteSchool();
   const isSchoolAdmin = useMemo(
     () => userRoles.includes('principal') || userRoles.includes('admin'),
     [userRoles],
@@ -353,28 +357,46 @@ export default function GradebookPage() {
                       return (
                         <td key={t} className="px-3 py-3 align-top">
                           <div className="flex flex-wrap gap-1.5">
-                            {entries.map((e) => (
+                            {entries.map((e) => {
+                              const title = `${e.date} · hệ số ${e.coefficient}${
+                                e.homeworkId ? ' · tự sinh từ BTVN' : ''
+                              }`;
+                              const tone = `rounded-lg border px-2 py-0.5 text-xs font-black ${TEST_TYPE_TONES[t]}`;
+                              // A read-only visitor (student, parent) may open this
+                              // grid -- GET /grades narrows them to their own rows --
+                              // but POST/PATCH/DELETE /grades stay TEACHER+ on the
+                              // BE, so the chips are inert for them.
+                              if (!canWrite) {
+                                return (
+                                  <span key={e.id} title={title} className={tone}>
+                                    {e.homeworkId && <span className="mr-0.5">⚡</span>}
+                                    {e.score}
+                                  </span>
+                                );
+                              }
+                              return (
+                                <button
+                                  key={e.id}
+                                  type="button"
+                                  onClick={() => openEdit(row, e)}
+                                  title={title}
+                                  className={`${tone} transition-transform hover:scale-105`}
+                                >
+                                  {e.homeworkId && <span className="mr-0.5">⚡</span>}
+                                  {e.score}
+                                </button>
+                              );
+                            })}
+                            {canWrite && (
                               <button
-                                key={e.id}
                                 type="button"
-                                onClick={() => openEdit(row, e)}
-                                title={`${e.date} · hệ số ${e.coefficient}${
-                                  e.homeworkId ? ' · tự sinh từ BTVN' : ''
-                                }`}
-                                className={`rounded-lg border px-2 py-0.5 text-xs font-black transition-transform hover:scale-105 ${TEST_TYPE_TONES[t]}`}
+                                onClick={() => openAdd(row, t)}
+                                aria-label={`Thêm điểm ${TEST_TYPE_LABELS[t]} cho ${row.studentName || row.studentId}`}
+                                className="rounded-lg border border-dashed border-white/15 p-0.5 text-slate-600 transition-colors hover:border-accent-400/50 hover:text-accent-300"
                               >
-                                {e.homeworkId && <span className="mr-0.5">⚡</span>}
-                                {e.score}
+                                <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                               </button>
-                            ))}
-                            <button
-                              type="button"
-                              onClick={() => openAdd(row, t)}
-                              aria-label={`Thêm điểm ${TEST_TYPE_LABELS[t]} cho ${row.studentName || row.studentId}`}
-                              className="rounded-lg border border-dashed border-white/15 p-0.5 text-slate-600 transition-colors hover:border-accent-400/50 hover:text-accent-300"
-                            >
-                              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-                            </button>
+                            )}
                           </div>
                           {row.byType[t] != null && (
                             <p className="mt-1 text-[11px] font-bold text-slate-600">

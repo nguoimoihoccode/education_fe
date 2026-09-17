@@ -457,11 +457,13 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              {/* Teaching hub (GVCN) — Phase 2. Principal/admin may preview. */}
+              {/* Teaching hub (GVCN) — Phase 2. Open to any signed-in user: the
+                  pages scope to "my classes" and the server confines every
+                  read per class, so a non-GVCN gets an empty notice. */}
               <Route
                 path="/teaching"
                 element={
-                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                  <ProtectedRoute>
                     <TeacherClassesPage />
                   </ProtectedRoute>
                 }
@@ -469,7 +471,7 @@ function App() {
               <Route
                 path="/teaching/classes/:id"
                 element={
-                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                  <ProtectedRoute>
                     <TeacherClassDetailPage />
                   </ProtectedRoute>
                 }
@@ -478,7 +480,7 @@ function App() {
               <Route
                 path="/teaching/timetable"
                 element={
-                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                  <ProtectedRoute>
                     <MyTimetablePage />
                   </ProtectedRoute>
                 }
@@ -486,7 +488,7 @@ function App() {
               <Route
                 path="/teaching/classes/:id/attendance"
                 element={
-                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                  <ProtectedRoute>
                     <ClassAttendancePage />
                   </ProtectedRoute>
                 }
@@ -495,7 +497,7 @@ function App() {
               <Route
                 path="/teaching/classes/:id/grades"
                 element={
-                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                  <ProtectedRoute>
                     <GradebookPage />
                   </ProtectedRoute>
                 }
@@ -503,7 +505,7 @@ function App() {
               <Route
                 path="/teaching/classes/:id/homework"
                 element={
-                  <ProtectedRoute roles={['teacher', 'principal', 'admin']}>
+                  <ProtectedRoute>
                     <HomeworkPage />
                   </ProtectedRoute>
                 }
@@ -530,7 +532,7 @@ function App() {
               <Route
                 path="/me/school"
                 element={
-                  <ProtectedRoute roles={['student', 'admin']}>
+                  <ProtectedRoute>
                     <MySchoolPage />
                   </ProtectedRoute>
                 }

@@ -11,7 +11,12 @@ export interface NavItem {
   to: string;
   badge?: number;
   matcher?: (location: { pathname: string; search: string }) => boolean;
-  /** When set, the item renders only if the signed-in user has one of these roles. */
+  /**
+   * When set, the item renders only if the signed-in user has one of these roles.
+   * School items deliberately leave this off: they are relationship-scoped and
+   * the pages themselves show an empty notice to a caller with no school, so
+   * hiding the menu would only make the section undiscoverable.
+   */
   roles?: string[];
 }
 
@@ -62,22 +67,25 @@ export const learningNavSections: NavSection[] = [
     ],
   },
   {
+    // No roles: these are relationship-scoped, so the pages are open to any
+    // signed-in user and the server decides what each one actually sees. A
+    // caller with no school gets an empty notice rather than a hidden menu.
     title: 'Lớp của tôi',
     items: [
-      { icon: <Presentation size={20} />, label: 'Lớp chủ nhiệm', to: '/teaching', roles: ['teacher', 'principal', 'admin'] },
-      { icon: <CalendarDays size={20} />, label: 'TKK của tôi', to: '/teaching/timetable', roles: ['teacher', 'principal', 'admin'] },
+      { icon: <Presentation size={20} />, label: 'Lớp chủ nhiệm', to: '/teaching' },
+      { icon: <CalendarDays size={20} />, label: 'TKK của tôi', to: '/teaching/timetable' },
     ],
   },
   {
     title: 'Trường của tôi',
     items: [
-      { icon: <CalendarDays size={20} />, label: 'TKK của tôi', to: '/me/school', roles: ['student', 'admin'] },
+      { icon: <CalendarDays size={20} />, label: 'TKK của tôi', to: '/me/school' },
     ],
   },
   {
     title: 'Con của tôi',
     items: [
-      { icon: <Baby size={20} />, label: 'Hồ sơ con', to: '/parent', roles: ['parent', 'admin'] },
+      { icon: <Baby size={20} />, label: 'Hồ sơ con', to: '/parent' },
     ],
   },
 ];

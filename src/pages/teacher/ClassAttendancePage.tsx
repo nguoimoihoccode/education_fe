@@ -61,6 +61,10 @@ interface DraftEntry {
 export default function ClassAttendancePage() {
   const { id = '' } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
+  // No client-side write gate on this page, unlike the gradebook/homework pages:
+  // `AttendanceService.assertManageAccess` is the same check for reading the sheet
+  // and for taking attendance (GVCN ∥ assigned teacher ∥ principal ∥ ADMIN, denial
+  // = 404), so whoever gets past the isError branch below can also save it.
   const [date, setDate] = useState(() => localDate());
   const [periodNumber, setPeriodNumber] = useState(1);
   const [draft, setDraft] = useState<Record<number, DraftEntry>>({});

@@ -16,6 +16,8 @@ import {
 } from '@/api/school.api';
 import { QUERY_KEYS } from '@/config/query';
 import { ROUTES } from '@/config/routes';
+import NoSchoolNotice from '@/components/school/NoSchoolNotice';
+import { useCanWriteSchool } from '@/hooks/useCanWriteSchool';
 import type {
   ClassParentRow,
   InviteParentDto,
@@ -52,6 +54,9 @@ interface InviteForm {
 export default function TeacherClassDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
+  // Read-open route: a non-GVCN can land here, and `assertClassAccess` 404s their
+  // roster/parents reads. Inviting a parent is a write, so it stays staff-only.
+  const canWrite = useCanWriteSchool();
   const [tab, setTab] = useState<'students' | 'parents'>('students');
   const [invite, setInvite] = useState<InviteForm | null>(null);
   const [form, setForm] = useState<InviteParentDto>({
@@ -188,6 +193,13 @@ export default function TeacherClassDetailPage() {
               <div className="flex justify-center py-16 text-slate-500">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
+            ) : rosterQuery.isError ? (
+              <div className="p-5">
+                <NoSchoolNotice
+                  title="Không xem được lớp này"
+                  description="Danh sách học sinh chỉ dành cho GVCN của lớp, hiệu trưởng hoặc quản trị."
+                />
+              </div>
             ) : (rosterQuery.data ?? []).length === 0 ? (
               <p className="p-10 text-center text-sm font-medium text-slate-500">
                 Lớp chưa có học sinh nào.
@@ -233,13 +245,15 @@ export default function TeacherClassDetailPage() {
                           )}
                         </td>
                         <td className="px-5 py-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => openInvite(row)}
-                            className="inline-flex items-center gap-1.5 rounded-xl border border-accent-400/30 px-3 py-1.5 text-xs font-black text-accent-200 transition-colors hover:bg-accent-400/10"
-                          >
-                            <UserPlus className="h-3.5 w-3.5" aria-hidden="true" /> Mời phụ huynh
-                          </button>
+                          {canWrite && (
+                            <button
+                              type="button"
+                              onClick={() => openInvite(row)}
+                              className="inline-flex items-center gap-1.5 rounded-xl border border-accent-400/30 px-3 py-1.5 text-xs font-black text-accent-200 transition-colors hover:bg-accent-400/10"
+                            >
+                              <UserPlus className="h-3.5 w-3.5" aria-hidden="true" /> Mời phụ huynh
+                            </button>
+                          )}
                         </td>
                       </tr>
                     );
@@ -291,9 +305,18 @@ export default function TeacherClassDetailPage() {
               <div className="flex justify-center py-16 text-slate-500">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
+            ) : parentsQuery.isError ? (
+              <div className="p-5">
+                <NoSchoolNotice
+                  title="Không xem được danh sách phụ huynh"
+                  description="Chỉ GVCN của lớp, hiệu trưởng hoặc quản trị mới xem được."
+                />
+              </div>
             ) : (parentsQuery.data ?? []).length === 0 ? (
               <p className="p-10 text-center text-sm font-medium text-slate-500">
-                Chưa mời phụ huynh nào. Sang tab Học sinh và bấm "Mời phụ huynh" để tạo mã mời.
+                {canWrite
+                  ? 'Chưa mời phụ huynh nào. Sang tab Học sinh và bấm "Mời phụ huynh" để tạo mã mời.'
+                  : 'Lớp chưa có phụ huynh nào được liên kết.'}
               </p>
             ) : (
               <ul className="divide-y divide-white/5">
@@ -318,7 +341,7 @@ export default function TeacherClassDetailPage() {
                     >
                       {row.status === 'pending' && !row.parent ? 'Chưa nhập mã' : STATUS_META[row.status].label}
                     </span>
-                    {row.status === 'pending' && row.parent && (
+                    {canWrite && row.status === 'pending' && row.parent && (
                       <button
                         type="button"
                         onClick={() => approveMutation.mutate(row.linkId)}
@@ -328,7 +351,7 @@ export default function TeacherClassDetailPage() {
                         <Check className="h-3.5 w-3.5" aria-hidden="true" /> Duyệt
                       </button>
                     )}
-                    {row.status === 'approved' && (
+                    {canWrite && row.status === 'approved' && (
                       <button
                         type="button"
                         onClick={() => {

@@ -18,6 +18,7 @@ import {
 import { QUERY_KEYS } from '@/config/query';
 import { ROUTES } from '@/config/routes';
 import { useAuthStore } from '@/store/auth.store';
+import { useCanWriteSchool } from '@/hooks/useCanWriteSchool';
 import type { HomeworkTargetType } from '@/types/school.types';
 
 function formatDue(iso: string): string {
@@ -74,6 +75,9 @@ export default function HomeworkPage() {
     [userRoles],
   );
   const [draft, setDraft] = useState<HomeworkDraft | null>(null);
+  // Reads are open to everyone; POST/DELETE /homework are still TEACHER+ on the
+  // BE, so hide the write affordances from a read-only visitor (student, parent).
+  const canWrite = useCanWriteSchool();
 
   const homeworkQuery = useQuery({
     queryKey: QUERY_KEYS.HOMEWORK,
@@ -185,15 +189,17 @@ export default function HomeworkPage() {
               ngay ở "Trường của tôi".
             </p>
           </div>
-          <button
-            type="button"
-            onClick={openCreate}
-            disabled={subjects.length === 0}
-            title={subjects.length === 0 ? 'Chưa có môn nào để giao' : undefined}
-            className="inline-flex items-center gap-1.5 rounded-2xl bg-accent-500 px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
-          >
-            <Plus className="h-4 w-4" aria-hidden="true" /> Giao bài mới
-          </button>
+          {canWrite && (
+            <button
+              type="button"
+              onClick={openCreate}
+              disabled={subjects.length === 0}
+              title={subjects.length === 0 ? 'Chưa có môn nào để giao' : undefined}
+              className="inline-flex items-center gap-1.5 rounded-2xl bg-accent-500 px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" /> Giao bài mới
+            </button>
+          )}
         </div>
 
         {/* ---------- list ---------- */}
@@ -208,7 +214,9 @@ export default function HomeworkPage() {
               <p className="mt-2 text-sm font-medium text-slate-500">
                 {subjects.length === 0
                   ? 'Bạn chưa dạy môn nào ở lớp này — hiệu trưởng thêm phân công trước.'
-                  : 'Chưa giao bài tập nào. Bấm "Giao bài mới" để bắt đầu.'}
+                  : canWrite
+                    ? 'Chưa giao bài tập nào. Bấm "Giao bài mới" để bắt đầu.'
+                    : 'Lớp chưa được giao bài tập nào.'}
               </p>
             </div>
           ) : (
@@ -251,19 +259,21 @@ export default function HomeworkPage() {
                       <CalendarClock className="h-3.5 w-3.5" aria-hidden="true" />
                       {past ? 'Hết hạn' : 'Hạn'} {formatDue(hw.dueDate)}
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (window.confirm(`Thu hồi "${hw.title}"? Điểm tự sinh từ bài này cũng bị xoá.`)) {
-                          deleteMutation.mutate(hw.id);
-                        }
-                      }}
-                      disabled={deleteMutation.isPending}
-                      aria-label={`Thu hồi ${hw.title}`}
-                      className="rounded-xl border border-rose-400/30 p-2 text-rose-300 transition-colors hover:bg-rose-400/10 disabled:opacity-50"
-                    >
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    </button>
+                    {canWrite && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`Thu hồi "${hw.title}"? Điểm tự sinh từ bài này cũng bị xoá.`)) {
+                            deleteMutation.mutate(hw.id);
+                          }
+                        }}
+                        disabled={deleteMutation.isPending}
+                        aria-label={`Thu hồi ${hw.title}`}
+                        className="rounded-xl border border-rose-400/30 p-2 text-rose-300 transition-colors hover:bg-rose-400/10 disabled:opacity-50"
+                      >
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                    )}
                   </li>
                 );
               })}
