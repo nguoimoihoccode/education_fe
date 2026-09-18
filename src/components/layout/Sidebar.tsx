@@ -1,6 +1,6 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { GraduationCap, ChevronLeft, ChevronRight, LogOut, User, X } from 'lucide-react';
-import { learningNavSections, type NavItem } from './navConfig';
+import { navSectionsFor, type NavItem } from './navConfig';
 import { useAuthStore } from '@/store/auth.store';
 
 const NO_ROLES: string[] = [];
@@ -178,6 +178,8 @@ export function DesktopSidebar({
   isSidebarOpen: boolean; isAuthenticated: boolean; displayName: string;
   onToggle: () => void; onLogout: () => void;
 }) {
+  const userRoles = useAuthStore((state) => state.user?.roles ?? NO_ROLES);
+
   return (
     <aside
       className={`stock-sidebar fixed top-0 left-0 z-30 h-screen transition-all duration-300 ease-in-out hidden lg:flex flex-col overflow-hidden ${
@@ -191,7 +193,7 @@ export function DesktopSidebar({
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-3 overflow-y-auto overflow-x-hidden">
-        {learningNavSections.map((section) => (
+        {navSectionsFor(userRoles).map((section) => (
           <NavSection
             key={section.title}
             title={section.title}
@@ -224,6 +226,8 @@ export function MobileSidebar({
 }: {
   isOpen: boolean; isAuthenticated: boolean; onClose: () => void; onLogout: () => void;
 }) {
+  const userRoles = useAuthStore((state) => state.user?.roles ?? NO_ROLES);
+
   return (
     <aside className={`stock-sidebar fixed top-0 left-0 z-50 w-64 h-screen flex flex-col lg:hidden overflow-hidden transition-transform duration-300 ${
       isOpen ? 'translate-x-0' : '-translate-x-full'
@@ -239,7 +243,7 @@ export function MobileSidebar({
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-3 overflow-y-auto">
-        {learningNavSections.map((section) => (
+        {navSectionsFor(userRoles).map((section) => (
           <NavSection
             key={section.title}
             title={section.title}

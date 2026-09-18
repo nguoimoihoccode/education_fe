@@ -4,8 +4,16 @@ import { useAuthStore } from '@/store/auth.store';
 /**
  * Roles the school module accepts for writes — mirrors the BE decorator
  * `@Roles(UserRole.TEACHER, ...SCHOOL_ADMIN_ROLES)` on every school write handler.
+ *
+ * Exported so the sidebar can gate its staff-only groups on the same list: the
+ * way to have a homeroom class is to hold one of these roles.
  */
-const SCHOOL_WRITE_ROLES = ['teacher', 'principal', 'admin'];
+export const SCHOOL_WRITE_ROLES = ['teacher', 'principal', 'admin'];
+
+/** Whether these roles are school staff (the ones who may write school data). */
+export function isSchoolStaff(roles: string[]): boolean {
+  return roles.some((role) => SCHOOL_WRITE_ROLES.includes(role));
+}
 
 /**
  * Whether the signed-in user may add/edit/delete school data.
@@ -17,8 +25,5 @@ const SCHOOL_WRITE_ROLES = ['teacher', 'principal', 'admin'];
  */
 export function useCanWriteSchool(): boolean {
   const roles = useAuthStore((state) => state.user?.roles);
-  return useMemo(
-    () => (roles ?? []).some((role) => SCHOOL_WRITE_ROLES.includes(role)),
-    [roles],
-  );
+  return useMemo(() => isSchoolStaff(roles ?? []), [roles]);
 }

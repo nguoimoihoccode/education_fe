@@ -3,7 +3,7 @@ import { CalendarRange } from 'lucide-react';
 import MyTimetablePanel from '@/components/school/MyTimetablePanel';
 import { ROUTES } from '@/config/routes';
 
-/** "TKK của tôi" — weekly teaching grid for teachers (Phase 3). */
+/** "Thời khoá biểu của tôi" — weekly grid from GET /timetable/me (Phase 3). */
 export default function MyTimetablePage() {
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-8 text-slate-100 sm:px-6 lg:px-8">
@@ -13,10 +13,10 @@ export default function MyTimetablePage() {
           <div>
             <h1 className="flex items-center gap-2 text-3xl font-black tracking-tight text-white">
               <CalendarRange className="h-7 w-7 text-accent-400" aria-hidden="true" />
-              TKK của tôi
+              Thời khoá biểu của tôi
             </h1>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Lịch dạy cả tuần — do hiệu trưởng xếp từ các phân công giảng dạy.
+              Lịch cả tuần — giáo viên thấy các tiết mình dạy, học sinh thấy lịch của lớp mình.
             </p>
           </div>
           <Link

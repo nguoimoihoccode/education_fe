@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   AlertTriangle, BookOpenCheck, CalendarRange, CheckCircle2, ClipboardList,
@@ -21,6 +21,10 @@ const TABS: Array<{ id: SchoolTab; label: string; icon: typeof CalendarRange }> 
   { id: 'homework', label: 'Bài tập về nhà', icon: BookOpenCheck },
 ];
 
+function isSchoolTab(value: string | null): value is SchoolTab {
+  return TABS.some((t) => t.id === value);
+}
+
 function formatDue(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
@@ -34,7 +38,16 @@ function formatDue(iso: string): string {
 
 /** "Trường của tôi" — timetable + sổ điểm + BTVN của chính học sinh (Phase 3–4). */
 export default function MySchoolPage() {
-  const [tab, setTab] = useState<SchoolTab>('timetable');
+  // The URL owns the tab: the sidebar deep-links straight to Điểm / BTVN, and a
+  // reload or a shared link keeps the tab. Missing or unknown values fall back to
+  // the timetable; picking the timetable clears the param so the URL stays clean.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const tab: SchoolTab = isSchoolTab(tabParam) ? tabParam : 'timetable';
+
+  const setTab = (id: SchoolTab) => {
+    setSearchParams(id === 'timetable' ? {} : { tab: id });
+  };
 
   const gradesQuery = useQuery({
     queryKey: QUERY_KEYS.MY_GRADES,

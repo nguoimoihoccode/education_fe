@@ -7,7 +7,7 @@ import { QUERY_KEYS } from '@/config/query';
 /**
  * Read-only weekly grid for the signed-in user (GET /timetable/me):
  * teachers see their teaching slots, students see their class grid.
- * Shared by "TKK của tôi" (teacher) and "Trường của tôi" (student).
+ * Shared by "Thời khoá biểu của tôi" and the timetable tab of "Trường của tôi".
  */
 export default function MyTimetablePanel() {
   const meQuery = useQuery({

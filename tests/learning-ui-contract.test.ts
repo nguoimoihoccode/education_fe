@@ -13,11 +13,18 @@ test('sidebar navigation is grouped around learning workflows', () => {
   const sidebar = readSource('src/components/layout/Sidebar.tsx');
 
   assert.match(navConfig, /learningNavSections/);
-  assert.match(navConfig, /title: 'Học hôm nay'/);
+  assert.match(navConfig, /title: 'Học tập'/);
   assert.match(navConfig, /label: 'Tiến độ'/);
   assert.match(navConfig, /title: 'Tài khoản'/);
   assert.doesNotMatch(navConfig, /title: 'Cộng đồng'/);
-  assert.match(sidebar, /learningNavSections\.map/);
+  // "Khám phá thêm" was a catch-all holding a Flashcard tool and a Quiz stats
+  // page; both sit next to the feature they belong to now, in one group.
+  assert.doesNotMatch(navConfig, /title: 'Khám phá thêm'/);
+  assert.doesNotMatch(navConfig, /title: 'Học hôm nay'/);
+  // The order is chosen per viewer, and both nav surfaces (desktop + the mobile
+  // drawer) must go through it rather than listing the sections themselves.
+  assert.match(navConfig, /export function navSectionsFor/);
+  assert.equal((sidebar.match(/navSectionsFor\(userRoles\)\.map/g) ?? []).length, 2);
   assert.doesNotMatch(sidebar, /TrendingUp/);
   assert.match(sidebar, /GraduationCap/);
 
@@ -36,13 +43,20 @@ test('phase 2 teaching hub and parent portal are role-aware', () => {
   const api = readSource('src/api/school.api.ts');
   const app = readSource('src/App.tsx');
 
-  // The GVCN hub and the parent portal are deliberately NOT role-gated: reads
-  // are open to any signed-in user and the server scopes them per relationship,
-  // so a caller with no school sees an empty notice instead of a hidden menu.
-  // The write affordances are gated client-side instead (see the test below).
+  // The GVCN hub and the parent portal pages are deliberately NOT role-gated:
+  // reads are open to any signed-in user and the server scopes them per
+  // relationship, so a caller with no school sees an empty notice instead of a
+  // hidden menu. The write affordances are gated client-side instead (see the
+  // test below).
+  //
+  // The *menu* splits them, because a menu entry is a promise about what the
+  // viewer works on: "Lớp chủ nhiệm" needs a role that can hold a homeroom class
+  // (`SCHOOL_WRITE_ROLES`, reused rather than spelled out again), while "Hồ sơ
+  // con" stays visible to everyone -- a parent account only gains `parent` after
+  // claiming an invite code, so gating it would hide the page that grants it.
   assert.match(navConfig, /title: 'Lớp của tôi'/);
-  assert.match(navConfig, /to: '\/teaching' \}/);
-  assert.doesNotMatch(navConfig, /to: '\/teaching', roles/);
+  assert.match(navConfig, /to: '\/teaching', roles: SCHOOL_WRITE_ROLES \}/);
+  assert.doesNotMatch(navConfig, /roles: \['teacher'/);
   assert.match(navConfig, /title: 'Con của tôi'/);
   assert.match(navConfig, /to: '\/parent' \}/);
   assert.doesNotMatch(navConfig, /to: '\/parent', roles/);
@@ -74,10 +88,23 @@ test('phase 3 timetable builder and attendance are wired end-to-end', () => {
   // reads their own grid (teachers their slots, students their class) and the
   // attendance sheet stays relationship-scoped on the BE.
   assert.match(navConfig, /to: '\/principal\/timetable', roles: \['principal', 'admin'\]/);
-  assert.match(navConfig, /to: '\/teaching\/timetable' \}/);
-  assert.doesNotMatch(navConfig, /to: '\/teaching\/timetable', roles/);
-  assert.match(navConfig, /to: '\/me\/school' \}/);
-  assert.doesNotMatch(navConfig, /to: '\/me\/school', roles/);
+  // One timetable reads as one menu entry: `/teaching/timetable` renders the same
+  // `MyTimetablePanel` as the timetable tab of `/me/school`, so it left the menu
+  // and the route stays valid for anyone who has the URL.
+  assert.doesNotMatch(navConfig, /to: '\/teaching\/timetable'/);
+  assert.match(app, /path="\/teaching\/timetable"/);
+  // "Trường của tôi" deep-links into MySchoolPage's tabs, one entry per tab.
+  // NavLink matches on pathname alone, so each item needs a matcher reading
+  // `?tab=` or all of them would light up on `/me/school` — same reason
+  // `/education?view=courses` has one. The default tab keeps the URL *clean*
+  // (`MySchoolPage` drops the param for it), so its item matches `/me/school`
+  // with no tab rather than `?tab=timetable`.
+  assert.match(navConfig, /const SCHOOL_TABS = \['timetable', 'grades', 'homework'\]/);
+  assert.match(navConfig, /!SCHOOL_TABS\.includes\(/);
+  assert.match(navConfig, /to: '\/me\/school',\n\s*matcher: \([\s\S]{0,120}?SCHOOL_TABS/);
+  assert.match(navConfig, /to: '\/me\/school\?tab=grades'[\s\S]{0,200}?get\('tab'\) === 'grades'/);
+  assert.match(navConfig, /to: '\/me\/school\?tab=homework'[\s\S]{0,200}?get\('tab'\) === 'homework'/);
+  assert.doesNotMatch(navConfig, /to: '\/me\/school\?tab=[a-z]+', roles/);
   assert.match(routes, /TEACHING_ATTENDANCE: \(id: string\) => `\/teaching\/classes\/\$\{id\}\/attendance`/);
   assert.match(app, /path="\/principal\/timetable"/);
   assert.match(app, /path="\/teaching\/classes\/:id\/attendance"/);
@@ -335,4 +362,42 @@ test('school reads are open to any signed-in user while writes stay staff-only',
 
   assert.match(notice, /Bạn chưa thuộc trường nào/);
   assert.match(mySchool, /NoSchoolNotice/);
+});
+
+
+test('the sidebar names each destination once and deep-links the school tabs', () => {
+  const navConfig = readSource('src/components/layout/navConfig.tsx');
+  const mySchool = readSource('src/pages/student/MySchoolPage.tsx');
+  const timetablePage = readSource('src/pages/teacher/MyTimetablePage.tsx');
+
+  // Two items used to share the label "TKK của tôi" while one of them rendered the
+  // same panel as MySchoolPage's first tab: one destination, two names, and a third
+  // (Điểm / BTVN) reachable only by opening the page and clicking a tab.
+  const labels = [...navConfig.matchAll(/label: '([^']+)'/g)].map((m) => m[1]);
+  assert.equal(
+    labels.length,
+    new Set(labels).size,
+    `duplicate sidebar label among: ${labels.join(', ')}`,
+  );
+  assert.doesNotMatch(navConfig, /label: 'TKK của tôi'/);
+
+  // The invariant behind the label check: no destination is listed twice. A
+  // principal sees "Quản trị trường" and "Trường của tôi" side by side, so
+  // `/principal/timetable` (the school-wide builder) and `/me/school` (the
+  // personal grid) both deserve an entry -- but one `to` each, and one label each.
+  const destinations = [...navConfig.matchAll(/\bto: '([^']+)'/g)].map((m) => m[1]);
+  assert.equal(
+    destinations.length,
+    new Set(destinations).size,
+    `duplicate sidebar destination among: ${destinations.join(', ')}`,
+  );
+
+  // Both that page and its nav entry are open to students as well as teachers
+  // (GET /timetable/me answers by relationship), so neither may assume a teacher.
+  assert.doesNotMatch(timetablePage, /Lịch dạy cả tuần/);
+
+  // `?tab=` owns the tab, so a sidebar deep link lands on the right tab and a
+  // reload keeps it.
+  assert.match(mySchool, /useSearchParams/);
+  assert.match(mySchool, /searchParams\.get\('tab'\)/);
 });
