@@ -51,7 +51,7 @@ export default function QuizStatsPage() {
               to="/quiz/stats"
               className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                 !isHistoryFocus
-                  ? 'bg-accent-600 text-white'
+                  ? 'bg-accent-600 text-on-accent'
                   : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10'
               }`}
             >
@@ -61,7 +61,7 @@ export default function QuizStatsPage() {
               to="/quiz/history"
               className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                 isHistoryFocus
-                  ? 'bg-accent-600 text-white'
+                  ? 'bg-accent-600 text-on-accent'
                   : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10'
               }`}
             >
@@ -143,7 +143,7 @@ export default function QuizStatsPage() {
                   </button>
                   <Link
                     to="/quiz"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-600 text-white text-sm font-bold hover:bg-accent-500 transition-all"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-600 text-on-accent text-sm font-bold hover:bg-accent-500 transition-all"
                   >
                     Bắt đầu quiz
                   </Link>

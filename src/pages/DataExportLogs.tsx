@@ -331,7 +331,7 @@ export default function DataExportLogs() {
                   <button 
                     onClick={handleRequestExport}
                     disabled={exportMutation.isPending}
-                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold shadow-[0_0_20px_rgba(20,184,166,0.25)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
+                    className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-on-accent font-bold shadow-[0_0_20px_rgba(20,184,166,0.25)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
                   >
                     {exportMutation.isPending ? (
                       <span className="flex items-center gap-2">
@@ -534,7 +534,7 @@ export default function DataExportLogs() {
                   <button
                     disabled={logsPage >= logsMeta.totalPages}
                     onClick={() => setLogsPage((p) => p + 1)}
-                    className="px-3 py-1.5 rounded-lg bg-accent-600 text-white text-xs font-bold shadow-[0_0_10px_rgba(139,92,246,0.2)] hover:bg-accent-500 transition-colors disabled:opacity-50"
+                    className="px-3 py-1.5 rounded-lg bg-accent-600 text-on-accent text-xs font-bold shadow-[0_0_10px_rgba(139,92,246,0.2)] hover:bg-accent-500 transition-colors disabled:opacity-50"
                   >
                     Next
                   </button>

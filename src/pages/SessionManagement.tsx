@@ -141,7 +141,7 @@ export default function SessionManagement() {
               type="button"
               onClick={() => revokeOthers.mutate()}
               disabled={revokeOthers.isPending || activeSessions.length <= 1}
-              className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-accent-600 to-fuchsia-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-accent-900/30 transition-colors hover:from-accent-500 hover:to-fuchsia-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-300 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-accent-600 to-fuchsia-600 px-5 py-3 text-sm font-black text-on-accent shadow-lg shadow-accent-900/30 transition-colors hover:from-accent-500 hover:to-fuchsia-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-300 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {revokeOthers.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <LogOut className="h-4 w-4" aria-hidden="true" />}
               Đăng xuất thiết bị khác

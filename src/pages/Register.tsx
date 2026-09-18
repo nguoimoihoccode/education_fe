@@ -170,7 +170,7 @@ export const Register = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-bold text-lg shadow-lg hover:shadow-primary-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-primary-600 to-secondary-600 text-on-accent font-bold text-lg shadow-lg hover:shadow-primary-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {isLoading ? 'Đang tạo tài khoản...' : 'Đăng ký ngay'}
             </button>

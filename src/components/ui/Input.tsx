@@ -12,7 +12,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 /**
- * Cyberpunk-themed Input component with neon focus states
+ * Input component. The `neonColor` prop name is historical -- its values are
+ * app accent tokens now, not neon hexes.
  * 
  * @example
  * ```tsx
@@ -45,30 +46,34 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputId = props.id || generatedId;
     const messageId = `${inputId}-message`;
 
-    const neonColors = {
+    /* Per-hue focus treatment. The hue names are historical: the values are
+       theme tokens now, because the neon/green literals had no light value and
+       painted at 1.3-2:1 on a white page. `app` is the default and the only
+       variant any caller has ever selected. */
+    const accentColors = {
       pink: {
-        border: 'focus:border-neon-pink',
-        shadow: 'focus:shadow-neon-pink-sm',
-        ring: 'focus-visible:ring-neon-pink',
+        border: 'focus:border-[var(--app-danger)]',
+        shadow: 'focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--app-danger)_25%,transparent)]',
+        ring: 'focus-visible:ring-[var(--app-danger)]',
       },
       cyan: {
-        border: 'focus:border-neon-cyan',
-        shadow: 'focus:shadow-neon-cyan-sm',
-        ring: 'focus-visible:ring-neon-cyan',
+        border: 'focus:border-[var(--app-accent)]',
+        shadow: 'focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--app-accent)_25%,transparent)]',
+        ring: 'focus-visible:ring-[var(--app-accent)]',
       },
       purple: {
-        border: 'focus:border-neon-purple',
-        shadow: 'focus:shadow-neon-purple-sm',
-        ring: 'focus-visible:ring-neon-purple',
+        border: 'focus:border-[var(--app-accent)]',
+        shadow: 'focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--app-accent)_25%,transparent)]',
+        ring: 'focus-visible:ring-[var(--app-accent)]',
       },
       green: {
-        border: 'focus:border-trade-up',
-        shadow: 'focus:shadow-neon-green',
-        ring: 'focus-visible:ring-trade-up',
+        border: 'focus:border-[var(--app-primary)]',
+        shadow: 'focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--app-primary)_25%,transparent)]',
+        ring: 'focus-visible:ring-[var(--app-primary)]',
       },
       app: {
         border: 'focus:border-[var(--app-primary)]',
-        shadow: 'focus:shadow-[0_0_0_3px_rgba(16,185,129,0.25)]',
+        shadow: 'focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--app-primary)_25%,transparent)]',
         ring: 'focus-visible:ring-[var(--app-focus)]',
       },
     };
@@ -113,9 +118,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               'py-2.5',
               // Focus states
               'outline-none',
-              neonColors[neonColor].border,
-              neonColors[neonColor].shadow,
-              neonColors[neonColor].ring,
+              accentColors[neonColor].border,
+              accentColors[neonColor].shadow,
+              accentColors[neonColor].ring,
               'focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-bg)]',
               // Error state
               error && 'border-[var(--app-danger)] focus:border-[var(--app-danger)]',
@@ -183,16 +188,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             )
           )}
 
-          {/* Animated border glow — only for non-app neon colors */}
+          {/* Animated border glow — non-default accent hues only */}
           {isFocused && !error && neonColor !== 'app' && (
             <div
               className={cn(
                 'absolute inset-0 rounded-xl pointer-events-none',
                 'transition-opacity duration-400 motion-reduce:transition-none',
-                neonColor === 'pink' && 'bg-neon-pink/5',
-                neonColor === 'cyan' && 'bg-neon-cyan/5',
-                neonColor === 'purple' && 'bg-neon-purple/5',
-                neonColor === 'green' && 'bg-trade-up/5'
+                neonColor === 'pink' && 'bg-[color-mix(in_srgb,var(--app-danger)_6%,transparent)]',
+                neonColor === 'cyan' && 'bg-[color-mix(in_srgb,var(--app-accent)_6%,transparent)]',
+                neonColor === 'purple' && 'bg-[color-mix(in_srgb,var(--app-accent)_6%,transparent)]',
+                neonColor === 'green' && 'bg-[color-mix(in_srgb,var(--app-primary)_6%,transparent)]'
               )}
             />
           )}

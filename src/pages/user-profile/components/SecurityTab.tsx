@@ -45,7 +45,7 @@ export default function SecurityTab({
           </div>
           <button onClick={handleChangePassword}
             disabled={!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword || isChangingPassword}
-            className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100">
+            className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100">
             <Key className="w-4 h-4" /> {isChangingPassword ? 'Updating...' : 'Update Password'}
           </button>
         </div>

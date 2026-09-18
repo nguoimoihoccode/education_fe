@@ -83,7 +83,7 @@ export default function SubjectsPage() {
           <button
             type="button"
             onClick={openCreate}
-            className="inline-flex items-center gap-2 rounded-2xl bg-accent-500 px-5 py-2.5 text-sm font-black text-white transition-colors hover:bg-accent-400"
+            className="inline-flex items-center gap-2 rounded-2xl bg-accent-500 px-5 py-2.5 text-sm font-black text-on-accent transition-colors hover:bg-accent-400"
           >
             <Plus className="h-4 w-4" aria-hidden="true" /> Thêm môn
           </button>
@@ -251,7 +251,7 @@ export default function SubjectsPage() {
                 <button
                   type="submit"
                   disabled={saveSubject.isPending}
-                  className="rounded-xl bg-accent-500 px-5 py-2.5 text-sm font-black text-white hover:bg-accent-400 disabled:opacity-50"
+                  className="rounded-xl bg-accent-500 px-5 py-2.5 text-sm font-black text-on-accent hover:bg-accent-400 disabled:opacity-50"
                 >
                   {saveSubject.isPending ? 'Đang lưu…' : 'Lưu'}
                 </button>

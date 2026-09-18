@@ -53,7 +53,7 @@ export default function NotFoundPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
               <Link
                 to="/"
-                className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_0_30px_rgba(139,92,246,0.25)] hover:scale-[1.03] active:scale-95 transition-all"
+                className="flex items-center gap-2 px-7 py-4 rounded-2xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold text-sm shadow-[0_0_30px_rgba(139,92,246,0.25)] hover:scale-[1.03] active:scale-95 transition-all"
               >
                 <Home className="w-4 h-4" />
                 Go Home

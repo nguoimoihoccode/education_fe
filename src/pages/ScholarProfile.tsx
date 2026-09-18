@@ -86,7 +86,7 @@ export default function ScholarProfile() {
           <Users className="w-16 h-16 text-slate-600 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-3">Profile Not Found</h2>
           <p className="text-slate-400 text-sm mb-6">The scholar profile for @{username} could not be loaded.</p>
-          <Link to="/education" className="px-6 py-3 rounded-full bg-accent-600 text-white font-bold text-sm hover:bg-accent-700 transition-all">
+          <Link to="/education" className="px-6 py-3 rounded-full bg-accent-600 text-on-accent font-bold text-sm hover:bg-accent-700 transition-all">
             Back to Courses
           </Link>
         </div>
@@ -110,7 +110,7 @@ export default function ScholarProfile() {
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Avatar */}
                 <div className="flex-shrink-0">
-                  <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-5xl font-black shadow-[0_0_40px_rgba(245,158,11,0.15)] border-4 border-slate-900">
+                  <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-on-accent text-5xl font-black shadow-[0_0_40px_rgba(245,158,11,0.15)] border-4 border-slate-900">
                     {scholar.displayName.charAt(0)}
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export default function ScholarProfile() {
                   <button
                     type="button"
                     onClick={() => toast('Theo dõi học viên sẽ sớm có mặt', { icon: '❤️' })}
-                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white text-sm font-bold shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:scale-[1.02] active:scale-95 transition-all"
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent text-sm font-bold shadow-[0_0_20px_rgba(139,92,246,0.2)] hover:scale-[1.02] active:scale-95 transition-all"
                     title="Sắp có"
                   >
                     <Heart className="w-4 h-4" /> Follow
@@ -200,7 +200,7 @@ export default function ScholarProfile() {
               <div className="space-y-3">
                 {scholar.publicDecks.map((deck, i) => (
                   <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-black/20 border border-white/[0.03] hover:bg-white/[0.02] transition-all">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-indigo-500 flex items-center justify-center text-white shadow-md flex-shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-indigo-500 flex items-center justify-center text-on-accent shadow-md flex-shrink-0">
                       <BookOpen className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">

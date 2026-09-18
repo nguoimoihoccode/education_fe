@@ -174,7 +174,7 @@ export default function QuizListPage() {
 
           <button
             onClick={openCreateModal}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-700 transition-colors"
+            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-accent-600 text-on-accent font-bold hover:bg-accent-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Tạo quiz
@@ -566,7 +566,7 @@ export default function QuizListPage() {
               <button
                 onClick={handleSubmitQuizForm}
                 disabled={createQuizMutation.isPending || updateQuizMutation.isPending}
-                className="flex-1 px-4 py-3.5 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3.5 rounded-xl bg-accent-600 text-on-accent font-bold hover:bg-accent-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {createQuizMutation.isPending
                   ? 'Đang tạo...'

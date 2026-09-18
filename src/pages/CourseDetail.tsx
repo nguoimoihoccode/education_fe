@@ -55,7 +55,7 @@ export default function CourseDetail() {
     useEffect(() => {
         const animatedBg = document.querySelector('.animated-bg') as HTMLElement;
         if (animatedBg) animatedBg.style.display = 'none';
-        document.body.style.background = '#020617';
+        document.body.style.background = 'var(--app-bg)';
         return () => {
             if (animatedBg) animatedBg.style.display = '';
             document.body.style.background = '';
@@ -213,7 +213,7 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                                     type="button"
                                     onClick={handlePrimaryAction}
                                     disabled={primaryAction.type === 'none' || enrollMutation.isPending}
-                                    className="px-8 py-4 bg-gradient-to-r from-accent-600 to-indigo-600 text-white rounded-xl font-bold flex items-center gap-3 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="px-8 py-4 bg-gradient-to-r from-accent-600 to-indigo-600 text-on-accent rounded-xl font-bold flex items-center gap-3 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     <Play className="w-5 h-5 fill-current" />
                                     {enrollMutation.isPending ? 'Enrolling...' : primaryAction.label}

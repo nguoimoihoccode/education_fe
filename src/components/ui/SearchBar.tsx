@@ -194,7 +194,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       {/* Input Container */}
       <div className="relative">
         {/* Search Icon */}
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neon-cyan">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--app-accent)]">
           <svg
             className="w-5 h-5"
             fill="none"
@@ -222,9 +222,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           placeholder={placeholder}
           className={cn(
             'w-full h-11 pl-11 pr-10 rounded-lg',
-            'bg-cyber-800/50 border border-cyber-700',
-            'text-white placeholder:text-gray-500',
-            'focus:outline-none focus:ring-2 focus:ring-neon-cyan/50 focus:border-neon-cyan',
+            'bg-[var(--app-surface)] border border-[var(--app-border)]',
+            'text-[var(--app-text)] placeholder:text-[var(--app-text-subtle)]',
+            'focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--app-focus)_50%,transparent)] focus:border-[var(--app-focus)]',
             'transition-all duration-300 motion-reduce:transition-none',
             'backdrop-blur-sm'
           )}
@@ -262,8 +262,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           ref={resultsRef}
           className={cn(
             'absolute z-50 w-full mt-2 rounded-lg overflow-hidden',
-            'bg-cyber-800/95 backdrop-blur-md border border-neon-cyan/30',
-            'shadow-lg shadow-neon-cyan/20',
+            'bg-[var(--app-surface)] backdrop-blur-md border border-[color:color-mix(in_srgb,var(--app-accent)_30%,transparent)]',
+            'shadow-lg shadow-[color-mix(in_srgb,var(--app-accent)_20%,transparent)]',
             'max-h-80 overflow-y-auto',
             'animate-in fade-in slide-in-from-top-2 duration-200 motion-reduce:animate-none'
           )}
@@ -274,9 +274,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               onClick={() => handleSelect(stock)}
               className={cn(
                 'w-full px-4 py-3 text-left transition-all duration-200 motion-reduce:transition-none cursor-pointer',
-                'hover:bg-neon-cyan/10 hover:border-l-4 hover:border-neon-cyan',
+                'hover:bg-[color-mix(in_srgb,var(--app-accent)_10%,transparent)] hover:border-l-4 hover:border-[var(--app-accent)]',
                 'border-l-4 border-transparent',
-                selectedIndex === index && 'bg-neon-cyan/10 border-neon-cyan'
+                selectedIndex === index && 'bg-[color-mix(in_srgb,var(--app-accent)_10%,transparent)] border-[var(--app-accent)]'
               )}
             >
               <div className="flex items-center justify-between">
@@ -291,12 +291,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 
                 <div className="flex items-center gap-2 ml-2">
                   {stock.exchange && (
-                    <span className="text-xs px-2 py-0.5 rounded bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/30">
+                    <span className="text-xs px-2 py-0.5 rounded bg-[color-mix(in_srgb,var(--app-accent)_10%,transparent)] text-[var(--app-accent)] border border-[color:color-mix(in_srgb,var(--app-accent)_30%,transparent)]">
                       {stock.exchange}
                     </span>
                   )}
                   {stock.index && (
-                    <span className="text-xs px-2 py-0.5 rounded bg-neon-purple/10 text-neon-purple border border-neon-purple/30">
+                    <span className="text-xs px-2 py-0.5 rounded bg-[color-mix(in_srgb,var(--app-warning)_10%,transparent)] text-[var(--app-warning)] border border-[color:color-mix(in_srgb,var(--app-warning)_30%,transparent)]">
                       {stock.index}
                     </span>
                   )}
@@ -309,7 +309,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
       {/* No results message */}
       {isOpen && searchTerm && filteredStocks.length === 0 && (
-        <div className="absolute z-50 w-full mt-2 p-4 rounded-lg bg-cyber-800/95 backdrop-blur-md border border-cyber-700 text-center text-gray-400 text-sm">
+        <div className="absolute z-50 w-full mt-2 p-4 rounded-lg bg-[var(--app-surface)] backdrop-blur-md border border-[var(--app-border)] text-center text-gray-400 text-sm">
           Không tìm thấy kết quả cho "{searchTerm}"
         </div>
       )}

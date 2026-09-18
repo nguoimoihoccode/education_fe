@@ -142,7 +142,7 @@ export default function DashboardLanding() {
             <div className="space-y-4">
               {path.map((item, index) => (
                 <div key={item.title} className="grid grid-cols-[44px_1fr_auto] items-center gap-4 rounded-[1.5rem] border border-slate-200 bg-slate-50/80 p-4">
-                  <div className={`grid h-11 w-11 place-items-center rounded-2xl text-sm font-black ${item.done ? 'bg-emerald-600 text-white' : 'bg-white text-slate-500 ring-1 ring-slate-200'}`}>
+                  <div className={`grid h-11 w-11 place-items-center rounded-2xl text-sm font-black ${item.done ? 'bg-emerald-600 text-on-accent' : 'bg-white text-slate-500 ring-1 ring-slate-200'}`}>
                     {item.done ? <CheckCircle2 className="h-5 w-5" /> : index + 1}
                   </div>
                   <div>

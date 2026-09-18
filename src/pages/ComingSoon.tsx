@@ -68,7 +68,7 @@ export default function ComingSoon() {
                   placeholder="Enter your email..."
                   className="flex-1 px-5 py-4 rounded-2xl bg-slate-800/80 border border-white/10 text-white text-sm placeholder-slate-500 focus:border-fuchsia-500 focus:ring-1 focus:ring-fuchsia-500 outline-none transition-all"
                 />
-                <button className="flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-accent-600 text-white font-bold text-sm shadow-[0_0_25px_rgba(192,38,211,0.25)] hover:scale-[1.02] active:scale-95 transition-all whitespace-nowrap">
+                <button className="flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-accent-600 text-on-accent font-bold text-sm shadow-[0_0_25px_rgba(192,38,211,0.25)] hover:scale-[1.02] active:scale-95 transition-all whitespace-nowrap">
                   <Bell className="w-4 h-4" /> Notify Me
                 </button>
               </div>

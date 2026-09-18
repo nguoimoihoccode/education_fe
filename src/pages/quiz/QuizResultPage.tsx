@@ -48,7 +48,7 @@ export default function QuizResultPage() {
         <div className="detail-wrapper py-20 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Không tìm thấy kết quả</h2>
           <p className="text-slate-300 mb-6">Không thể tải kết quả quiz.</p>
-          <Link to="/quiz" className="px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all">
+          <Link to="/quiz" className="px-6 py-3 rounded-full bg-accent-600 text-on-accent font-medium hover:bg-accent-700 transition-all">
             Quay lại danh sách quiz
           </Link>
         </div>
@@ -117,7 +117,7 @@ export default function QuizResultPage() {
                 href={certificateUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium hover:scale-105 transition-transform"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-on-accent font-medium hover:scale-105 transition-transform"
               >
                 <Trophy className="w-5 h-5" />
                 Tải chứng chỉ
@@ -141,7 +141,7 @@ export default function QuizResultPage() {
               }
               return `/quiz/${quiz.id}/session?mode=${modeParam}`;
             })()}
-            className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all"
+            className="flex items-center gap-2 px-6 py-3 rounded-full bg-accent-600 text-on-accent font-medium hover:bg-accent-700 transition-all"
           >
             <RotateCw className="w-5 h-5" />
             {isPassed || !canRetry ? 'Luyện lại' : 'Thử lại'}
@@ -155,7 +155,7 @@ export default function QuizResultPage() {
           </Link>
           <Link
             to="/quiz"
-            className="flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-all"
+            className="flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-600 text-on-accent font-medium hover:bg-emerald-700 transition-all"
           >
             <Home className="w-5 h-5" />
             Tất cả quiz

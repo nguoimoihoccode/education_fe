@@ -168,7 +168,7 @@ export default function FlashcardDecks() {
 
           <button
             onClick={openCreateDeckModal}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-700 transition-colors"
+            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-accent-600 text-on-accent font-bold hover:bg-accent-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Tạo bộ thẻ
@@ -304,7 +304,7 @@ export default function FlashcardDecks() {
                   <button
                     type="button"
                     onClick={openCreateDeckModal}
-                    className="px-5 py-2.5 rounded-xl bg-indigo-500 text-white text-sm font-bold hover:bg-indigo-400 transition-colors"
+                    className="px-5 py-2.5 rounded-xl bg-indigo-500 text-on-accent text-sm font-bold hover:bg-indigo-400 transition-colors"
                   >
                     Tạo bộ thẻ
                   </button>
@@ -412,7 +412,7 @@ export default function FlashcardDecks() {
               <button
                 onClick={handleSubmitDeckForm}
                 disabled={createDeckMutation.isPending || updateDeckMutation.isPending}
-                className="flex-1 px-4 py-3 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-700 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-3 rounded-xl bg-accent-600 text-on-accent font-bold hover:bg-accent-700 transition-colors disabled:opacity-50"
               >
                 {createDeckMutation.isPending
                   ? 'Đang tạo...'

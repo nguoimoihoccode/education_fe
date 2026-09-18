@@ -22,12 +22,12 @@ const STATUS_META: Record<
 > = {
   present: {
     label: STATUS_LABELS.present,
-    active: 'border-emerald-400 bg-emerald-500 text-white',
+    active: 'border-emerald-400 bg-emerald-500 text-on-accent',
     idle: 'border-white/10 text-slate-400 hover:border-emerald-400/50 hover:text-emerald-300',
   },
   absent: {
     label: STATUS_LABELS.absent,
-    active: 'border-rose-400 bg-rose-500 text-white',
+    active: 'border-rose-400 bg-rose-500 text-on-accent',
     idle: 'border-white/10 text-slate-400 hover:border-rose-400/50 hover:text-rose-300',
   },
   late: {
@@ -37,7 +37,7 @@ const STATUS_META: Record<
   },
   excused: {
     label: STATUS_LABELS.excused,
-    active: 'border-sky-400 bg-sky-500 text-white',
+    active: 'border-sky-400 bg-sky-500 text-on-accent',
     idle: 'border-white/10 text-slate-400 hover:border-sky-400/50 hover:text-sky-300',
   },
 };
@@ -285,7 +285,7 @@ export default function ClassAttendancePage() {
                   type="button"
                   onClick={save}
                   disabled={saveMutation.isPending}
-                  className="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-accent-500 px-4 py-2 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+                  className="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-accent-500 px-4 py-2 text-sm font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
                 >
                   {saveMutation.isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

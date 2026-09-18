@@ -229,7 +229,7 @@ export default function PrincipalDashboard() {
             <button
               type="button"
               onClick={() => setShowYearForm((v) => !v)}
-              className="inline-flex items-center gap-2 rounded-2xl bg-accent-500 px-4 py-2 text-sm font-black text-white transition-colors hover:bg-accent-400"
+              className="inline-flex items-center gap-2 rounded-2xl bg-accent-500 px-4 py-2 text-sm font-black text-on-accent transition-colors hover:bg-accent-400"
             >
               <Plus className="h-4 w-4" aria-hidden="true" /> Năm học mới
             </button>
@@ -278,7 +278,7 @@ export default function PrincipalDashboard() {
                 <button
                   type="submit"
                   disabled={createYear.isPending}
-                  className="min-h-11 w-full rounded-xl bg-accent-500 px-4 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+                  className="min-h-11 w-full rounded-xl bg-accent-500 px-4 text-sm font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
                 >
                   {createYear.isPending ? 'Đang tạo…' : 'Tạo'}
                 </button>

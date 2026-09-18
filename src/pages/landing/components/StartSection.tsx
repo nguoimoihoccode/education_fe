@@ -46,7 +46,7 @@ const StartSection = () => {
 
         <Link
           to="/education"
-          className="mt-12 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-white text-sm font-medium lp-btn-glass"
+          className="mt-12 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-on-accent text-sm font-medium lp-btn-glass"
         >
           Xem khóa học
           <ArrowUpRight className="w-4 h-4" />

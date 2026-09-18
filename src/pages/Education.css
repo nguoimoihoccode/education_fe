@@ -875,8 +875,10 @@
 
 .education-container:not(.education-path-page) .font-headline.text-transparent.bg-clip-text,
 .education-container:not(.education-path-page) .font-headline.bg-clip-text.text-transparent {
-    --tw-gradient-from: #ffffff var(--tw-gradient-from-position);
-    --tw-gradient-to: #e2e8f0 var(--tw-gradient-to-position);
+    /* Follows the readable family rather than hardcoding #ffffff/#e2e8f0, which
+       left these headlines as white-on-white in light mode. */
+    --tw-gradient-from: var(--edu-text-readable) var(--tw-gradient-from-position);
+    --tw-gradient-to: var(--edu-text-muted-readable) var(--tw-gradient-to-position);
 }
 
 /* Card with overflow hidden (for images, gradients) */
@@ -1190,6 +1192,21 @@
     --edu-bg: #f8fafc;
     --edu-card: #ffffff;
     --edu-border: rgba(0, 0, 0, 0.1);
+
+    /* Mirror of the "readable" family above. These are used as *page* text as
+       well as panel text -- `.education-container:not(.education-path-page)
+       header h1 { color: var(--edu-text-readable) }` sits directly on the page
+       background -- so leaving them at their dark values made every education
+       suite header #f8fafc on #ffffff (1.03:1, invisible). */
+    --edu-surface-readable: rgba(255, 255, 255, 0.92);
+    --edu-surface-readable-hover: #ffffff;
+    --edu-surface-muted: rgba(241, 245, 249, 0.9);
+    --edu-border-readable: rgba(15, 23, 42, 0.14);
+    --edu-border-readable-weak: rgba(15, 23, 42, 0.12);
+    --edu-text-readable: #0f172a;
+    --edu-text-muted-readable: #475569;
+    --edu-text-subtle-readable: #64748b;
+    --edu-readable-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
 }
 
 

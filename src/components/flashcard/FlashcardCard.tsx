@@ -116,10 +116,17 @@ export function FlashcardCard({
         </div>
 
         {/* Back Side */}
+        {/* Pinned to the base token values: this face is a dark design in both
+            themes -- its gradient starts from `accent-900`, which is the same
+            colour in either theme, so a light-mode variant of it would put
+            `text-on-accent` on a near-white card. Pinning keeps the neutral
+            stops (and the `from-white` headline gradient inside) at the values
+            the design was drawn against; in dark the attribute changes nothing. */}
         <div
+          data-theme-fixed="light"
           className={clsx(
             'absolute inset-0 backface-hidden rounded-[2rem] p-8 flex flex-col items-center justify-center',
-            'bg-gradient-to-br from-accent-900/90 to-slate-900/90 backdrop-blur-xl border border-accent-500/30 shadow-[0_0_50px_rgba(139,92,246,0.3)] text-white',
+            'bg-gradient-to-br from-accent-900/90 to-slate-900/90 backdrop-blur-xl border border-accent-500/30 shadow-[0_0_50px_rgba(139,92,246,0.3)] text-on-accent',
             isFlipped ? 'z-10' : 'z-0 rotate-y-180'
           )}
         >

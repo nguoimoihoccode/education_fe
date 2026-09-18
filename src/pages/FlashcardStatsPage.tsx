@@ -42,7 +42,7 @@ export default function FlashcardStatsPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 to="/flashcards/review"
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-700 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent-600 text-on-accent font-bold hover:bg-accent-700 transition-colors"
               >
                 <RefreshCcw className="w-5 h-5" />
                 Ôn tập ngay

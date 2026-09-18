@@ -183,7 +183,7 @@ export default function TimetablePage() {
                   type="button"
                   onClick={() => configMutation.mutate(configDraft)}
                   disabled={configMutation.isPending || configDraft.days.length === 0}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-accent-500 px-3 py-1.5 text-xs font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-accent-500 px-3 py-1.5 text-xs font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
                 >
                   <Save className="h-3.5 w-3.5" aria-hidden="true" />
                   {configMutation.isPending ? 'Đang lưu…' : 'Lưu'}
@@ -286,7 +286,7 @@ export default function TimetablePage() {
                       1,
                     )
                   }
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-accent-500 px-3 py-1.5 text-xs font-black text-white transition-colors hover:bg-accent-400"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-accent-500 px-3 py-1.5 text-xs font-black text-on-accent transition-colors hover:bg-accent-400"
                 >
                   <Plus className="h-3.5 w-3.5" aria-hidden="true" /> Thêm tiết
                 </button>
@@ -408,7 +408,7 @@ export default function TimetablePage() {
             <button
               type="submit"
               disabled={createMutation.isPending || !modal.assignmentId}
-              className="min-h-11 w-full rounded-xl bg-accent-500 px-4 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+              className="min-h-11 w-full rounded-xl bg-accent-500 px-4 text-sm font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
             >
               {createMutation.isPending ? 'Đang lưu…' : 'Thêm vào TKK'}
             </button>

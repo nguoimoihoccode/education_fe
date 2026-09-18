@@ -296,7 +296,7 @@ export default function GradebookPage() {
                   type="button"
                   onClick={() => setTerm(opt.v)}
                   className={`rounded-lg px-3 py-1.5 text-sm font-black transition-colors ${
-                    term === opt.v ? 'bg-accent-500 text-white' : 'text-slate-400 hover:text-white'
+                    term === opt.v ? 'bg-accent-500 text-on-accent' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   {opt.label}
@@ -458,7 +458,7 @@ export default function GradebookPage() {
                   onClick={() => setRankingScope(opt.v)}
                   className={`rounded-lg px-3 py-1.5 text-sm font-black transition-colors ${
                     rankingScope === opt.v
-                      ? 'bg-accent-500 text-white'
+                      ? 'bg-accent-500 text-on-accent'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -662,7 +662,7 @@ export default function GradebookPage() {
               <button
                 type="submit"
                 disabled={saveMutation.isPending}
-                className="ml-auto inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent-500 px-5 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+                className="ml-auto inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-accent-500 px-5 text-sm font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
               >
                 {saveMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

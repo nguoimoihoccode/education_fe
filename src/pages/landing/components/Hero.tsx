@@ -19,7 +19,7 @@ const Hero = () => {
       >
         {/* Badge */}
         <div className="liquid-glass mb-6 inline-flex items-center gap-2 rounded-full px-2 py-1.5">
-          <span className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white">
+          <span className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-on-accent">
             LinguaAI
           </span>
           <span className="pr-3 text-xs font-medium text-slate-500">
@@ -45,7 +45,7 @@ const Hero = () => {
         <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row">
           <Link
             to="/register"
-            className="inline-flex min-h-12 items-center gap-2 rounded-full bg-emerald-600 px-7 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500"
+            className="inline-flex min-h-12 items-center gap-2 rounded-full bg-emerald-600 px-7 py-3 text-sm font-semibold text-on-accent transition hover:bg-emerald-500"
           >
             Bắt đầu miễn phí
             <ArrowRight className="h-4 w-4" />

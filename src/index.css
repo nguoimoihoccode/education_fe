@@ -79,6 +79,38 @@
   --neon-orange: #ff6b35;
   --cyber-900: var(--app-bg-elevated);
 
+  /* Neutral scale (Tailwind's `slate`/`gray`/`white`) as CSS vars.
+     Dark values are byte-identical to Tailwind's defaults -- see the mirror
+     under :root[data-theme='light'] below. `--color-on-accent` is fixed in both
+     themes: it is content on a saturated accent/gradient, which stays saturated. */
+  --color-slate-50: 248 250 252;
+  --color-slate-100: 241 245 249;
+  --color-slate-200: 226 232 240;
+  --color-slate-300: 203 213 225;
+  --color-slate-400: 148 163 184;
+  --color-slate-500: 100 116 139;
+  --color-slate-600: 71 85 105;
+  --color-slate-700: 51 65 85;
+  --color-slate-800: 30 41 59;
+  --color-slate-900: 15 23 42;
+  --color-slate-950: 2 6 23;
+  --color-gray-50: 249 250 251;
+  --color-gray-100: 243 244 246;
+  --color-gray-200: 229 231 235;
+  --color-gray-300: 209 213 219;
+  --color-gray-400: 156 163 175;
+  --color-gray-500: 107 114 128;
+  --color-gray-600: 75 85 99;
+  --color-gray-700: 55 65 81;
+  --color-gray-800: 31 41 55;
+  --color-gray-900: 17 24 39;
+  --color-gray-950: 3 7 18;
+  --color-white: 255 255 255;
+  --color-on-accent: 255 255 255;
+  /* Fixed in both themes, like `--color-on-accent`: `--app-primary` and
+     `--app-warning` stay light-ish in both, so content on them stays dark. */
+  --color-on-light-accent: 2 6 23;
+
   /* Typography */
   font-family: 'IBM Plex Sans', 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.6;
@@ -127,6 +159,84 @@
   --stock-text-secondary: var(--app-text-muted);
   --stock-text-tertiary: var(--app-text-subtle);
   --cyber-900: var(--app-bg);
+
+  /* Mirror of the neutral scale above: N -> 1000-N, so `bg-slate-950` (the page
+     in dark) becomes slate-50 (the page in light) and `text-slate-100` (the
+     primary text in dark) becomes near-black. The scale keeps its *relative*
+     meaning, which is why ~1000 untouched `slate-*` sites flip correctly. */
+  --color-slate-50: 2 6 23;
+  --color-slate-100: 15 23 42;
+  --color-slate-200: 30 41 59;
+  --color-slate-300: 51 65 85;
+  --color-slate-400: 71 85 105;
+  --color-slate-500: 100 116 139;
+  --color-slate-600: 148 163 184;
+  --color-slate-700: 203 213 225;
+  --color-slate-800: 226 232 240;
+  --color-slate-900: 241 245 249;
+  --color-slate-950: 248 250 252;
+  --color-gray-50: 3 7 18;
+  --color-gray-100: 17 24 39;
+  --color-gray-200: 31 41 55;
+  --color-gray-300: 55 65 81;
+  --color-gray-400: 75 85 99;
+  --color-gray-500: 107 114 128;
+  --color-gray-600: 156 163 175;
+  --color-gray-700: 209 213 219;
+  --color-gray-800: 229 231 235;
+  --color-gray-900: 243 244 246;
+  --color-gray-950: 249 250 251;
+  /* Inverts: solid `bg-white` panels and `border-white/10` overlays are "lighter
+     than the page" in dark, and become "darker than the page" tint here. */
+  --color-white: 15 23 42;
+  --color-on-accent: 255 255 255;
+  --color-on-light-accent: 2 6 23;
+
+  /* The global `:focus-visible` outline below paints this, and #00f5ff on white
+     is 1.3:1 -- the focus ring would be invisible. No other live rule reads it
+     (`--neon-*` survives only for the unused `.neon-gradient-*` helpers). */
+  --neon-cyan: #0891b2;
+}
+
+/* Legibility floor for the two muted text steps, light mode only.
+   The mirror above is right for `bg-slate-700` (the toggle off-track wants a
+   light grey) but wrong for the same value used as text, where it lands at
+   2.45:1. These are the only two utilities that need it -- narrowly scoped,
+   no !important, and not the mass `:where(.bg-slate-*)` remap that
+   tests/foundation-tokens.test.ts pins against. */
+:root[data-theme='light'] .text-slate-600,
+:root[data-theme='light'] .text-slate-700 {
+  color: #64748b;
+}
+
+/* Data-attribute scope for routes that are deliberately pinned to one look:
+   the marketing landing and auth pages live outside the app shell and keep
+   their dark treatment in both themes. Layout.tsx puts this attribute on the
+   subtree it renders without the shell. */
+[data-theme-fixed='light'] {
+  --color-slate-50: 248 250 252;
+  --color-slate-100: 241 245 249;
+  --color-slate-200: 226 232 240;
+  --color-slate-300: 203 213 225;
+  --color-slate-400: 148 163 184;
+  --color-slate-500: 100 116 139;
+  --color-slate-600: 71 85 105;
+  --color-slate-700: 51 65 85;
+  --color-slate-800: 30 41 59;
+  --color-slate-900: 15 23 42;
+  --color-slate-950: 2 6 23;
+  --color-gray-50: 249 250 251;
+  --color-gray-100: 243 244 246;
+  --color-gray-200: 229 231 235;
+  --color-gray-300: 209 213 219;
+  --color-gray-400: 156 163 175;
+  --color-gray-500: 107 114 128;
+  --color-gray-600: 75 85 99;
+  --color-gray-700: 55 65 81;
+  --color-gray-800: 31 41 55;
+  --color-gray-900: 17 24 39;
+  --color-gray-950: 3 7 18;
+  --color-white: 255 255 255;
 }
 
 /* Semantic surfaces for shell / new code */
@@ -1173,10 +1283,11 @@ button svg,
   }
 }
 
-/* Dark mode preference (if user system is set to dark) */
-@media (prefers-color-scheme: dark) {
-  /* Already dark by default, but can add overrides here */
-}
+/* The light theme is driven by the `data-theme` attribute alone (see
+   App.tsx SettingsEffect): 'system' resolves the OS preference in JS shared by
+   the boot script in index.html, so no prefers-color-scheme block is needed
+   here. An earlier empty `@media (prefers-color-scheme: dark)` stub sat at this
+   spot and only implied support that did not exist. */
 
 /* ============================================
    OVERFLOW PREVENTION
@@ -1235,8 +1346,11 @@ button svg,
   position: absolute;
   top: -40px;
   left: 0;
-  background: var(--cyber-800);
-  color: var(--neon-cyan);
+  /* `--cyber-800` is defined nowhere in this file, so the old declaration was
+     invalid at computed-value time and left the link transparent with cyan
+     text -- unreadable on a light page. App tokens instead. */
+  background: var(--app-surface);
+  color: var(--app-text);
   padding: 8px;
   text-decoration: none;
   z-index: 100;

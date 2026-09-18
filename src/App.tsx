@@ -118,11 +118,21 @@ function SettingsEffect() {
     const root = document.documentElement;
 
     // Handle Theme
-    if (theme === 'light') {
-      root.setAttribute('data-theme', 'light');
-    } else {
-      root.removeAttribute('data-theme');
-    }
+    // 'system' is resolved here rather than in CSS so the `data-theme`
+    // attribute stays the single source of truth: the media query only decides
+    // which value 'system' resolves to, and the two explicit options stay
+    // immune to an OS change. Before this, 'system' fell through to
+    // removeAttribute and was indistinguishable from 'dark'.
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+    const applyTheme = () => {
+      const resolved = theme === 'system' ? (prefersLight.matches ? 'light' : 'dark') : theme;
+      if (resolved === 'light') {
+        root.setAttribute('data-theme', 'light');
+      } else {
+        root.removeAttribute('data-theme');
+      }
+    };
+    applyTheme();
 
     // Handle High Contrast
     if (highContrast) {
@@ -186,6 +196,13 @@ function SettingsEffect() {
     Object.entries(activePalette).forEach(([shade, rgbString]) => {
       root.style.setProperty(`--color-accent-${shade}`, rgbString);
     });
+
+    // Follow the OS live, but only while 'system' is selected -- an explicit
+    // dark/light choice must not be overridden when the OS flips.
+    if (theme === 'system') {
+      prefersLight.addEventListener('change', applyTheme);
+      return () => prefersLight.removeEventListener('change', applyTheme);
+    }
   }, [theme, accentColor, fontSize, reducedMotion, compactMode, highContrast]);
 
   return null;

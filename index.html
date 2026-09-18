@@ -11,7 +11,13 @@
     <script>
       try {
         const settings = JSON.parse(localStorage.getItem('edupro-settings') || '{}');
-        if (settings?.state?.theme === 'light') {
+        const theme = settings?.state?.theme;
+        // 'system' resolves exactly as SettingsEffect does, so the first painted
+        // frame already matches what React will apply -- otherwise the boot
+        // shell would flash dark before switching to light.
+        const useLight = theme === 'light'
+          || (theme === 'system' && window.matchMedia('(prefers-color-scheme: light)').matches);
+        if (useLight) {
           document.documentElement.setAttribute('data-theme', 'light');
         }
       } catch (_) {}

@@ -444,7 +444,7 @@ export default function QuizSessionPage() {
           <p className="text-slate-300 mb-6">Không thể tải phiên quiz.</p>
           <button
             onClick={() => navigate('/quiz')}
-            className="px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all"
+            className="px-6 py-3 rounded-full bg-accent-600 text-on-accent font-medium hover:bg-accent-700 transition-all"
           >
             Quay lại danh sách quiz
           </button>
@@ -545,7 +545,7 @@ export default function QuizSessionPage() {
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="w-7 h-7 rounded-lg bg-accent-600 text-white flex items-center justify-center text-xs font-bold">
+                        <span className="w-7 h-7 rounded-lg bg-accent-600 text-on-accent flex items-center justify-center text-xs font-bold">
                           {batchView.batchStart + qIdx + 1}
                         </span>
                         <span className="text-sm font-bold text-accent-400">
@@ -580,7 +580,7 @@ export default function QuizSessionPage() {
                               <span
                                 className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
                                   isSelected
-                                    ? 'bg-accent-600 text-white'
+                                    ? 'bg-accent-600 text-on-accent'
                                     : 'bg-white/10 text-slate-200'
                                 }`}
                               >
@@ -659,11 +659,11 @@ export default function QuizSessionPage() {
                         <span
                           className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
                             isCorrectOption
-                              ? 'bg-emerald-600 text-white'
+                              ? 'bg-emerald-600 text-on-accent'
                               : isWrongSelected
-                                ? 'bg-rose-600 text-white'
+                                ? 'bg-rose-600 text-on-accent'
                                 : isSelected
-                                  ? 'bg-accent-600 text-white'
+                                  ? 'bg-accent-600 text-on-accent'
                                   : 'bg-white/10 text-slate-200'
                           }`}
                         >
@@ -747,7 +747,7 @@ export default function QuizSessionPage() {
                     type="button"
                     onClick={handleGoNextBatch}
                     disabled={!batchView.canGoNextBatch || isFinishing}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-on-accent font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Lô tiếp
                     <ArrowRight className="w-4 h-4" />
@@ -757,7 +757,7 @@ export default function QuizSessionPage() {
                     type="button"
                     onClick={() => void finishExam('submit')}
                     disabled={!batchView.canSubmitQuiz || isFinishing}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-on-accent font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isFinishing ? 'Đang nộp bài...' : 'Nộp bài'}
                     <Send className="w-4 h-4" />
@@ -772,7 +772,7 @@ export default function QuizSessionPage() {
                   type="button"
                   onClick={() => void handlePracticeContinue()}
                   disabled={isFinishing}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-on-accent font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {practiceView.shouldFinishAfterFeedback ||
                   localAnsweredCount >= practiceView.totalQuestions
@@ -787,7 +787,7 @@ export default function QuizSessionPage() {
                   type="button"
                   onClick={() => void handlePracticeSubmit()}
                   disabled={!selectedAnswer.trim() || isSubmitting || isFinishing}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-white font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-600 text-on-accent font-medium hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Đang chấm...' : 'Kiểm tra'}
                   <CheckCircle className="w-4 h-4" />

@@ -80,12 +80,12 @@ export default function MySchoolPage() {
                 type="button"
                 onClick={() => setTab(id)}
                 className={`relative inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-black transition-colors ${
-                  tab === id ? 'bg-accent-500 text-white' : 'text-slate-400 hover:text-white'
+                  tab === id ? 'bg-accent-500 text-on-accent' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" /> {label}
                 {id === 'homework' && pendingCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-black text-white">
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-black text-on-accent">
                     {pendingCount}
                   </span>
                 )}
@@ -205,7 +205,7 @@ function HomeworkRows({ rows, gradedIds }: { rows: StudentHomeworkRow[]; gradedI
               {hw.targetType === 'quiz' && !done && (
                 <Link
                   to={ROUTES.QUIZ_DETAIL(hw.targetId)}
-                  className="rounded-xl bg-accent-500 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-accent-400"
+                  className="rounded-xl bg-accent-500 px-4 py-2 text-xs font-black text-on-accent transition-colors hover:bg-accent-400"
                 >
                   Làm bài
                 </Link>

@@ -206,7 +206,7 @@ export default function FlashcardReviewPage() {
             </button>
             <button
               onClick={handleGoHome}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-accent-600 to-indigo-600 text-on-accent font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all"
             >
               <Home className="w-5 h-5 fill-current" />
               Go to Decks

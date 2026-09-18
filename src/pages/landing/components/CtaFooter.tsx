@@ -18,7 +18,7 @@ const CtaFooter = () => {
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <Link
             to="/register"
-            className="rounded-full bg-emerald-600 px-6 py-3 text-white font-medium text-sm lp-btn-glass"
+            className="rounded-full bg-emerald-600 px-6 py-3 text-on-accent font-medium text-sm lp-btn-glass"
           >
             Đăng ký miễn phí
           </Link>

@@ -75,7 +75,7 @@ export default function QuizDetailPage() {
         <div className="detail-wrapper py-20 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">Không tìm thấy bài quiz</h2>
           <p className="text-slate-300 mb-6">Bài quiz bạn đang tìm không tồn tại hoặc đã bị gỡ bỏ.</p>
-          <Link to="/quiz" className="px-6 py-3 rounded-full bg-accent-600 text-white font-medium hover:bg-accent-700 transition-all">
+          <Link to="/quiz" className="px-6 py-3 rounded-full bg-accent-600 text-on-accent font-medium hover:bg-accent-700 transition-all">
             Quay lại danh sách quiz
           </Link>
         </div>
@@ -128,7 +128,7 @@ export default function QuizDetailPage() {
                     difficulty: isOfflineHskQuiz ? selectedDifficulty : null,
                     count: isOfflineHskQuiz ? selectedQuestionCount : null,
                   })}`}
-                  className="flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold hover:scale-105 transition-transform shadow-lg shadow-accent-900/30"
+                  className="flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold hover:scale-105 transition-transform shadow-lg shadow-accent-900/30"
                 >
                   <Play className="w-5 h-5" />
                   {playMode === 'practice' ? 'Bắt đầu học' : 'Bắt đầu kiểm tra'}
@@ -175,8 +175,8 @@ export default function QuizDetailPage() {
                 className={`px-4 py-2 rounded-full border text-sm font-semibold ${
                   playMode === mode.id
                     ? mode.id === 'practice'
-                      ? 'bg-emerald-600 text-white border-emerald-500'
-                      : 'bg-rose-600 text-white border-rose-500'
+                      ? 'bg-emerald-600 text-on-accent border-emerald-500'
+                      : 'bg-rose-600 text-on-accent border-rose-500'
                     : 'bg-white/5 text-slate-300 border-white/10'
                 }`}
               >
@@ -205,7 +205,7 @@ export default function QuizDetailPage() {
                       onClick={() => setSelectedDifficulty(difficulty)}
                       className={`px-4 py-2 rounded-full border text-sm font-semibold ${
                         selectedDifficulty === difficulty
-                          ? 'bg-accent-600 text-white border-accent-500'
+                          ? 'bg-accent-600 text-on-accent border-accent-500'
                           : 'bg-white/5 text-slate-300 border-white/10'
                       }`}
                     >
@@ -224,7 +224,7 @@ export default function QuizDetailPage() {
                       onClick={() => setSelectedQuestionCount(count)}
                       className={`px-4 py-2 rounded-full border text-sm font-semibold ${
                         selectedQuestionCount === count
-                          ? 'bg-emerald-600 text-white border-emerald-500'
+                          ? 'bg-emerald-600 text-on-accent border-emerald-500'
                           : 'bg-white/5 text-slate-300 border-white/10'
                       }`}
                     >

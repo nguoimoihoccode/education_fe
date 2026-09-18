@@ -40,7 +40,14 @@ export const Layout = ({ children }: LayoutProps) => {
   const authPaths: string[] = [ROUTES.LOGIN, ROUTES.REGISTER, ROUTES.AUTH_CALLBACK];
   const noLayoutPaths: string[] = [ROUTES.HOME, ROUTES.DASHBOARD_LANDING];
   if (authPaths.includes(currentPath) || noLayoutPaths.includes(currentPath)) {
-    return <>{children}</>;
+    // These routes sit outside the shell and are pinned to one look: the landing
+    // and auth pages carry their own light palette (Landing.css `--lp-*`), and
+    // their components use neutral classes on top of it. Without this attribute
+    // the inverted scale would flip `text-slate-900` to near-white on those
+    // already-light pages in light mode -- invisible text. `data-theme-fixed`
+    // restores the base (dark-theme) neutral values, so these pages render
+    // identically in both themes with no per-file edits.
+    return <div data-theme-fixed="light">{children}</div>;
   }
 
   const handleLogout = () => {

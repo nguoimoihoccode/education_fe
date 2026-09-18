@@ -168,7 +168,7 @@ export default function TeacherClassDetailPage() {
               type="button"
               onClick={() => setTab('students')}
               className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-black transition-colors ${
-                tab === 'students' ? 'bg-accent-500 text-white' : 'text-slate-400 hover:text-white'
+                tab === 'students' ? 'bg-accent-500 text-on-accent' : 'text-slate-400 hover:text-white'
               }`}
             >
               <Users className="h-4 w-4" aria-hidden="true" /> Học sinh
@@ -177,7 +177,7 @@ export default function TeacherClassDetailPage() {
               type="button"
               onClick={() => setTab('parents')}
               className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-black transition-colors ${
-                tab === 'parents' ? 'bg-accent-500 text-white' : 'text-slate-400 hover:text-white'
+                tab === 'parents' ? 'bg-accent-500 text-on-accent' : 'text-slate-400 hover:text-white'
               }`}
             >
               <Baby className="h-4 w-4" aria-hidden="true" /> Phụ huynh
@@ -346,7 +346,7 @@ export default function TeacherClassDetailPage() {
                         type="button"
                         onClick={() => approveMutation.mutate(row.linkId)}
                         disabled={approveMutation.isPending}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/90 px-3 py-1.5 text-xs font-black text-white transition-colors hover:bg-emerald-400 disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/90 px-3 py-1.5 text-xs font-black text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-50"
                       >
                         <Check className="h-3.5 w-3.5" aria-hidden="true" /> Duyệt
                       </button>
@@ -458,7 +458,7 @@ export default function TeacherClassDetailPage() {
               <button
                 type="submit"
                 disabled={inviteMutation.isPending}
-                className="min-h-11 w-full rounded-xl bg-accent-500 px-4 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+                className="min-h-11 w-full rounded-xl bg-accent-500 px-4 text-sm font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
               >
                 {inviteMutation.isPending ? 'Đang tạo mã…' : 'Tạo mã mời'}
               </button>

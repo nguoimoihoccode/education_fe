@@ -96,7 +96,7 @@ export default function ParentChildPage() {
                 type="button"
                 onClick={() => setTab(id)}
                 className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-black transition-colors ${
-                  tab === id ? 'bg-accent-500 text-white' : 'text-slate-400 hover:text-white'
+                  tab === id ? 'bg-accent-500 text-on-accent' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" /> {label}

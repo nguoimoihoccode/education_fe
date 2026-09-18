@@ -527,7 +527,7 @@ export default function AiTutor() {
             <button
               onClick={handleNewChat}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(139,92,246,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(139,92,246,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="w-4 h-4" />
               New Chat
@@ -590,10 +590,10 @@ export default function AiTutor() {
             </button>
             <div className="flex items-center gap-3 flex-1">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent-600 to-fuchsia-600 flex items-center justify-center shadow-lg">
-                <Bot className="w-5 h-5 text-white" />
+                <Bot className="w-5 h-5 text-on-accent" />
               </div>
               <div>
-                <h2 className="text-sm font-black font-headline text-white">AI Tutor</h2>
+                <h2 className="text-sm font-black font-headline text-on-accent">AI Tutor</h2>
                 <p className="text-[10px] font-bold text-emerald-400 tracking-widest uppercase flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                   Online — Ready to help
@@ -648,11 +648,11 @@ export default function AiTutor() {
                     <Wand2 className="w-12 h-12 text-accent-400" />
                   </div>
                   <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
-                    <Sparkles className="w-4 h-4 text-white" />
+                    <Sparkles className="w-4 h-4 text-on-accent" />
                   </div>
                 </div>
 
-                <h2 className="text-2xl md:text-3xl font-black font-headline text-white mb-3 text-center">
+                <h2 className="text-2xl md:text-3xl font-black font-headline text-on-accent mb-3 text-center">
                   Hi {user?.displayName?.split(' ')[0] || 'there'}! I'm your AI Tutor
                 </h2>
                 <p className="text-center max-w-lg mb-10 text-sm leading-relaxed" style={{ color: 'var(--app-text-muted)' }}>
@@ -673,7 +673,7 @@ export default function AiTutor() {
                     >
                       <div className="flex items-center gap-3 mb-2">
                         <prompt.icon className="w-4 h-4 text-accent-400" />
-                        <span className="text-xs font-bold text-white">{prompt.label}</span>
+                        <span className="text-xs font-bold text-on-accent">{prompt.label}</span>
                       </div>
                       <p className="text-[11px] line-clamp-2 leading-relaxed" style={{ color: 'var(--app-text-subtle)' }}>{prompt.prompt}</p>
                       <ChevronRight className="w-3.5 h-3.5 text-accent-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -791,9 +791,10 @@ export default function AiTutor() {
                   <button
                     onClick={handleSend}
                     disabled={!input.trim() || isTyping || isLoading || !activeConvId}
-                    className="absolute right-3 bottom-3 w-10 h-10 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg"
+                    aria-label="Gửi tin nhắn"
+                    className="absolute right-3 bottom-3 w-10 h-10 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg"
                   >
-                    <Send className="w-4 h-4" />
+                    <Send className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>

@@ -137,7 +137,7 @@ export function FlashcardDeckCard({
 
           <button
             onClick={handleStartReview}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-600 text-white font-bold hover:bg-accent-500 transition-all duration-200 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-600 text-on-accent font-bold hover:bg-accent-500 transition-all duration-200 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
           >
             <Play className="w-4 h-4 fill-current" />
             Review

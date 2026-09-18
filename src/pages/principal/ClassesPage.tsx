@@ -174,7 +174,7 @@ export default function ClassesPage() {
             <button
               type="button"
               onClick={() => setShowCreate((v) => !v)}
-              className="inline-flex items-center gap-2 rounded-2xl bg-accent-500 px-5 py-2.5 text-sm font-black text-white transition-colors hover:bg-accent-400"
+              className="inline-flex items-center gap-2 rounded-2xl bg-accent-500 px-5 py-2.5 text-sm font-black text-on-accent transition-colors hover:bg-accent-400"
             >
               <Plus className="h-4 w-4" aria-hidden="true" /> Tạo lớp
             </button>
@@ -255,7 +255,7 @@ export default function ClassesPage() {
               <button
                 type="submit"
                 disabled={createClassMutation.isPending || (yearsQuery.data ?? []).length === 0}
-                className="w-full rounded-xl bg-accent-500 px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+                className="w-full rounded-xl bg-accent-500 px-4 py-2.5 text-sm font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
               >
                 {(yearsQuery.data ?? []).length === 0
                   ? 'Cần tạo năm học trước (trang Tổng quan)'
@@ -365,7 +365,7 @@ export default function ClassesPage() {
                     type="button"
                     onClick={submitAddStudents}
                     disabled={addStudentsMutation.isPending}
-                    className="inline-flex items-center gap-2 rounded-xl bg-accent-500 px-4 py-2 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-xl bg-accent-500 px-4 py-2 text-sm font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
                   >
                     <UserPlus className="h-4 w-4" aria-hidden="true" />
                     {addStudentsMutation.isPending ? 'Đang thêm…' : 'Thêm vào lớp'}

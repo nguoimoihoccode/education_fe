@@ -69,7 +69,7 @@ export default function UserProfile() {
                     </div>
                   </div>
                   <button onClick={() => avatarInputRef.current?.click()}
-                    className="absolute bottom-1 right-1 w-10 h-10 rounded-xl bg-accent-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg">
+                    className="absolute bottom-1 right-1 w-10 h-10 rounded-xl bg-accent-600 text-on-accent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg">
                     <Camera className="w-4 h-4" />
                   </button>
                   <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
@@ -101,7 +101,7 @@ export default function UserProfile() {
                   ) : (
                     <>
                       <button onClick={handleSaveProfile} disabled={isSavingProfile}
-                        className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                        className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold text-sm shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
                         <Save className="w-4 h-4" /> {isSavingProfile ? 'Saving...' : 'Save'}
                       </button>
                       <button onClick={() => { setIsEditing(false); setEditForm({ displayName: user?.displayName || '', phone: user?.phone || '' }); }}
@@ -126,7 +126,7 @@ export default function UserProfile() {
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all ${
                 activeTab === tab.id
-                  ? 'bg-accent-600 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)]'
+                  ? 'bg-accent-600 text-on-accent shadow-[0_0_15px_rgba(139,92,246,0.3)]'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}>
               <tab.icon className="w-4 h-4" /> {tab.label}

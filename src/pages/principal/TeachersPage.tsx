@@ -68,7 +68,7 @@ export default function TeachersPage() {
           <button
             type="button"
             onClick={() => setShowForm((v) => !v)}
-            className="inline-flex items-center gap-2 rounded-2xl bg-accent-500 px-5 py-2.5 text-sm font-black text-white transition-colors hover:bg-accent-400"
+            className="inline-flex items-center gap-2 rounded-2xl bg-accent-500 px-5 py-2.5 text-sm font-black text-on-accent transition-colors hover:bg-accent-400"
           >
             <Plus className="h-4 w-4" aria-hidden="true" /> Thêm phân công
           </button>
@@ -129,7 +129,7 @@ export default function TeachersPage() {
               <button
                 type="submit"
                 disabled={createAssignmentMutation.isPending}
-                className="min-h-11 flex-1 rounded-xl bg-accent-500 px-4 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+                className="min-h-11 flex-1 rounded-xl bg-accent-500 px-4 text-sm font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
               >
                 {createAssignmentMutation.isPending ? 'Đang lưu…' : 'Phân công'}
               </button>

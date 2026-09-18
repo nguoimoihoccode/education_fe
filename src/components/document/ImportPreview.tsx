@@ -133,7 +133,7 @@ export function ImportPreview({
           <button
             onClick={handleImport}
             disabled={preview.suggestedFlashcards.length === 0}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-indigo-600 text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm tracking-wider uppercase"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-indigo-600 text-on-accent font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm tracking-wider uppercase"
           >
             <Sparkles className="w-4 h-4" />
             Import {selectedCards.size > 0 ? `(${selectedCards.size})` : 'All'}

@@ -193,7 +193,7 @@ export default function PremiumUpgrade() {
                 onClick={() => setIsYearly(false)}
                 className={`px-6 py-3 rounded-xl text-sm font-bold transition-all ${
                   !isYearly
-                    ? 'bg-accent-600 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)]'
+                    ? 'bg-accent-600 text-on-accent shadow-[0_0_15px_rgba(139,92,246,0.3)]'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -203,7 +203,7 @@ export default function PremiumUpgrade() {
                 onClick={() => setIsYearly(true)}
                 className={`px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
                   isYearly
-                    ? 'bg-accent-600 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)]'
+                    ? 'bg-accent-600 text-on-accent shadow-[0_0_15px_rgba(139,92,246,0.3)]'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -305,7 +305,7 @@ export default function PremiumUpgrade() {
                       }
                       className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all mb-8 ${
                         plan.popular
-                          ? 'bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white shadow-[0_0_25px_rgba(139,92,246,0.25)] hover:scale-[1.02] active:scale-95'
+                          ? 'bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent shadow-[0_0_25px_rgba(139,92,246,0.25)] hover:scale-[1.02] active:scale-95'
                           : `bg-gradient-to-r ${plan.gradient} text-white shadow-lg hover:scale-[1.02] active:scale-95`
                       }`}
                     >
@@ -448,7 +448,7 @@ export default function PremiumUpgrade() {
                 </div>
                 <p className="text-sm text-slate-300 leading-relaxed mb-5 italic">"{t.text}"</p>
                 <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-fuchsia-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-fuchsia-600 flex items-center justify-center text-on-accent font-bold text-sm shadow-md">
                     {t.avatar}
                   </div>
                   <div>
@@ -521,7 +521,7 @@ export default function PremiumUpgrade() {
                     { icon: '✨' },
                   )
                 }
-                className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-base shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all"
+                className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold text-base shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all"
               >
                 <Rocket className="w-5 h-5" />
                 Start Free Trial

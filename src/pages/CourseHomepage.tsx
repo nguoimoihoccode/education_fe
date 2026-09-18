@@ -80,7 +80,7 @@ export default function CourseHomepage() {
               From basics to advanced techniques, we've got you covered.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link to="/education" className="px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-lg flex items-center gap-3 hover:scale-105 transition-transform shadow-xl shadow-accent-900/30">
+              <Link to="/education" className="px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold text-lg flex items-center gap-3 hover:scale-105 transition-transform shadow-xl shadow-accent-900/30">
                 <Play className="w-5 h-5" />
                 Start Learning
               </Link>
@@ -228,7 +228,7 @@ export default function CourseHomepage() {
                   )}
                   <Link
                     to="/education"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-600 text-white text-sm font-bold hover:bg-accent-500 transition-all"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-600 text-on-accent text-sm font-bold hover:bg-accent-500 transition-all"
                   >
                     Về trang học
                   </Link>

@@ -88,7 +88,7 @@ export default function ParentChildrenPage() {
           <button
             type="submit"
             disabled={claimMutation.isPending}
-            className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-accent-500 px-4 text-sm font-black text-white transition-colors hover:bg-accent-400 disabled:opacity-50"
+            className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-accent-500 px-4 text-sm font-black text-on-accent transition-colors hover:bg-accent-400 disabled:opacity-50"
           >
             <TicketCheck className="h-4 w-4" aria-hidden="true" />
             {claimMutation.isPending ? 'Đang kiểm tra…' : 'Nhập mã mời'}

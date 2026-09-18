@@ -312,7 +312,7 @@ function BaiTapList({
             {exercises.map((ex, i: number) => (
                 <div key={ex.id} className="lesson-exercise-card">
                     <div className="flex items-center gap-4 mb-6">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-fuchsia-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">{i + 1}</div>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-fuchsia-500 flex items-center justify-center text-on-accent font-bold text-lg shadow-lg">{i + 1}</div>
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{ex.type.replace('_', ' ')}</span>
                     </div>
                     <p className="text-2xl font-medium text-white mb-8 leading-normal">{ex.question}</p>

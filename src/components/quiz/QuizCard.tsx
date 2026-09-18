@@ -235,7 +235,7 @@ export function QuizCard({ quiz, onEdit, onDelete, onStartQuiz }: QuizCardProps)
 
           <button
             onClick={handleStartQuiz}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-white font-bold text-sm shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold text-sm shadow-[0_0_15px_rgba(139,92,246,0.3)]"
           >
             <Zap className="w-4 h-4" />
             {isOfflineHskQuiz ? 'Cấu hình' : hasQuestions ? 'Bắt đầu' : 'Chi tiết'}

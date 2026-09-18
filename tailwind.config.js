@@ -17,6 +17,61 @@ export default {
     },
     extend: {
       colors: {
+        // Neutral scale driven by CSS vars (same mechanism as `accent` below) so
+        // the light theme can invert it. The values at `:root` in index.css are
+        // byte-identical to Tailwind's defaults, so dark mode renders exactly as
+        // it did when these were compiled to literals; the mirror under
+        // `:root[data-theme='light']` flips them for light mode. This is what
+        // lets ~1000 existing `bg-slate-*`/`text-slate-*`/`border-white/10`
+        // sites become theme-aware without editing any of them.
+        //
+        // Deliberately NOT a `:root[data-theme='light'] :where(.bg-slate-950…)`
+        // remap: tests/foundation-tokens.test.ts pins that such mass !important
+        // slate overrides must not come back.
+        slate: {
+          50: 'rgb(var(--color-slate-50) / <alpha-value>)',
+          100: 'rgb(var(--color-slate-100) / <alpha-value>)',
+          200: 'rgb(var(--color-slate-200) / <alpha-value>)',
+          300: 'rgb(var(--color-slate-300) / <alpha-value>)',
+          400: 'rgb(var(--color-slate-400) / <alpha-value>)',
+          500: 'rgb(var(--color-slate-500) / <alpha-value>)',
+          600: 'rgb(var(--color-slate-600) / <alpha-value>)',
+          700: 'rgb(var(--color-slate-700) / <alpha-value>)',
+          800: 'rgb(var(--color-slate-800) / <alpha-value>)',
+          900: 'rgb(var(--color-slate-900) / <alpha-value>)',
+          950: 'rgb(var(--color-slate-950) / <alpha-value>)',
+        },
+        gray: {
+          50: 'rgb(var(--color-gray-50) / <alpha-value>)',
+          100: 'rgb(var(--color-gray-100) / <alpha-value>)',
+          200: 'rgb(var(--color-gray-200) / <alpha-value>)',
+          300: 'rgb(var(--color-gray-300) / <alpha-value>)',
+          400: 'rgb(var(--color-gray-400) / <alpha-value>)',
+          500: 'rgb(var(--color-gray-500) / <alpha-value>)',
+          600: 'rgb(var(--color-gray-600) / <alpha-value>)',
+          700: 'rgb(var(--color-gray-700) / <alpha-value>)',
+          800: 'rgb(var(--color-gray-800) / <alpha-value>)',
+          900: 'rgb(var(--color-gray-900) / <alpha-value>)',
+          950: 'rgb(var(--color-gray-950) / <alpha-value>)',
+        },
+        // `white` is used two ways in this codebase, and they need opposite
+        // treatment. Inverting it covers the alpha-overlay idiom (`bg-white/5`,
+        // `border-white/10` -- 626 sites) plus solid white panels/buttons whose
+        // partner text is a slate shade that inverts with them. Content sitting
+        // on a saturated accent/gradient background must NOT invert, because the
+        // accent stays saturated in both themes; those sites use `on-accent`.
+        white: 'rgb(var(--color-white) / <alpha-value>)',
+        // Quoted kebab-case on purpose: Tailwind uses colour keys verbatim in
+        // utility names, so a camelCase `onAccent` key emits no class at all
+        // and `text-on-accent` goes silently missing.
+        'on-accent': 'rgb(var(--color-on-accent) / <alpha-value>)',
+        // Content on the accents that stay *light* in both themes
+        // (`--app-primary` #10b981/#059669, `--app-warning` #f59e0b/#d97706 --
+        // all brighter than mid grey), so their content has to stay dark in
+        // both. Fixed, like `on-accent` above. Using `on-accent` here would be
+        // wrong: white on #10b981 is 2.9:1, below AA, where fixed dark is
+        // 8.6:1 dark / 5.8:1 light.
+        'on-light-accent': 'rgb(var(--color-on-light-accent) / <alpha-value>)',
         // Fintech Palette (New Design System)
         primary: {
           DEFAULT: '#F59E0B', // Amber 500
