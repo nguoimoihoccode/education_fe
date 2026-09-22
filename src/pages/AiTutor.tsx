@@ -23,8 +23,9 @@ import {
   Settings,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/store/auth.store';
+import { ROUTES } from '@/config/routes';
 import {
   listConversations,
   createConversation,
@@ -33,7 +34,12 @@ import {
   sendMessage,
 } from '@/api/ai.api';
 import { useAiProviderStore } from '@/store/aiProvider.store';
-import type { AiMessage, AiConversationSummary, SendMessageResponse } from '@/types/ai.types';
+import type {
+  AiMessage,
+  AiConversationSummary,
+  ChatReference,
+  SendMessageResponse,
+} from '@/types/ai.types';
 import './Education.css';
 import { AiSettingsDrawer } from '@/components/ai';
 import { directSendMessage } from '@/api/aiDirect.api';
@@ -45,6 +51,8 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  /** Lesson sources the reply drew on (server mode only; not persisted). */
+  references?: ChatReference[];
 }
 
 interface Conversation {
@@ -393,7 +401,13 @@ export default function AiTutor() {
             : await sendMessage(activeConvId, trimmed);
 
       const userMsg = mapApiMessage(reply.userMessage);
-      const assistantMsg = mapApiMessage(reply.assistantMessage);
+      // References come back only on the response that produced the reply (the
+      // server does not persist them), so they are attached here, not in
+      // mapApiMessage — reloading a conversation will not re-show old chips.
+      const assistantMsg: ChatMessage = {
+        ...mapApiMessage(reply.assistantMessage),
+        references: reply.references ?? [],
+      };
 
       setConversations((prev) =>
         prev.map((c) =>
@@ -744,6 +758,50 @@ export default function AiTutor() {
                         {/* Render lightweight markdown without executing raw HTML. */}
                         <div className="whitespace-pre-wrap">{renderSafeMessageContent(msg.content)}</div>
                       </div>
+
+                      {/* Source chips: only the response that produced this reply
+                          carried references, so a reloaded conversation shows none. */}
+                      {msg.role === 'assistant' && (msg.references?.length ?? 0) > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                          <span
+                            className="text-[10px] font-bold uppercase tracking-wider"
+                            style={{ color: 'var(--app-text-subtle)' }}
+                          >
+                            Nguồn
+                          </span>
+                          {msg.references!.map((ref, refIndex) => {
+                            const chipClass =
+                              'flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium border max-w-[240px] transition-all hover:border-accent-500/40';
+                            const chipStyle = {
+                              background: 'var(--app-surface-hover)',
+                              borderColor: 'var(--app-border)',
+                              color: 'var(--app-text-muted)',
+                            };
+                            const label = (
+                              <>
+                                <BookOpen className="w-3 h-3 flex-shrink-0" />
+                                <span className="truncate">{ref.title}</span>
+                              </>
+                            );
+                            const key = `${ref.lessonId ?? 'chunk'}-${refIndex}`;
+                            return ref.lessonId ? (
+                              <Link
+                                key={key}
+                                to={ROUTES.LESSON(ref.lessonId)}
+                                className={chipClass}
+                                style={chipStyle}
+                                title="Mở bài học"
+                              >
+                                {label}
+                              </Link>
+                            ) : (
+                              <span key={key} className={chipClass} style={chipStyle}>
+                                {label}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
 
                       {/* Actions */}
                       <div className={`flex items-center gap-2 mt-1.5 ${msg.role === 'user' ? 'justify-end' : ''}`}>

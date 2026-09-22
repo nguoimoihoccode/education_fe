@@ -20,10 +20,25 @@ export interface AiConversationDetail extends Omit<AiConversationSummary, 'messa
   messages: AiMessage[];
 }
 
+/**
+ * A retrieval hit the tutor cites under its reply. Metadata only — the server
+ * never persists it with the message, so it is only present on the response
+ * that produced the reply.
+ */
+export interface ChatReference {
+  lessonId: string | null;
+  title: string;
+  sourceType: 'lesson' | 'vocabulary';
+  /** Cosine distance from the question; lower is closer. */
+  distance: number;
+}
+
 export interface SendMessageResponse {
   userMessage: AiMessage;
   assistantMessage: AiMessage;
   conversation: { id: string; title: string; updatedAt: string };
+  /** Sources the reply drew on; empty or absent when nothing was retrieved. */
+  references?: ChatReference[];
 }
 
 export type ConfigSource = 'db' | 'env' | 'default';
@@ -116,4 +131,22 @@ export interface ReindexKnowledgeResult {
   embedded: number;
   removed: number;
   failed?: number;
+}
+
+/** Admin view of the RAG index the tutor retrieves from (`GET /ai/knowledge/status`). */
+export interface KnowledgeIndexStatusView {
+  embeddingConfigured: boolean;
+  /** Distinct lessons that still hold at least one chunk. */
+  lessons: number;
+  chunks: number;
+  embedded: number;
+  /** Rows a failed run left without their vector — retrieval cannot see them. */
+  pending: number;
+  bySourceType: Array<{
+    sourceType: string;
+    chunks: number;
+    embedded: number;
+    pending: number;
+  }>;
+  lastEmbeddedAt: string | null;
 }

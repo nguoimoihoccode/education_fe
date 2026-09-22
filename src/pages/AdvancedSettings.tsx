@@ -40,6 +40,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import {
   getAiSettings,
+  getKnowledgeIndexStatus,
   updateAiSettings,
   testAiSettings,
   reindexKnowledge,
@@ -47,7 +48,11 @@ import {
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore, type SettingsState } from '@/store/settings.store';
 import { useAiProviderStore } from '@/store/aiProvider.store';
-import type { AiProviderSettingsView, ConfigSource } from '@/types/ai.types';
+import type {
+  AiProviderSettingsView,
+  ConfigSource,
+  KnowledgeIndexStatusView,
+} from '@/types/ai.types';
 import './Education.css';
 
 /* ================================================================ */
@@ -124,6 +129,7 @@ export default function AdvancedSettings() {
   const [aiEmbeddingDimensions, setAiEmbeddingDimensions] = useState(1536);
   const [aiEmbeddingSaving, setAiEmbeddingSaving] = useState(false);
   const [aiReindexing, setAiReindexing] = useState(false);
+  const [aiIndexStatus, setAiIndexStatus] = useState<KnowledgeIndexStatusView | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSaving, setAiSaving] = useState(false);
   const [aiTesting, setAiTesting] = useState(false);
@@ -230,6 +236,13 @@ export default function AdvancedSettings() {
       .finally(() => {
         if (!cancelled) setAiLoading(false);
       });
+    // Read-only extra shown next to the reindex buttons: a failure to load it
+    // must not take the settings form down with it, so it stays silent.
+    getKnowledgeIndexStatus()
+      .then((status) => {
+        if (!cancelled) setAiIndexStatus(status);
+      })
+      .catch(() => undefined);
     return () => {
       cancelled = true;
     };
@@ -329,6 +342,11 @@ export default function AdvancedSettings() {
       toast.success(
         `Indexed ${scope} · ${result.chunks} chunks · ${result.embedded} embedded · ${result.removed} removed`,
       );
+      // The counters above are the run's own report; the panel below shows the
+      // index state, which the run just changed.
+      getKnowledgeIndexStatus()
+        .then(setAiIndexStatus)
+        .catch(() => undefined);
     } catch {
       toast.error('Đánh lại chỉ mục thất bại');
     } finally {
@@ -908,6 +926,29 @@ export default function AdvancedSettings() {
                           is only needed to publish an edit immediately or after changing the model.
                         </p>
                       </div>
+                      {/* Live counters from GET /ai/knowledge/status — the
+                          "chờ embed" ones are what a failed nightly run leaves
+                          behind, and without them that failure is invisible. */}
+                      {aiIndexStatus && (
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
+                          <span className="font-mono">{aiIndexStatus.chunks} chunks</span>
+                          <span className="font-mono">{aiIndexStatus.lessons} bài</span>
+                          <span className="font-mono">{aiIndexStatus.embedded} đã embed</span>
+                          {aiIndexStatus.pending > 0 && (
+                            <span className="font-mono text-amber-400">
+                              {aiIndexStatus.pending} chờ embed
+                            </span>
+                          )}
+                          {aiIndexStatus.lastEmbeddedAt && (
+                            <span className="font-mono">
+                              embed lần cuối {new Date(aiIndexStatus.lastEmbeddedAt).toLocaleString('vi-VN')}
+                            </span>
+                          )}
+                          {!aiIndexStatus.embeddingConfigured && (
+                            <span className="text-rose-400">Chưa cấu hình embedding provider</span>
+                          )}
+                        </div>
+                      )}
                       <div className="flex flex-wrap items-center gap-2">
                         <button
                           type="button"

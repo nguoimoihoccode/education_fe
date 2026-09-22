@@ -2,6 +2,7 @@ import { apiClient, CACHE_PROFILES } from './client';
 import {
   AI_CONVERSATIONS_PATH,
   AI_KNOWLEDGE_REINDEX_PATH,
+  AI_KNOWLEDGE_STATUS_PATH,
   AI_SETTINGS_PATH,
   AI_SETTINGS_TEST_PATH,
   getAiConversationPath,
@@ -12,6 +13,7 @@ import type {
   AiConversationSummary,
   AiProviderSettingsView,
   AiTestResult,
+  KnowledgeIndexStatusView,
   ReindexKnowledgeResult,
   SendMessageResponse,
   UpdateAiSettingsRequest,
@@ -81,5 +83,14 @@ export const reindexKnowledge = async (body?: {
   force?: boolean;
 }): Promise<ReindexKnowledgeResult> => {
   const res = await apiClient.post(AI_KNOWLEDGE_REINDEX_PATH, body ?? {}, { cache: false });
+  return res.data;
+};
+
+/**
+ * Admin read-only health view of the RAG index: chunk counts, how many rows a
+ * failed run left without their vector, when the corpus was last embedded.
+ */
+export const getKnowledgeIndexStatus = async (): Promise<KnowledgeIndexStatusView> => {
+  const res = await apiClient.get(AI_KNOWLEDGE_STATUS_PATH, CACHE_PROFILES.NO_CACHE);
   return res.data;
 };

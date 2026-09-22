@@ -4,48 +4,63 @@ import { MemoryRouter } from 'react-router-dom';
 
 import type { AiProviderSettingsView } from '@/types/ai.types';
 
-const { mockReindexKnowledge, mockUpdateAiSettings, mockToast, settingsView } = vi.hoisted(
-  () => {
-    const view: AiProviderSettingsView = {
-      baseUrl: 'https://api.groq.com/openai/v1',
-      model: 'llama-3.3-70b-versatile',
-      maxTokens: 2048,
-      temperature: 0.7,
-      systemRules: 'rules',
+const {
+  mockReindexKnowledge,
+  mockUpdateAiSettings,
+  mockGetKnowledgeIndexStatus,
+  mockToast,
+  settingsView,
+} = vi.hoisted(() => {
+  const view: AiProviderSettingsView = {
+    baseUrl: 'https://api.groq.com/openai/v1',
+    model: 'llama-3.3-70b-versatile',
+    maxTokens: 2048,
+    temperature: 0.7,
+    systemRules: 'rules',
+    apiKeyConfigured: true,
+    apiKeyLast4: 'abcd',
+    source: {
+      baseUrl: 'env',
+      apiKey: 'env',
+      model: 'default',
+      maxTokens: 'default',
+      temperature: 'default',
+      systemRules: 'default',
+    },
+    updatedAt: null,
+    embedding: {
+      baseUrl: 'https://api.openai.com/v1',
+      model: 'text-embedding-3-small',
+      dimensions: 1536,
       apiKeyConfigured: true,
-      apiKeyLast4: 'abcd',
+      apiKeyLast4: 'wxyz',
       source: {
-        baseUrl: 'env',
-        apiKey: 'env',
-        model: 'default',
-        maxTokens: 'default',
-        temperature: 'default',
-        systemRules: 'default',
+        baseUrl: 'db',
+        apiKey: 'db',
+        model: 'db',
+        dimensions: 'db',
       },
-      updatedAt: null,
-      embedding: {
-        baseUrl: 'https://api.openai.com/v1',
-        model: 'text-embedding-3-small',
-        dimensions: 1536,
-        apiKeyConfigured: true,
-        apiKeyLast4: 'wxyz',
-        source: {
-          baseUrl: 'db',
-          apiKey: 'db',
-          model: 'db',
-          dimensions: 'db',
-        },
-        updatedAt: '2026-09-17T00:00:00.000Z',
-      },
-    };
-    return {
-      mockReindexKnowledge: vi.fn(),
-      mockUpdateAiSettings: vi.fn(),
-      mockToast: { success: vi.fn(), error: vi.fn() },
-      settingsView: view,
-    };
-  },
-);
+      updatedAt: '2026-09-17T00:00:00.000Z',
+    },
+  };
+  return {
+    mockReindexKnowledge: vi.fn(),
+    mockUpdateAiSettings: vi.fn(),
+    // A default on creation: the settings effect fires on the very first render,
+    // before any afterEach has had a chance to (re)install one.
+    mockGetKnowledgeIndexStatus: vi.fn().mockResolvedValue({
+      embeddingConfigured: true,
+      lessons: 4,
+      chunks: 20,
+      embedded: 19,
+      pending: 1,
+      bySourceType: [],
+      lastEmbeddedAt: '2026-09-22T04:00:00.000Z',
+    }),
+    mockToast: { success: vi.fn(), error: vi.fn() },
+    settingsView: view,
+  };
+});
 
 vi.mock('react-hot-toast', () => ({
   default: mockToast,
@@ -56,6 +71,7 @@ vi.mock('@/api/ai.api', () => ({
   updateAiSettings: mockUpdateAiSettings,
   testAiSettings: vi.fn(),
   reindexKnowledge: mockReindexKnowledge,
+  getKnowledgeIndexStatus: mockGetKnowledgeIndexStatus,
 }));
 
 vi.mock('@/store/settings.store', () => ({
@@ -128,6 +144,16 @@ describe('AdvancedSettings knowledge index controls', () => {
     vi.clearAllMocks();
     mockUpdateAiSettings.mockReset();
     mockReindexKnowledge.mockReset();
+    mockGetKnowledgeIndexStatus.mockReset();
+    mockGetKnowledgeIndexStatus.mockResolvedValue({
+      embeddingConfigured: true,
+      lessons: 4,
+      chunks: 20,
+      embedded: 19,
+      pending: 1,
+      bySourceType: [],
+      lastEmbeddedAt: '2026-09-22T04:00:00.000Z',
+    });
   });
 
   it('sends the embedding provider nested under `embedding`, not as top-level fields', async () => {
@@ -188,5 +214,53 @@ describe('AdvancedSettings knowledge index controls', () => {
     fireEvent.click(await screen.findByRole('button', { name: /đánh lại chỉ mục/i }));
 
     expect(mockReindexKnowledge).not.toHaveBeenCalled();
+  });
+
+  // A failed nightly run leaves rows without their vector, and nothing else
+  // surfaces that — the counters here are the only place an admin would see it.
+  it('shows the index status counters from the status endpoint', async () => {
+    renderAiSection();
+
+    expect(
+      await screen.findByText(/1 chờ embed/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/20 chunks/i)).toBeInTheDocument();
+    expect(screen.getByText(/4 bài/i)).toBeInTheDocument();
+    expect(mockGetKnowledgeIndexStatus).toHaveBeenCalled();
+  });
+
+  it('warns when the embedding provider is not configured', async () => {
+    mockGetKnowledgeIndexStatus.mockResolvedValue({
+      embeddingConfigured: false,
+      lessons: 0,
+      chunks: 0,
+      embedded: 0,
+      pending: 0,
+      bySourceType: [],
+      lastEmbeddedAt: null,
+    });
+    renderAiSection();
+
+    expect(
+      await screen.findByText(/chưa cấu hình embedding provider/i),
+    ).toBeInTheDocument();
+  });
+
+  it('refreshes the status counters after a reindex run', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    mockReindexKnowledge.mockResolvedValue({
+      lessons: 4,
+      chunks: 20,
+      embedded: 6,
+      removed: 1,
+    });
+    renderAiSection();
+
+    fireEvent.click(await screen.findByRole('button', { name: /đánh lại chỉ mục/i }));
+
+    await waitFor(() => expect(mockReindexKnowledge).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(mockGetKnowledgeIndexStatus.mock.calls.length).toBeGreaterThanOrEqual(2),
+    );
   });
 });

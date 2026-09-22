@@ -8,6 +8,7 @@ export const AI_CONVERSATIONS_PATH = '/ai/conversations';
 export const AI_SETTINGS_PATH = '/ai/settings';
 export const AI_SETTINGS_TEST_PATH = '/ai/settings/test';
 export const AI_KNOWLEDGE_REINDEX_PATH = '/ai/knowledge/reindex';
+export const AI_KNOWLEDGE_STATUS_PATH = '/ai/knowledge/status';
 
 /** No `conversationId` → the collection itself (list / create). */
 export function getAiConversationPath(conversationId?: string): string {

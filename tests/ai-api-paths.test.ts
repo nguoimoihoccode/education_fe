@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   AI_CONVERSATIONS_PATH,
   AI_KNOWLEDGE_REINDEX_PATH,
+  AI_KNOWLEDGE_STATUS_PATH,
   AI_SETTINGS_PATH,
   AI_SETTINGS_TEST_PATH,
   getAiConversationPath,
@@ -21,6 +22,10 @@ test('settings endpoints match the ai controller decorators', () => {
 
 test('knowledge reindex matches the reindex endpoint', () => {
   assert.equal(AI_KNOWLEDGE_REINDEX_PATH, '/ai/knowledge/reindex');
+});
+
+test('knowledge status matches the status endpoint', () => {
+  assert.equal(AI_KNOWLEDGE_STATUS_PATH, '/ai/knowledge/status');
 });
 
 test('conversation paths address the collection and one conversation', () => {
@@ -41,6 +46,7 @@ test('every ai path is relative, without the /api prefix nginx adds', () => {
     AI_SETTINGS_PATH,
     AI_SETTINGS_TEST_PATH,
     AI_KNOWLEDGE_REINDEX_PATH,
+    AI_KNOWLEDGE_STATUS_PATH,
     getAiConversationPath('c-1'),
     getAiMessagesPath('c-1'),
   ]) {
