@@ -196,14 +196,24 @@ export default function LessonView() {
 
                             <div className="mt-16 pt-8 border-t border-white/10 flex flex-col items-center">
                                 <p className="lesson-muted mb-4 text-sm uppercase tracking-widest">Đã học xong?</p>
-                                <button
-                                    type="button"
-                                    onClick={() => completeMutation.mutate()}
-                                    disabled={completeMutation.isPending}
-                                    className="lesson-primary-btn flex items-center gap-3"
-                                >
-                                    <CheckCircle2 className="w-6 h-6" /> {completeMutation.isPending ? 'Đang hoàn thành...' : 'Hoàn thành bài học'}
-                                </button>
+                                <div className="flex flex-wrap items-center justify-center gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => completeMutation.mutate()}
+                                        disabled={completeMutation.isPending}
+                                        className="lesson-primary-btn flex items-center gap-3"
+                                    >
+                                        <CheckCircle2 className="w-6 h-6" /> {completeMutation.isPending ? 'Đang hoàn thành...' : 'Hoàn thành bài học'}
+                                    </button>
+                                    {/* Carries the lesson id so the tutor opens a chat
+                                        grounded in this lesson instead of a blank one. */}
+                                    <Link
+                                        to={`${ROUTES.AI_TUTOR}?lessonId=${id}`}
+                                        className="lesson-secondary-btn flex items-center gap-2"
+                                    >
+                                        <Sparkles className="w-5 h-5" /> Hỏi về bài này
+                                    </Link>
+                                </div>
                             </div>
                         </div>
                     )}

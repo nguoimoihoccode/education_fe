@@ -34,9 +34,16 @@ import {
   HardDrive,
   Sparkles,
   Loader2,
+  RefreshCw,
+  Ruler,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { getAiSettings, updateAiSettings, testAiSettings } from '@/api/ai.api';
+import {
+  getAiSettings,
+  updateAiSettings,
+  testAiSettings,
+  reindexKnowledge,
+} from '@/api/ai.api';
 import { useAuthStore } from '@/store/auth.store';
 import { useSettingsStore, type SettingsState } from '@/store/settings.store';
 import { useAiProviderStore } from '@/store/aiProvider.store';
@@ -109,6 +116,14 @@ export default function AdvancedSettings() {
   const [aiMaxTokens, setAiMaxTokens] = useState(2048);
   const [aiTemperature, setAiTemperature] = useState(0.7);
   const [aiSystemRules, setAiSystemRules] = useState('');
+  // The embedding provider has no client-side consumer — embeddings are only ever
+  // computed on the server — so nothing here mirrors into the local BYOK store.
+  const [aiEmbeddingBaseUrl, setAiEmbeddingBaseUrl] = useState('');
+  const [aiEmbeddingApiKey, setAiEmbeddingApiKey] = useState('');
+  const [aiEmbeddingModel, setAiEmbeddingModel] = useState('');
+  const [aiEmbeddingDimensions, setAiEmbeddingDimensions] = useState(1536);
+  const [aiEmbeddingSaving, setAiEmbeddingSaving] = useState(false);
+  const [aiReindexing, setAiReindexing] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSaving, setAiSaving] = useState(false);
   const [aiTesting, setAiTesting] = useState(false);
@@ -195,6 +210,10 @@ export default function AdvancedSettings() {
     setAiMaxTokens(view.maxTokens ?? 2048);
     setAiTemperature(view.temperature ?? 0.7);
     setAiSystemRules(view.systemRules ?? '');
+    setAiEmbeddingBaseUrl(view.embedding.baseUrl ?? '');
+    setAiEmbeddingApiKey('');
+    setAiEmbeddingModel(view.embedding.model ?? '');
+    setAiEmbeddingDimensions(view.embedding.dimensions ?? 1536);
   };
 
   useEffect(() => {
@@ -236,7 +255,17 @@ export default function AdvancedSettings() {
     try {
       const result = await testAiSettings();
       if (result.ok) {
-        toast.success(`Connection OK · ${result.latencyMs}ms`);
+        // The server probes both providers but only throws on the chat one, so
+        // the embedding outcome has to be read out here — otherwise a broken
+        // embedding provider looks exactly like a working one until a learner
+        // asks a question the lesson tier cannot answer.
+        toast.success(
+          result.embedding.ok
+            ? `Connection OK · ${result.latencyMs}ms · embeddings OK · ${result.embedding.latencyMs}ms`
+            : `Connection OK · ${result.latencyMs}ms · embeddings failed: ${
+                result.embedding.error ?? 'unknown error'
+              }`,
+        );
       } else {
         toast.error('Connection test failed');
       }
@@ -244,6 +273,66 @@ export default function AdvancedSettings() {
       toast.error('Connection test failed');
     } finally {
       setAiTesting(false);
+    }
+  };
+
+  const handleSaveEmbedding = async () => {
+    setAiEmbeddingSaving(true);
+    try {
+      // Saved through the admin endpoint rather than the local BYOK store: the
+      // embedding provider is server-side configuration only, so a value kept in
+      // the browser would never be used by anything.
+      const view = await updateAiSettings({
+        embedding: {
+          baseUrl: aiEmbeddingBaseUrl.trim() || undefined,
+          model: aiEmbeddingModel.trim() || undefined,
+          dimensions: aiEmbeddingDimensions,
+          ...(aiEmbeddingApiKey.trim() ? { apiKey: aiEmbeddingApiKey.trim() } : {}),
+        },
+      });
+      applyAiSettings(view);
+      toast.success('Đã lưu embedding provider');
+    } catch {
+      toast.error('Lưu embedding provider thất bại');
+    } finally {
+      setAiEmbeddingSaving(false);
+    }
+  };
+
+  const handleClearEmbeddingKey = async () => {
+    if (!window.confirm('Clear the stored embedding API key? This cannot be undone.')) return;
+    setAiEmbeddingSaving(true);
+    try {
+      const view = await updateAiSettings({ embedding: { clearApiKey: true } });
+      applyAiSettings(view);
+      toast.success('Đã xoá embedding API key');
+    } catch {
+      toast.error('Xoá embedding API key thất bại');
+    } finally {
+      setAiEmbeddingSaving(false);
+    }
+  };
+
+  const handleReindex = async (force: boolean) => {
+    const message = force
+      ? 'Re-embed the whole corpus? This calls the embedding provider for every chunk and may take a while.'
+      : 'Rebuild the knowledge index? Unchanged lessons are skipped.';
+    if (!window.confirm(message)) return;
+
+    setAiReindexing(true);
+    try {
+      const result = await reindexKnowledge(force ? { force: true } : undefined);
+      const scope =
+        result.lessons === undefined
+          ? '1 lesson'
+          : `${result.lessons} lessons${result.failed ? ` (${result.failed} failed)` : ''}`;
+      toast.success(
+        `Indexed ${scope} · ${result.chunks} chunks · ${result.embedded} embedded · ${result.removed} removed`,
+      );
+    } catch {
+      toast.error('Đánh lại chỉ mục thất bại');
+    } finally {
+      setAiReindexing(false);
     }
   };
 
@@ -613,7 +702,7 @@ export default function AdvancedSettings() {
                           value={aiBaseUrl}
                           onChange={(e) => setAiBaseUrl(e.target.value)}
                           placeholder="https://api.openai.com/v1"
-                          className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                          className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500"
                         />
                       </div>
                     </SettingRow>
@@ -631,7 +720,7 @@ export default function AdvancedSettings() {
                               : 'sk-…'
                           }
                           autoComplete="off"
-                          className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                          className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500"
                         />
                       </div>
                     </SettingRow>
@@ -644,7 +733,7 @@ export default function AdvancedSettings() {
                           value={aiModel}
                           onChange={(e) => setAiModel(e.target.value)}
                           placeholder="gpt-4o-mini"
-                          className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                          className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500"
                         />
                       </div>
                     </SettingRow>
@@ -657,7 +746,7 @@ export default function AdvancedSettings() {
                           min={1}
                           value={aiMaxTokens}
                           onChange={(e) => setAiMaxTokens(Number(e.target.value))}
-                          className="w-32 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                          className="w-32 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500"
                         />
                       </div>
                     </SettingRow>
@@ -672,7 +761,7 @@ export default function AdvancedSettings() {
                           step={0.1}
                           value={aiTemperature}
                           onChange={(e) => setAiTemperature(Number(e.target.value))}
-                          className="w-32 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50"
+                          className="w-32 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500"
                         />
                       </div>
                     </SettingRow>
@@ -696,11 +785,149 @@ export default function AdvancedSettings() {
                         rows={8}
                         maxLength={8000}
                         placeholder="You are a practical language tutor..."
-                        className="w-full px-3 py-3 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono leading-relaxed focus:outline-none focus:border-accent-500/50 resize-y min-h-[140px]"
+                        className="w-full px-3 py-3 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono leading-relaxed focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500 resize-y min-h-[140px]"
                       />
                       <p className="text-[10px] text-slate-500 text-right">
                         {aiSystemRules.length}/8000
                       </p>
+                    </div>
+
+                    <div className="pt-6 mt-6 border-t border-white/10 space-y-2">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-bold text-white flex items-center gap-2">
+                            <Database className="w-4 h-4 text-accent-400" />
+                            Embedding provider
+                          </p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            Separate from the chat provider, because the default one (Groq) has no
+                            embeddings endpoint. Used to index lessons for retrieval and to embed each
+                            learner question.
+                          </p>
+                        </div>
+                        <SourceBadge source={aiSettings?.embedding.source.apiKey} />
+                      </div>
+
+                      <SettingRow label="Base URL" description="OpenAI-compatible embeddings base URL" icon={Globe}>
+                        <div className="flex flex-col items-end gap-1.5">
+                          <SourceBadge source={aiSettings?.embedding.source.baseUrl} />
+                          <input
+                            type="text"
+                            value={aiEmbeddingBaseUrl}
+                            onChange={(e) => setAiEmbeddingBaseUrl(e.target.value)}
+                            placeholder="https://api.openai.com/v1"
+                            className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500"
+                          />
+                        </div>
+                      </SettingRow>
+
+                      <SettingRow label="API Key" description="Embedding provider key (never shown in full)" icon={Lock}>
+                        <div className="flex flex-col items-end gap-1.5">
+                          <SourceBadge source={aiSettings?.embedding.source.apiKey} />
+                          <input
+                            type="password"
+                            value={aiEmbeddingApiKey}
+                            onChange={(e) => setAiEmbeddingApiKey(e.target.value)}
+                            placeholder={
+                              aiSettings?.embedding.apiKeyConfigured && aiSettings.embedding.apiKeyLast4
+                                ? `••••${aiSettings.embedding.apiKeyLast4}`
+                                : 'sk-…'
+                            }
+                            autoComplete="off"
+                            className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500"
+                          />
+                        </div>
+                      </SettingRow>
+
+                      <SettingRow label="Model" description="Embedding model id" icon={Bot}>
+                        <div className="flex flex-col items-end gap-1.5">
+                          <SourceBadge source={aiSettings?.embedding.source.model} />
+                          <input
+                            type="text"
+                            value={aiEmbeddingModel}
+                            onChange={(e) => setAiEmbeddingModel(e.target.value)}
+                            placeholder="text-embedding-3-small"
+                            className="w-64 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500"
+                          />
+                        </div>
+                      </SettingRow>
+
+                      {/* Changing this is not a config tweak: the stored vectors
+                          have a width, so the corpus must be re-embedded and the
+                          column altered to match. */}
+                      <SettingRow
+                        label="Dimensions"
+                        description="Vector width. Changing it requires re-embedding the whole corpus (use Re-embed all)."
+                        icon={Ruler}
+                      >
+                        <div className="flex flex-col items-end gap-1.5">
+                          <SourceBadge source={aiSettings?.embedding.source.dimensions} />
+                          <input
+                            type="number"
+                            min={1}
+                            max={8192}
+                            value={aiEmbeddingDimensions}
+                            onChange={(e) => setAiEmbeddingDimensions(Number(e.target.value))}
+                            className="w-32 px-3 py-2 rounded-xl bg-black/30 border border-white/10 text-white text-xs font-mono focus:outline-none focus:border-accent-500/50 focus-visible:ring-2 focus-visible:ring-accent-500"
+                          />
+                        </div>
+                      </SettingRow>
+
+                      <div className="flex flex-wrap items-center gap-2 pt-2">
+                        <button
+                          type="button"
+                          onClick={handleSaveEmbedding}
+                          disabled={aiEmbeddingSaving || aiReindexing}
+                          className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                        >
+                          {aiEmbeddingSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                          Save embedding provider
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleClearEmbeddingKey}
+                          disabled={
+                            aiEmbeddingSaving || aiReindexing || !aiSettings?.embedding.apiKeyConfigured
+                          }
+                          className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold hover:bg-rose-500/20 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          Clear key
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="pt-6 mt-6 border-t border-white/10 space-y-2">
+                      <div>
+                        <p className="text-sm font-bold text-white flex items-center gap-2">
+                          <RefreshCw className="w-4 h-4 text-accent-400" />
+                          Knowledge index
+                        </p>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          The tutor retrieves answers from this index. It is rebuilt nightly, so this
+                          is only needed to publish an edit immediately or after changing the model.
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleReindex(false)}
+                          disabled={aiReindexing || aiEmbeddingSaving}
+                          className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent text-xs font-bold shadow-[0_0_15px_rgba(139,92,246,0.25)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                        >
+                          {aiReindexing ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                          Đánh lại chỉ mục
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleReindex(true)}
+                          disabled={aiReindexing || aiEmbeddingSaving}
+                          className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all disabled:opacity-50 disabled:pointer-events-none"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                          Re-embed all
+                        </button>
+                      </div>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2 pt-6">
@@ -815,7 +1042,14 @@ function ToggleRow({ label, description, icon: Icon, checked, onChange }: {
           <p className="text-xs text-slate-500 mt-0.5">{description}</p>
         </div>
       </div>
-      <button onClick={onChange} className={`relative w-12 h-7 rounded-full transition-all flex-shrink-0 ${checked ? 'bg-accent-600' : 'bg-slate-700'}`}>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        onClick={onChange}
+        className={`relative w-12 h-7 rounded-full transition-all flex-shrink-0 ${checked ? 'bg-accent-600' : 'bg-slate-700'} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900`}
+      >
         <span className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
       </button>
     </div>

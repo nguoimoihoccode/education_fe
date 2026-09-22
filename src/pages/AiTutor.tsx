@@ -23,6 +23,7 @@ import {
   Settings,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '@/store/auth.store';
 import {
   listConversations,
@@ -131,6 +132,21 @@ export default function AiTutor() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { isConfigured: hasLocalKey, settings: localSettings } = useAiProviderStore();
 
+  // "Hỏi về bài này" arrives as /ai-tutor?lessonId=<id>. It is read once, at
+  // mount, so the initial-load effect below can stay keyed on BYOK mode alone —
+  // depending on the param would re-run the whole load the moment it is cleared.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pendingLessonId = useRef<string | null>(searchParams.get('lessonId'));
+
+  // Consumed or not, the param goes away: it is a one-shot instruction, so a
+  // refresh or a back-navigation must not open a second conversation for it.
+  useEffect(() => {
+    if (!searchParams.has('lessonId')) return;
+    const next = new URLSearchParams(searchParams);
+    next.delete('lessonId');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
   const activeConv = conversations.find((c) => c.id === activeConvId) || conversations[0];
   const messages = useMemo(() => activeConv?.messages || [], [activeConv]);
 
@@ -175,7 +191,18 @@ export default function AiTutor() {
         let list = await listConversations();
         if (cancelled) return;
 
-        if (list.length === 0) {
+        // A lesson-scoped request always opens its own conversation. Reusing an
+        // existing chat would answer without the lesson context that was just
+        // asked for — the whole point of the link. The id is taken once so a
+        // BYOK toggle re-running this effect cannot open a second one.
+        const requestedLessonId = pendingLessonId.current;
+        pendingLessonId.current = null;
+
+        if (requestedLessonId) {
+          const created = await createConversation({ lessonId: requestedLessonId });
+          if (cancelled) return;
+          list = [created, ...list];
+        } else if (list.length === 0) {
           const created = await createConversation();
           if (cancelled) return;
           list = [created];

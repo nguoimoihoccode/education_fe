@@ -28,6 +28,22 @@ export interface SendMessageResponse {
 
 export type ConfigSource = 'db' | 'env' | 'default';
 
+export interface AiEmbeddingSettingsView {
+  baseUrl: string;
+  model: string;
+  /** Width of the stored vectors; must match the `embedding` column. */
+  dimensions: number;
+  apiKeyConfigured: boolean;
+  apiKeyLast4: string | null;
+  source: {
+    baseUrl: ConfigSource;
+    apiKey: ConfigSource;
+    model: ConfigSource;
+    dimensions: ConfigSource;
+  };
+  updatedAt: string | null;
+}
+
 export interface AiProviderSettingsView {
   baseUrl: string;
   model: string;
@@ -46,6 +62,23 @@ export interface AiProviderSettingsView {
     systemRules: ConfigSource;
   };
   updatedAt: string | null;
+  /**
+   * The embedding provider is configured separately from the chat provider —
+   * the default chat provider (Groq) exposes no embeddings endpoint at all — so
+   * it is reported alongside rather than folded into the fields above.
+   */
+  embedding: AiEmbeddingSettingsView;
+}
+
+export interface UpdateEmbeddingSettingsRequest {
+  baseUrl?: string;
+  apiKey?: string;
+  model?: string;
+  dimensions?: number;
+  clearApiKey?: boolean;
+  clearBaseUrl?: boolean;
+  clearModel?: boolean;
+  clearDimensions?: boolean;
 }
 
 export interface UpdateAiSettingsRequest {
@@ -61,4 +94,26 @@ export interface UpdateAiSettingsRequest {
   clearMaxTokens?: boolean;
   clearTemperature?: boolean;
   clearSystemRules?: boolean;
+  embedding?: UpdateEmbeddingSettingsRequest;
+}
+
+/**
+ * The embedding provider's outcome is reported rather than thrown by the server:
+ * an admin checking the chat side must not be blocked by an embedding one that is
+ * simply not set up yet.
+ */
+export interface AiTestResult {
+  ok: boolean;
+  latencyMs: number;
+  embedding: { ok: boolean; latencyMs: number; error?: string };
+}
+
+/** Two shapes: one lesson reindexed, or the whole-corpus sweep. */
+export interface ReindexKnowledgeResult {
+  lessonId?: string;
+  lessons?: number;
+  chunks: number;
+  embedded: number;
+  removed: number;
+  failed?: number;
 }

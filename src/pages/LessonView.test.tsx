@@ -84,4 +84,12 @@ describe('LessonView a11y surfaces', () => {
     expect(document.body.style.background).not.toBe('rgb(2, 6, 23)');
     expect(document.body.style.background).not.toBe('#020617');
   });
+
+  // The tutor only grounds its answers when it receives the lesson id, so the
+  // link has to carry it — a plain /ai-tutor link silently loses the context.
+  it('links to the tutor with the lesson id so answers are grounded', async () => {
+    renderLesson();
+    const link = await screen.findByRole('link', { name: /hỏi về bài này/i });
+    expect(link).toHaveAttribute('href', '/ai-tutor?lessonId=lesson-1');
+  });
 });

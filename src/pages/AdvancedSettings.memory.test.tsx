@@ -66,6 +66,7 @@ vi.mock('@/api/ai.api', () => ({
   getAiSettings: vi.fn().mockResolvedValue(null),
   updateAiSettings: vi.fn(),
   testAiSettings: vi.fn(),
+  reindexKnowledge: vi.fn(),
 }));
 
 import AdvancedSettings from './AdvancedSettings';
