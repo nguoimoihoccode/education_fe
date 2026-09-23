@@ -8,6 +8,7 @@ const {
   mockReindexKnowledge,
   mockUpdateAiSettings,
   mockGetKnowledgeIndexStatus,
+  mockGetKnowledgeRetrievalStats,
   mockToast,
   settingsView,
 } = vi.hoisted(() => {
@@ -57,6 +58,31 @@ const {
       bySourceType: [],
       lastEmbeddedAt: '2026-09-22T04:00:00.000Z',
     }),
+    mockGetKnowledgeRetrievalStats: vi.fn().mockResolvedValue({
+      windowDays: 30,
+      currentThreshold: 0.75,
+      totalQueries: 40,
+      queriesWithHits: 36,
+      zeroHitQueries: 4,
+      zeroHitRate: 0.1,
+      avgHitCount: 4.2,
+      bestDistance: { avg: 0.52, min: 0.18, max: 0.95, p50: 0.49, p90: 0.71 },
+      buckets: [
+        { key: 'very-close', from: 0, to: 0.3, count: 8 },
+        { key: 'close', from: 0.3, to: 0.5, count: 14 },
+        { key: 'edge', from: 0.5, to: 0.75, count: 14 },
+        { key: 'beyond', from: 0.75, to: 0.9, count: 3 },
+        { key: 'far', from: 0.9, to: null, count: 1 },
+        { key: 'none', from: null, to: null, count: 0 },
+      ],
+      recentZeroHitQueries: [
+        {
+          queryPreview: 'đề thi nói gì về thì quá khứ',
+          bestDistance: 0.82,
+          createdAt: '2026-09-23T01:00:00.000Z',
+        },
+      ],
+    }),
     mockToast: { success: vi.fn(), error: vi.fn() },
     settingsView: view,
   };
@@ -72,6 +98,7 @@ vi.mock('@/api/ai.api', () => ({
   testAiSettings: vi.fn(),
   reindexKnowledge: mockReindexKnowledge,
   getKnowledgeIndexStatus: mockGetKnowledgeIndexStatus,
+  getKnowledgeRetrievalStats: mockGetKnowledgeRetrievalStats,
 }));
 
 vi.mock('@/store/settings.store', () => ({
@@ -153,6 +180,32 @@ describe('AdvancedSettings knowledge index controls', () => {
       pending: 1,
       bySourceType: [],
       lastEmbeddedAt: '2026-09-22T04:00:00.000Z',
+    });
+    mockGetKnowledgeRetrievalStats.mockReset();
+    mockGetKnowledgeRetrievalStats.mockResolvedValue({
+      windowDays: 30,
+      currentThreshold: 0.75,
+      totalQueries: 40,
+      queriesWithHits: 36,
+      zeroHitQueries: 4,
+      zeroHitRate: 0.1,
+      avgHitCount: 4.2,
+      bestDistance: { avg: 0.52, min: 0.18, max: 0.95, p50: 0.49, p90: 0.71 },
+      buckets: [
+        { key: 'very-close', from: 0, to: 0.3, count: 8 },
+        { key: 'close', from: 0.3, to: 0.5, count: 14 },
+        { key: 'edge', from: 0.5, to: 0.75, count: 14 },
+        { key: 'beyond', from: 0.75, to: 0.9, count: 3 },
+        { key: 'far', from: 0.9, to: null, count: 1 },
+        { key: 'none', from: null, to: null, count: 0 },
+      ],
+      recentZeroHitQueries: [
+        {
+          queryPreview: 'đề thi nói gì về thì quá khứ',
+          bestDistance: 0.82,
+          createdAt: '2026-09-23T01:00:00.000Z',
+        },
+      ],
     });
   });
 
@@ -262,5 +315,65 @@ describe('AdvancedSettings knowledge index controls', () => {
     await waitFor(() =>
       expect(mockGetKnowledgeIndexStatus.mock.calls.length).toBeGreaterThanOrEqual(2),
     );
+  });
+
+  it('shows the retrieval distance stats beside the index counters', async () => {
+    renderAiSection();
+
+    expect(await screen.findByText(/40 truy vấn \/ 30 ngày/)).toBeInTheDocument();
+    expect(screen.getByText(/TB 4\.2 nguồn\/truy vấn/)).toBeInTheDocument();
+    expect(screen.getByText(/p50 0\.49/)).toBeInTheDocument();
+    expect(screen.getByText(/4 không tìm thấy nguồn \(10%\)/)).toBeInTheDocument();
+    // The edge buckets are named with the threshold the data was cut at.
+    expect(screen.getByText(/Áp ngưỡng \(0\.5 – 0\.75\)/)).toBeInTheDocument();
+    expect(screen.getByText(/Vượt ngưỡng \(0\.75 – 0\.9\)/)).toBeInTheDocument();
+    // The zero-hit queries are the corpus-gap shortlist.
+    expect(
+      screen.getByText(/đề thi nói gì về thì quá khứ/),
+    ).toBeInTheDocument();
+    expect(mockGetKnowledgeRetrievalStats).toHaveBeenCalled();
+  });
+
+  it('stays quiet while no search has been logged yet', async () => {
+    mockGetKnowledgeRetrievalStats.mockResolvedValue({
+      windowDays: 30,
+      currentThreshold: 0.75,
+      totalQueries: 0,
+      queriesWithHits: 0,
+      zeroHitQueries: 0,
+      zeroHitRate: 0,
+      avgHitCount: null,
+      bestDistance: { avg: null, min: null, max: null, p50: null, p90: null },
+      buckets: [
+        { key: 'very-close', from: 0, to: 0.3, count: 0 },
+        { key: 'close', from: 0.3, to: 0.5, count: 0 },
+        { key: 'edge', from: 0.5, to: 0.75, count: 0 },
+        { key: 'beyond', from: 0.75, to: 0.9, count: 0 },
+        { key: 'far', from: 0.9, to: null, count: 0 },
+        { key: 'none', from: null, to: null, count: 0 },
+      ],
+      recentZeroHitQueries: [],
+    });
+    renderAiSection();
+
+    expect(
+      await screen.findByText(/chưa có dữ liệu truy vấn nào được ghi lại/i),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/40 truy vấn/)).not.toBeInTheDocument();
+  });
+
+  // The stats are a read-only extra: a failing fetch must cost the block, not
+  // the settings form.
+  it('keeps the settings form up when the stats fetch fails', async () => {
+    mockGetKnowledgeRetrievalStats.mockRejectedValue(new Error('boom'));
+    renderAiSection();
+
+    expect(
+      await screen.findByRole('button', { name: /save embedding provider/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/chưa có dữ liệu truy vấn nào được ghi lại/i),
+    ).not.toBeInTheDocument();
+    expect(mockGetKnowledgeRetrievalStats).toHaveBeenCalled();
   });
 });

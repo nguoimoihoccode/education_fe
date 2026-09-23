@@ -41,6 +41,7 @@ import type { LucideIcon } from 'lucide-react';
 import {
   getAiSettings,
   getKnowledgeIndexStatus,
+  getKnowledgeRetrievalStats,
   updateAiSettings,
   testAiSettings,
   reindexKnowledge,
@@ -52,10 +53,36 @@ import type {
   AiProviderSettingsView,
   ConfigSource,
   KnowledgeIndexStatusView,
+  KnowledgeRetrievalStatsView,
 } from '@/types/ai.types';
 import './Education.css';
 
 /* ================================================================ */
+
+/**
+ * Bucket labels for the retrieval-distance distribution. `threshold` comes
+ * from the same payload so the two edge buckets keep naming the seam the
+ * data was cut at, even after MAX_COSINE_DISTANCE moves.
+ */
+function retrievalBucketLabel(
+  bucket: KnowledgeRetrievalStatsView['buckets'][number],
+  threshold: number,
+): string {
+  switch (bucket.key) {
+    case 'very-close':
+      return 'Rất gần (< 0.3)';
+    case 'close':
+      return 'Khá gần (0.3 – 0.5)';
+    case 'edge':
+      return `Áp ngưỡng (0.5 – ${threshold})`;
+    case 'beyond':
+      return `Vượt ngưỡng (${threshold} – 0.9)`;
+    case 'far':
+      return 'Rất xa (≥ 0.9)';
+    case 'none':
+      return 'Không có ứng viên';
+  }
+}
 
 const BASE_SETTING_SECTIONS = [
   { id: 'appearance' as const, label: 'Appearance', icon: Palette },
@@ -130,6 +157,7 @@ export default function AdvancedSettings() {
   const [aiEmbeddingSaving, setAiEmbeddingSaving] = useState(false);
   const [aiReindexing, setAiReindexing] = useState(false);
   const [aiIndexStatus, setAiIndexStatus] = useState<KnowledgeIndexStatusView | null>(null);
+  const [aiRetrievalStats, setAiRetrievalStats] = useState<KnowledgeRetrievalStatsView | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSaving, setAiSaving] = useState(false);
   const [aiTesting, setAiTesting] = useState(false);
@@ -236,11 +264,16 @@ export default function AdvancedSettings() {
       .finally(() => {
         if (!cancelled) setAiLoading(false);
       });
-    // Read-only extra shown next to the reindex buttons: a failure to load it
-    // must not take the settings form down with it, so it stays silent.
+    // Read-only extras shown next to the reindex buttons: a failure to load
+    // either must not take the settings form down with it, so both stay silent.
     getKnowledgeIndexStatus()
       .then((status) => {
         if (!cancelled) setAiIndexStatus(status);
+      })
+      .catch(() => undefined);
+    getKnowledgeRetrievalStats()
+      .then((stats) => {
+        if (!cancelled) setAiRetrievalStats(stats);
       })
       .catch(() => undefined);
     return () => {
@@ -949,6 +982,93 @@ export default function AdvancedSettings() {
                           )}
                         </div>
                       )}
+                      {/* Distance stats from GET /ai/knowledge/retrieval-stats —
+                          the evidence for moving the threshold later. Quiet
+                          until a search has actually run. */}
+                      {aiRetrievalStats &&
+                        (aiRetrievalStats.totalQueries === 0 ? (
+                          <p className="text-xs text-slate-500">
+                            Chưa có dữ liệu truy vấn nào được ghi lại.
+                          </p>
+                        ) : (
+                          <div className="space-y-2 text-xs text-slate-400">
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono">
+                              <span>
+                                {aiRetrievalStats.totalQueries} truy vấn /{' '}
+                                {aiRetrievalStats.windowDays} ngày
+                              </span>
+                              {aiRetrievalStats.avgHitCount !== null && (
+                                <span>
+                                  TB {aiRetrievalStats.avgHitCount.toFixed(1)} nguồn/truy vấn
+                                </span>
+                              )}
+                              {aiRetrievalStats.bestDistance.p50 !== null && (
+                                <span>p50 {aiRetrievalStats.bestDistance.p50.toFixed(2)}</span>
+                              )}
+                              {aiRetrievalStats.bestDistance.p90 !== null && (
+                                <span>p90 {aiRetrievalStats.bestDistance.p90.toFixed(2)}</span>
+                              )}
+                              {aiRetrievalStats.zeroHitQueries > 0 && (
+                                <span className="text-amber-400">
+                                  {aiRetrievalStats.zeroHitQueries} không tìm thấy nguồn (
+                                  {(aiRetrievalStats.zeroHitRate * 100).toFixed(0)}%)
+                                </span>
+                              )}
+                            </div>
+                            <div className="space-y-1">
+                              {aiRetrievalStats.buckets
+                                .filter((bucket) => bucket.count > 0)
+                                .map((bucket) => {
+                                  const total = aiRetrievalStats.buckets.reduce(
+                                    (sum, item) => sum + item.count,
+                                    0,
+                                  );
+                                  const pct = Math.round((bucket.count / total) * 100);
+                                  return (
+                                    <div key={bucket.key} className="flex items-center gap-2">
+                                      <span className="w-44 shrink-0 text-slate-500">
+                                        {retrievalBucketLabel(bucket, aiRetrievalStats.currentThreshold)}
+                                      </span>
+                                      <div className="h-1.5 flex-1 rounded-full bg-white/5 overflow-hidden">
+                                        <div
+                                          className={`h-full rounded-full ${
+                                            bucket.key === 'far'
+                                              ? 'bg-rose-400/50'
+                                              : bucket.key === 'beyond'
+                                                ? 'bg-amber-400/50'
+                                                : 'bg-accent-500/60'
+                                          }`}
+                                          style={{ width: `${pct}%` }}
+                                        />
+                                      </div>
+                                      <span className="w-8 text-right font-mono">{bucket.count}</span>
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                            <p className="text-slate-500">
+                              Khoảng cách càng nhỏ càng khớp. Ngưỡng hiện tại: ≤ {aiRetrievalStats.currentThreshold}.
+                              Truy vấn tập trung ở "vượt ngưỡng" kèm tỉ lệ không tìm thấy cao → ngưỡng đang quá chặt.
+                            </p>
+                            {aiRetrievalStats.recentZeroHitQueries.length > 0 && (
+                              <div className="text-slate-500">
+                                <p>Gần đây không tìm thấy nguồn:</p>
+                                <ul className="mt-1 space-y-0.5">
+                                  {aiRetrievalStats.recentZeroHitQueries
+                                    .slice(0, 5)
+                                    .map((query) => (
+                                      <li
+                                        key={`${query.createdAt}-${query.queryPreview}`}
+                                        className="truncate font-mono"
+                                      >
+                                        “{query.queryPreview}” · {query.bestDistance?.toFixed(2) ?? '—'}
+                                      </li>
+                                    ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        ))}
                       <div className="flex flex-wrap items-center gap-2">
                         <button
                           type="button"

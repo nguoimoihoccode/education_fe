@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   AI_CONVERSATIONS_PATH,
   AI_KNOWLEDGE_REINDEX_PATH,
+  AI_KNOWLEDGE_RETRIEVAL_STATS_PATH,
   AI_KNOWLEDGE_STATUS_PATH,
   AI_SETTINGS_PATH,
   AI_SETTINGS_TEST_PATH,
@@ -28,6 +29,10 @@ test('knowledge status matches the status endpoint', () => {
   assert.equal(AI_KNOWLEDGE_STATUS_PATH, '/ai/knowledge/status');
 });
 
+test('retrieval stats matches the retrieval-stats endpoint', () => {
+  assert.equal(AI_KNOWLEDGE_RETRIEVAL_STATS_PATH, '/ai/knowledge/retrieval-stats');
+});
+
 test('conversation paths address the collection and one conversation', () => {
   assert.equal(AI_CONVERSATIONS_PATH, '/ai/conversations');
   assert.equal(getAiConversationPath(), '/ai/conversations');
@@ -47,6 +52,7 @@ test('every ai path is relative, without the /api prefix nginx adds', () => {
     AI_SETTINGS_TEST_PATH,
     AI_KNOWLEDGE_REINDEX_PATH,
     AI_KNOWLEDGE_STATUS_PATH,
+    AI_KNOWLEDGE_RETRIEVAL_STATS_PATH,
     getAiConversationPath('c-1'),
     getAiMessagesPath('c-1'),
   ]) {

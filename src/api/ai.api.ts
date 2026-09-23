@@ -2,6 +2,7 @@ import { apiClient, CACHE_PROFILES } from './client';
 import {
   AI_CONVERSATIONS_PATH,
   AI_KNOWLEDGE_REINDEX_PATH,
+  AI_KNOWLEDGE_RETRIEVAL_STATS_PATH,
   AI_KNOWLEDGE_STATUS_PATH,
   AI_SETTINGS_PATH,
   AI_SETTINGS_TEST_PATH,
@@ -14,6 +15,7 @@ import type {
   AiProviderSettingsView,
   AiTestResult,
   KnowledgeIndexStatusView,
+  KnowledgeRetrievalStatsView,
   ReindexKnowledgeResult,
   SendMessageResponse,
   UpdateAiSettingsRequest,
@@ -92,5 +94,17 @@ export const reindexKnowledge = async (body?: {
  */
 export const getKnowledgeIndexStatus = async (): Promise<KnowledgeIndexStatusView> => {
   const res = await apiClient.get(AI_KNOWLEDGE_STATUS_PATH, CACHE_PROFILES.NO_CACHE);
+  return res.data;
+};
+
+/**
+ * Admin read of the retrieval-distance log — the evidence for tuning the
+ * threshold later. Fresh data by definition, so never cached.
+ */
+export const getKnowledgeRetrievalStats = async (): Promise<KnowledgeRetrievalStatsView> => {
+  const res = await apiClient.get(
+    AI_KNOWLEDGE_RETRIEVAL_STATS_PATH,
+    CACHE_PROFILES.NO_CACHE,
+  );
   return res.data;
 };

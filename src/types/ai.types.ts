@@ -150,3 +150,35 @@ export interface KnowledgeIndexStatusView {
   }>;
   lastEmbeddedAt: string | null;
 }
+
+/** Admin view of the retrieval distances the tutor logs per vector search. */
+export interface KnowledgeRetrievalStatsView {
+  windowDays: number;
+  /** The threshold these distances are judged against (`MAX_COSINE_DISTANCE`). */
+  currentThreshold: number;
+  totalQueries: number;
+  queriesWithHits: number;
+  zeroHitQueries: number;
+  /** Share of queries that found nothing within the threshold, 0–1. */
+  zeroHitRate: number;
+  avgHitCount: number | null;
+  bestDistance: {
+    avg: number | null;
+    min: number | null;
+    max: number | null;
+    p50: number | null;
+    p90: number | null;
+  };
+  buckets: Array<{
+    key: 'very-close' | 'close' | 'edge' | 'beyond' | 'far' | 'none';
+    from: number | null;
+    /** Exclusive upper bound; null means unbounded. */
+    to: number | null;
+    count: number;
+  }>;
+  recentZeroHitQueries: Array<{
+    queryPreview: string;
+    bestDistance: number | null;
+    createdAt: string;
+  }>;
+}
