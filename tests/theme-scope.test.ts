@@ -98,4 +98,17 @@ describe('theme resolution', () => {
       /theme === 'system' && window\.matchMedia\('\(prefers-color-scheme: light\)'\)\.matches/,
     );
   });
+
+  it('treats a first-time visitor as "system", in the store and at boot', () => {
+    // The default used to be dark. Both places have to agree on what a missing
+    // value means: the store writes the default only once React has mounted,
+    // while the boot script reads localStorage *before* that -- so a mismatch
+    // paints one frame in the wrong theme on a machine whose OS disagrees.
+    const store = read('src/store/settings.store.ts');
+    const html = read('index.html');
+
+    assert.match(store, /theme: 'system'/);
+    assert.doesNotMatch(store, /theme: 'dark'/);
+    assert.match(html, /settings\?\.state\?\.theme \?\? 'system'/);
+  });
 });

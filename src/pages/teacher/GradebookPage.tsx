@@ -367,8 +367,12 @@ export default function GradebookPage() {
                               // but POST/PATCH/DELETE /grades stay TEACHER+ on the
                               // BE, so the chips are inert for them.
                               if (!canWrite) {
+                                // `title` alone only reaches a mouse; the label keeps
+                                // date/coefficient available to assistive tech. Touch
+                                // users still cannot reveal it -- that needs a tap
+                                // popover, deliberately out of scope here.
                                 return (
-                                  <span key={e.id} title={title} className={tone}>
+                                  <span key={e.id} title={title} aria-label={title} className={tone}>
                                     {e.homeworkId && <span className="mr-0.5">⚡</span>}
                                     {e.score}
                                   </span>

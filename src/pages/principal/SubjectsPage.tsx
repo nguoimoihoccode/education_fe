@@ -9,6 +9,7 @@ import {
   deleteSubject,
 } from '@/api/school.api';
 import { QUERY_KEYS } from '@/config/query';
+import { LoadErrorNotice } from '@/components/ui';
 import type { CreateSubjectDto, Subject } from '@/types/school.types';
 
 const EMPTY_FORM: CreateSubjectDto = { name: '', code: '', color: '#22d3ee', description: '' };
@@ -19,7 +20,7 @@ export default function SubjectsPage() {
   const [form, setForm] = useState<CreateSubjectDto>(EMPTY_FORM);
   const [showForm, setShowForm] = useState(false);
 
-  const { data: subjects = [], isLoading } = useQuery({
+  const { data: subjects = [], isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEYS.SCHOOL_SUBJECTS,
     queryFn: listSubjects,
   });
@@ -93,6 +94,11 @@ export default function SubjectsPage() {
           <div className="flex justify-center py-16 text-slate-500">
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
+        ) : isError ? (
+          <LoadErrorNotice
+            title="Không tải được danh sách môn học"
+            onRetry={() => refetch()}
+          />
         ) : (
           <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900/70 backdrop-blur-xl">
             <table className="w-full text-left text-sm">

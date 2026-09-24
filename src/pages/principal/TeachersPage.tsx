@@ -14,6 +14,7 @@ import {
   deleteAssignment,
 } from '@/api/school.api';
 import { QUERY_KEYS } from '@/config/query';
+import { LoadErrorNotice } from '@/components/ui';
 import type { CreateAssignmentDto } from '@/types/school.types';
 
 const EMPTY_FORM: CreateAssignmentDto = { teacherId: 0, subjectId: '', classId: '' };
@@ -23,7 +24,7 @@ export default function TeachersPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<CreateAssignmentDto>(EMPTY_FORM);
 
-  const { data: teachers = [], isLoading } = useQuery({
+  const { data: teachers = [], isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEYS.SCHOOL_TEACHERS,
     queryFn: listTeachers,
   });
@@ -149,6 +150,11 @@ export default function TeachersPage() {
           <div className="flex justify-center py-16 text-slate-500">
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
+        ) : isError ? (
+          <LoadErrorNotice
+            title="Không tải được danh sách giáo viên"
+            onRetry={() => refetch()}
+          />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {teachers.length === 0 && (

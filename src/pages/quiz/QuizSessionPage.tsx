@@ -605,7 +605,7 @@ export default function QuizSessionPage() {
                       }}
                       disabled={!batchView.isEditable || isFinishing}
                       placeholder="Nhập câu trả lời"
-                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-accent-500 disabled:opacity-70"
+                      className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-accent-500 focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-70"
                     />
                   )}
                 </div>
@@ -696,7 +696,7 @@ export default function QuizSessionPage() {
                   }
                   disabled={optionsDisabled}
                   placeholder="Nhập câu trả lời"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-accent-500 disabled:opacity-70"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-accent-500 focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-70"
                 />
               </div>
             )}

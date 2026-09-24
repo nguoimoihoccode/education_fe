@@ -265,7 +265,7 @@ export default function QuizListPage() {
             value={topicFilter}
             onChange={(e) => setTopicFilter(e.target.value)}
             aria-label="Lọc quiz theo chủ đề"
-            className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-500"
+            className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-500 focus-visible:ring-2 focus-visible:ring-accent-500"
           >
             <option value="">Tất cả chủ đề</option>
             {availableTopics.map((topic) => (

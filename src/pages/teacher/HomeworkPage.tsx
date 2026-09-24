@@ -17,6 +17,7 @@ import {
 } from '@/api/school.api';
 import { QUERY_KEYS } from '@/config/query';
 import { ROUTES } from '@/config/routes';
+import { LoadErrorNotice } from '@/components/ui';
 import { useAuthStore } from '@/store/auth.store';
 import { useCanWriteSchool } from '@/hooks/useCanWriteSchool';
 import type { HomeworkTargetType } from '@/types/school.types';
@@ -207,6 +208,16 @@ export default function HomeworkPage() {
           {homeworkQuery.isLoading ? (
             <div className="flex justify-center py-16 text-slate-500">
               <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : homeworkQuery.isError ? (
+            /* `rows` falls back to [] and retry is off, so without this branch a
+               failed read would render the "no homework" state below and state
+               something false about the class. */
+            <div className="p-4">
+              <LoadErrorNotice
+                title="Không tải được danh sách bài tập"
+                onRetry={() => homeworkQuery.refetch()}
+              />
             </div>
           ) : rows.length === 0 ? (
             <div className="p-10 text-center">

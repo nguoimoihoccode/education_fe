@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, BookOpen, Clock, Users, Star, Award, Play, ChevronRight, Sparkles, Zap } from 'lucide-react';
 import { getCourses } from '@/api/education.api';
-import { Pagination } from '@/components/ui';
+import { LoadErrorNotice, Pagination } from '@/components/ui';
 import './Education.css';
 
 export default function CourseHomepage() {
@@ -15,14 +15,14 @@ export default function CourseHomepage() {
   useEffect(() => {
     const animatedBg = document.querySelector('.animated-bg') as HTMLElement;
     if (animatedBg) animatedBg.style.display = 'none';
-    document.body.style.background = '#020617';
+    document.body.style.background = 'var(--app-bg)';
     return () => {
       if (animatedBg) animatedBg.style.display = '';
       document.body.style.background = '';
     };
   }, []);
 
-  const { data: coursesData, isLoading } = useQuery({
+  const { data: coursesData, isLoading, isError, refetch } = useQuery({
     queryKey: ['courses', currentPage, itemsPerPage],
     queryFn: () => getCourses({
       page: currentPage,
@@ -208,7 +208,17 @@ export default function CourseHomepage() {
               ))}
             </div>
 
-            {filteredCourses.length === 0 && !isLoading && (
+            {/* A failed read leaves `coursesData` undefined, so without this the
+                "no courses match your filters" state below would show instead --
+                wrong copy, and its clear-filters button cannot help. */}
+            {isError && (
+              <LoadErrorNotice
+                title="Không tải được danh sách khóa học"
+                onRetry={() => refetch()}
+              />
+            )}
+
+            {!isError && filteredCourses.length === 0 && !isLoading && (
               <div className="text-center py-20">
                 <Search className="w-16 h-16 text-slate-600 mx-auto mb-4" />
                 <p className="text-slate-400 text-lg mb-4">Không tìm thấy khóa học phù hợp.</p>

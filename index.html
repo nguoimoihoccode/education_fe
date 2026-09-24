@@ -11,7 +11,9 @@
     <script>
       try {
         const settings = JSON.parse(localStorage.getItem('edupro-settings') || '{}');
-        const theme = settings?.state?.theme;
+        // A missing value is 'system', the store's default -- resolving it as
+        // 'dark' here would paint one dark frame before React follows the OS.
+        const theme = settings?.state?.theme ?? 'system';
         // 'system' resolves exactly as SettingsEffect does, so the first painted
         // frame already matches what React will apply -- otherwise the boot
         // shell would flash dark before switching to light.

@@ -30,3 +30,6 @@ export type { SearchBarProps } from './SearchBar';
 
 export { Pagination } from './Pagination';
 export type { PaginationProps } from './Pagination';
+
+export { LoadErrorNotice } from './LoadErrorNotice';
+export type { LoadErrorNoticeProps } from './LoadErrorNotice';

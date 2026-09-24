@@ -364,6 +364,41 @@ test('school reads are open to any signed-in user while writes stay staff-only',
   assert.match(mySchool, /NoSchoolNotice/);
 });
 
+test('a failed read renders an error notice, never the empty state', () => {
+  // Every one of these queries reads `data: x = []` with `retry: false`, so a
+  // network error or a 403 leaves the list empty and the page would otherwise
+  // state something false about the user's own data ("bạn chưa được phân công
+  // lớp nào") with full confidence -- worse than a blank screen, because it
+  // reads as an answer. Each page must branch on isError.
+  const pages = [
+    'src/pages/teacher/TeacherClassesPage.tsx',
+    'src/pages/teacher/HomeworkPage.tsx',
+    'src/pages/principal/ClassesPage.tsx',
+    'src/pages/principal/SubjectsPage.tsx',
+    'src/pages/principal/TeachersPage.tsx',
+    'src/pages/CourseHomepage.tsx',
+  ];
+  for (const page of pages) {
+    const source = readSource(page);
+    assert.match(source, /import \{ LoadErrorNotice/, page);
+    assert.match(source, /isError/, page);
+  }
+
+  // Where the empty state is a parallel branch rather than a ternary arm, the
+  // `!isError` guard is the only thing keeping the two apart -- both would render.
+  assert.match(
+    readSource('src/pages/teacher/TeacherClassesPage.tsx'),
+    /!isLoading && !isError && classes\.length === 0/,
+  );
+  assert.match(
+    readSource('src/pages/CourseHomepage.tsx'),
+    /!isError && filteredCourses\.length === 0 && !isLoading/,
+  );
+  assert.match(
+    readSource('src/pages/principal/ClassesPage.tsx'),
+    /!rosterQuery\.isLoading && !rosterQuery\.isError && \(rosterQuery\.data \?\? \[\]\)\.length === 0/,
+  );
+});
 
 test('the sidebar names each destination once and deep-links the school tabs', () => {
   const navConfig = readSource('src/components/layout/navConfig.tsx');

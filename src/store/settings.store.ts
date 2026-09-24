@@ -46,7 +46,10 @@ type SettingsValues = Omit<SettingsState, SettingsActions>;
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
-      theme: 'dark',
+      // A first-time visitor follows their own OS rather than the app picking for
+      // them. `index.html`'s boot script resolves 'system' the same way, so the
+      // first painted frame already matches -- see SettingsEffect in App.tsx.
+      theme: 'system',
       accentColor: 'violet',
       fontSize: 'medium',
       reducedMotion: false,
@@ -88,7 +91,7 @@ export const useSettingsStore = create<SettingsState>()(
 
       updateSetting: (key, value) => set({ [key]: value }),
       resetAppearance: () => set({
-        theme: 'dark',
+        theme: 'system',
         accentColor: 'violet',
         fontSize: 'medium',
         reducedMotion: false,

@@ -19,6 +19,7 @@ import {
   removeClassStudent,
 } from '@/api/school.api';
 import { QUERY_KEYS } from '@/config/query';
+import { LoadErrorNotice } from '@/components/ui';
 import type { AddStudentsResult, CreateClassDto } from '@/types/school.types';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -268,6 +269,11 @@ export default function ClassesPage() {
             <div className="flex justify-center py-16 text-slate-500">
               <Loader2 className="h-8 w-8 animate-spin" />
             </div>
+          ) : classesQuery.isError ? (
+            <LoadErrorNotice
+              title="Không tải được danh sách lớp"
+              onRetry={() => classesQuery.refetch()}
+            />
           ) : (classesQuery.data ?? []).length === 0 ? (
             <div className="rounded-3xl border border-dashed border-white/10 p-10 text-center text-sm font-medium text-slate-500">
               Chưa có lớp nào. Tạo lớp đầu tiên để bắt đầu nhận học sinh.
@@ -453,7 +459,21 @@ export default function ClassesPage() {
                       </td>
                     </tr>
                   )}
-                  {!rosterQuery.isLoading && (rosterQuery.data ?? []).length === 0 && (
+                  {rosterQuery.isError && (
+                    <tr>
+                      <td colSpan={3} className="px-5 py-8 text-center font-medium text-slate-500">
+                        Không tải được danh sách học sinh.{' '}
+                        <button
+                          type="button"
+                          onClick={() => rosterQuery.refetch()}
+                          className="font-black text-accent-300 underline"
+                        >
+                          Thử lại
+                        </button>
+                      </td>
+                    </tr>
+                  )}
+                  {!rosterQuery.isLoading && !rosterQuery.isError && (rosterQuery.data ?? []).length === 0 && (
                     <tr>
                       <td colSpan={3} className="px-5 py-8 text-center font-medium text-slate-500">
                         Lớp chưa có học sinh nào.

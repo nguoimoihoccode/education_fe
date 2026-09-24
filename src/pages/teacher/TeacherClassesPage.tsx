@@ -4,11 +4,12 @@ import {
   CalendarRange, ChevronRight, Loader2, MapPin, Presentation, Users,
 } from 'lucide-react';
 import { listMyHomeroomClasses } from '@/api/school.api';
+import { LoadErrorNotice } from '@/components/ui';
 import { QUERY_KEYS } from '@/config/query';
 import { ROUTES } from '@/config/routes';
 
 export default function TeacherClassesPage() {
-  const { data: classes = [], isLoading } = useQuery({
+  const { data: classes = [], isLoading, isError, refetch } = useQuery({
     queryKey: QUERY_KEYS.TEACHER_CLASSES,
     queryFn: listMyHomeroomClasses,
     retry: false,
@@ -33,7 +34,17 @@ export default function TeacherClassesPage() {
           </div>
         )}
 
-        {!isLoading && classes.length === 0 && (
+        {/* `classes` defaults to [] and retry is off, so without this branch a
+            failed request would render the empty state below and tell the user
+            they have no homeroom classes -- a false claim about their own data. */}
+        {isError && (
+          <LoadErrorNotice
+            title="Không tải được danh sách lớp chủ nhiệm"
+            onRetry={() => refetch()}
+          />
+        )}
+
+        {!isLoading && !isError && classes.length === 0 && (
           <div className="rounded-3xl border border-dashed border-white/10 p-10 text-center">
             <p className="text-sm font-medium text-slate-500">
               Bạn chưa được phân công chủ nhiệm lớp nào.

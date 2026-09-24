@@ -5,7 +5,6 @@ import {
   FileJson,
   FileSpreadsheet,
   Database,
-  Filter,
   Search,
   Clock,
   Brain,
@@ -438,9 +437,6 @@ export default function DataExportLogs() {
                     <option value="achievement">Achievements</option>
                     <option value="system">System & Account</option>
                   </select>
-                  <button className="p-2 rounded-xl bg-black/20 border border-white/10 text-slate-400 hover:text-white transition-colors">
-                    <Filter className="w-5 h-5" />
-                  </button>
                 </div>
                 
                 <div className="relative w-full sm:w-64">
