@@ -560,7 +560,7 @@ export default function AiTutor() {
         <aside
           className={`${
             sidebarOpen ? 'w-72' : 'w-0'
-          } flex-shrink-0 backdrop-blur-xl border-r flex flex-col transition-all duration-300 overflow-hidden`}
+          } flex-shrink-0 border-r flex flex-col transition-all duration-300 overflow-hidden`}
           style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}
         >
           {/* New Chat Button */}
@@ -568,7 +568,7 @@ export default function AiTutor() {
             <button
               onClick={handleNewChat}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(139,92,246,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-accent-600 text-on-accent font-bold text-sm hover:bg-accent-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Plus className="w-4 h-4" />
               New Chat
@@ -621,7 +621,7 @@ export default function AiTutor() {
         {/* ============ Chat Area ============ */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Chat Header */}
-          <header className="flex items-center gap-4 px-6 py-4 border-b backdrop-blur-md flex-shrink-0" style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}>
+          <header className="flex items-center gap-4 px-6 py-4 border-b flex-shrink-0" style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}>
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 rounded-xl hover:bg-[var(--app-surface-hover)] transition-all"
@@ -630,7 +630,7 @@ export default function AiTutor() {
               <MessageSquare className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-3 flex-1">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent-600 to-fuchsia-600 flex items-center justify-center shadow-lg">
+              <div className="w-9 h-9 rounded-xl bg-accent-600 flex items-center justify-center">
                 <Bot className="w-5 h-5 text-on-accent" />
               </div>
               <div>
@@ -685,10 +685,10 @@ export default function AiTutor() {
               /* Empty State */
               <div className="flex flex-col items-center justify-center h-full px-6 py-12">
                 <div className="relative mb-8">
-                  <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-accent-600/20 to-fuchsia-600/20 flex items-center justify-center border border-accent-500/20">
+                  <div className="w-24 h-24 rounded-3xl bg-accent-600/10 flex items-center justify-center border border-accent-500/20">
                     <Wand2 className="w-12 h-12 text-accent-400" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+                  <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center">
                     <Sparkles className="w-4 h-4 text-on-accent" />
                   </div>
                 </div>
@@ -732,10 +732,8 @@ export default function AiTutor() {
                   >
                     {/* Avatar */}
                     <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${
-                        msg.role === 'assistant'
-                          ? 'bg-gradient-to-br from-accent-600 to-fuchsia-600'
-                          : 'bg-gradient-to-br from-emerald-500 to-teal-600'
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                        msg.role === 'assistant' ? 'bg-accent-600' : 'bg-emerald-600'
                       }`}
                     >
                       {msg.role === 'assistant' ? (
@@ -839,7 +837,7 @@ export default function AiTutor() {
                 {/* Typing Indicator */}
                 {isTyping && (
                   <div className="flex gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent-600 to-fuchsia-600 flex items-center justify-center shadow-md">
+                    <div className="w-9 h-9 rounded-xl bg-accent-600 flex items-center justify-center">
                       <Bot className="w-5 h-5 text-white" />
                     </div>
                     <div className="px-5 py-4 rounded-2xl rounded-bl-md border" style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}>
@@ -858,7 +856,7 @@ export default function AiTutor() {
           </div>
 
           {/* Input Area */}
-          <div className="px-4 md:px-6 pb-5 pt-3 border-t backdrop-blur-md flex-shrink-0" style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}>
+          <div className="px-4 md:px-6 pb-5 pt-3 border-t flex-shrink-0" style={{ background: 'var(--app-surface)', borderColor: 'var(--app-border)' }}>
             <div className="max-w-4xl mx-auto">
               <div className="flex gap-3 items-end">
                 <div className="flex-1 relative">
@@ -877,7 +875,7 @@ export default function AiTutor() {
                     onClick={handleSend}
                     disabled={!input.trim() || isTyping || isLoading || !activeConvId}
                     aria-label="Gửi tin nhắn"
-                    className="absolute right-3 bottom-3 w-10 h-10 rounded-xl bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg"
+                    className="absolute right-3 bottom-3 w-10 h-10 rounded-xl bg-accent-600 text-on-accent flex items-center justify-center hover:bg-accent-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     <Send className="w-4 h-4" aria-hidden="true" />
                   </button>

@@ -171,11 +171,6 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
 
     return (
         <div className="education-container education-path-page" style={{ color: 'var(--app-text)' }}>
-            <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[100px]"></div>
-            </div>
-
             <div className="detail-wrapper fade-in-entry">
                 <Link to="/education" className="btn-back mb-8 group pl-2">
                     <div className="bg-white/10 rounded-full p-1 group-hover:bg-white/20 transition-colors mr-2"><ChevronLeft className="w-4 h-4" /></div>
@@ -188,7 +183,6 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                         {/* Background Image & Effects */}
                         <img alt="Course background" className="w-full h-full object-cover opacity-30 mix-blend-luminosity" src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=2073&auto=format&fit=crop" />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent z-10"></div>
-                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,rgba(139,92,246,0.15),transparent_50%)] z-10"></div>
                     </div>
 
                     <div className="relative z-20 w-full px-8 pb-12 grid grid-cols-1 md:grid-cols-3 gap-12 items-end">
@@ -199,10 +193,10 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                                 </span>
                                 <span className="text-slate-400 text-xs font-bold font-mono">• {course.estimatedHours} Hours Total Content</span>
                             </div>
-                            <h1 className="text-5xl md:text-6xl font-black font-headline tracking-tighter leading-tight bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent mb-6 drop-shadow-lg">
+                            <h1 className="text-5xl md:text-6xl font-black font-headline tracking-tighter leading-tight text-white mb-6">
                                 {course.title.split(':').length > 1 ? (
                                     <>
-                                        {course.title.split(':')[0]}: <br /><span className="text-accent-400 bg-none drop-shadow-none">{course.title.split(':')[1]}</span>
+                                        {course.title.split(':')[0]}: <br /><span className="text-accent-400">{course.title.split(':')[1]}</span>
                                     </>
                                 ) : (
                                     course.title
@@ -213,7 +207,7 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                                     type="button"
                                     onClick={handlePrimaryAction}
                                     disabled={primaryAction.type === 'none' || enrollMutation.isPending}
-                                    className="px-8 py-4 bg-gradient-to-r from-accent-600 to-indigo-600 text-on-accent rounded-xl font-bold flex items-center gap-3 shadow-[0_0_30px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="px-8 py-4 bg-accent-600 text-on-accent rounded-xl font-bold flex items-center gap-3 hover:bg-accent-500 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     <Play className="w-5 h-5 fill-current" />
                                     {enrollMutation.isPending ? 'Enrolling...' : primaryAction.label}
@@ -221,7 +215,7 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                                 <button
                                     type="button"
                                     onClick={handleCourseInfo}
-                                    className="px-8 py-4 bg-slate-800/80 backdrop-blur-md border border-white/10 text-white rounded-xl font-bold flex items-center gap-3 hover:bg-white/10 transition-all"
+                                    className="px-8 py-4 bg-slate-800/80 border border-white/10 text-white rounded-xl font-bold flex items-center gap-3 hover:bg-white/10 transition-all"
                                 >
                                     <BookOpen className="w-5 h-5" />
                                     Thông tin khóa học
@@ -230,7 +224,7 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                         </div>
 
                         {/* Progress / Enrollment Card */}
-                        <div className="bg-slate-800/80 backdrop-blur-md border border-white/10 p-8 rounded-xl relative group overflow-hidden shadow-2xl">
+                        <div className="bg-slate-800/80 border border-white/10 p-8 rounded-xl relative group overflow-hidden">
                             <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="font-headline font-bold text-lg text-white">Tổng tiến độ</h3>
@@ -238,7 +232,7 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                             </div>
                             
                             <div className="h-3 w-full bg-white/5 rounded-full mb-6 relative overflow-hidden">
-                                <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all duration-1000" style={{ width: `${userCourse?.progress || 0}%` }}>
+                                <div className="absolute top-0 left-0 h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${userCourse?.progress || 0}%` }}>
                                 </div>
                             </div>
                             
@@ -284,10 +278,10 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                             {groups.map((group, groupIdx) => (
                                 <div key={group.type} className="relative">
                                     <div className="flex items-center gap-6 mb-8">
-                                        <div className="flex-none w-14 h-14 rounded-full bg-slate-800/80 backdrop-blur-md border border-accent-500/20 flex items-center justify-center font-headline font-black text-xl text-accent-400 shadow-[0_0_20px_rgba(139,92,246,0.15)]">
+                                        <div className="flex-none w-14 h-14 rounded-full bg-slate-800/80 border border-accent-500/20 flex items-center justify-center font-headline font-black text-xl text-accent-400">
                                             {String(groupIdx + 1).padStart(2, '0')}
                                         </div>
-                                        <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
+                                        <div className="h-px flex-1 bg-white/10"></div>
                                         <h3 className="text-2xl font-bold font-headline text-white pr-8">
                                             {groupTypeLabel(group.type, group.items.length)}
                                         </h3>
@@ -303,10 +297,10 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                                                 <Link
                                                     key={lesson.id}
                                                     to={lessonTargetUrl || '#'}
-                                                    className={`group border border-white/5 backdrop-blur-md p-6 rounded-2xl flex items-center justify-between transition-all duration-300 bg-slate-800/80 hover:bg-slate-800`}
+                                                    className={`group border border-white/5 p-6 rounded-2xl flex items-center justify-between transition-all duration-300 bg-slate-800/80 hover:bg-slate-800`}
                                                 >
                                                     <div className="flex items-center gap-5">
-                                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg bg-white/10 ${config.color}`}>
+                                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-white/10 ${config.color}`}>
                                                             <Icon className="w-6 h-6" />
                                                         </div>
                                                         <div>
@@ -331,10 +325,10 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                     {(relatedDecks.length > 0 || relatedQuizzes.length > 0) && (
                         <section className="mt-20">
                             <div className="flex items-center gap-6 mb-8">
-                                <div className="flex-none w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                                <div className="flex-none w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                                     <Layers className="w-7 h-7" />
                                 </div>
-                                <div className="h-px flex-1 bg-gradient-to-r from-emerald-500/20 to-transparent"></div>
+                                <div className="h-px flex-1 bg-emerald-500/20"></div>
                                 <h3 className="text-2xl font-bold font-headline text-white pr-8">Ôn luyện trong khóa</h3>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -342,7 +336,7 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                                     <Link
                                         key={deck.id}
                                         to={ROUTES.FLASHCARD_REVIEW}
-                                        className="group border border-white/5 backdrop-blur-md p-6 rounded-2xl flex items-center justify-between bg-slate-800/80 hover:bg-slate-800 transition-all"
+                                        className="group border border-white/5 p-6 rounded-2xl flex items-center justify-between bg-slate-800/80 hover:bg-slate-800 transition-all"
                                     >
                                         <div className="flex items-center gap-5">
                                             <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
@@ -360,7 +354,7 @@ const isEnrolled = myCourses.some((uc) => uc.courseId === id);
                                     <Link
                                         key={quiz.id}
                                         to={ROUTES.QUIZ_DETAIL(quiz.id)}
-                                        className="group border border-white/5 backdrop-blur-md p-6 rounded-2xl flex items-center justify-between bg-slate-800/80 hover:bg-slate-800 transition-all"
+                                        className="group border border-white/5 p-6 rounded-2xl flex items-center justify-between bg-slate-800/80 hover:bg-slate-800 transition-all"
                                     >
                                         <div className="flex items-center gap-5">
                                             <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">

@@ -64,13 +64,13 @@ export default function CourseHomepage() {
         {/* Hero Section */}
         <section className="text-center mb-20">
           <div className="max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-white/5 border border-white/10">
               <Sparkles className="w-4 h-4 text-accent-400" />
               <span className="text-sm text-slate-300">AI-Powered Learning Platform</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tight">
               Master the
-              <span className="text-gradient mx-2 bg-gradient-to-r from-accent-400 via-pink-400 to-amber-400 bg-clip-text text-transparent">
+              <span className="mx-2 text-accent-400">
                 Markets
               </span>
               <br />Like a Pro
@@ -80,7 +80,7 @@ export default function CourseHomepage() {
               From basics to advanced techniques, we've got you covered.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link to="/education" className="px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold text-lg flex items-center gap-3 hover:scale-105 transition-transform shadow-xl shadow-accent-900/30">
+              <Link to="/education" className="px-8 py-4 rounded-full bg-accent-600 text-on-accent font-bold text-lg flex items-center gap-3 hover:bg-accent-500 transition-colors">
                 <Play className="w-5 h-5" />
                 Start Learning
               </Link>
@@ -100,7 +100,7 @@ export default function CourseHomepage() {
             { icon: Star, value: '4.8', label: 'Avg Rating', color: 'text-pink-400' },
           ].map((stat, idx) => (
             <div key={idx} className="glass-card p-6 text-center group hover:-translate-y-1 transition-all">
-              <div className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-accent-500/20 to-fuchsia-500/20 flex items-center justify-center ${stat.color}`}>
+              <div className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-accent-500/10 flex items-center justify-center ${stat.color}`}>
                 <stat.icon className="w-6 h-6" />
               </div>
               <div className="text-3xl font-black text-white mb-1">{stat.value}</div>
@@ -125,7 +125,7 @@ export default function CourseHomepage() {
               {featuredCourses.map((course) => (
                 <Link to={`/education/courses/${course.id}`} key={course.id} className="glass-card p-6 group hover:-translate-y-2 transition-all border-white/10 hover:border-accent-500/30">
                   <div className="relative mb-4 overflow-hidden rounded-xl">
-                    <img src={course.thumbnail || '/api/placeholder/400/250'} alt={course.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                    <img src={course.thumbnail || '/api/placeholder/400/250'} alt={course.title} className="w-full h-48 object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                     <div className="absolute top-4 left-4">
                       <span className="chip bg-accent-500/20 text-accent-300 text-xs">Featured</span>
@@ -187,7 +187,7 @@ export default function CourseHomepage() {
               {filteredCourses.map((course) => (
                 <Link to={`/education/courses/${course.id}`} key={course.id} className="glass-card p-6 group hover:-translate-y-1 transition-all">
                   <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500/20 to-fuchsia-500/20 flex items-center justify-center text-2xl">
+                    <div className="w-12 h-12 rounded-xl bg-accent-500/10 flex items-center justify-center text-2xl">
                       {course.language.flag}
                     </div>
                     <div className="flex gap-2">

@@ -128,7 +128,7 @@ export default function QuizDetailPage() {
                     difficulty: isOfflineHskQuiz ? selectedDifficulty : null,
                     count: isOfflineHskQuiz ? selectedQuestionCount : null,
                   })}`}
-                  className="flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-accent-600 to-fuchsia-600 text-on-accent font-bold hover:scale-105 transition-transform shadow-lg shadow-accent-900/30"
+                  className="flex items-center gap-2 px-8 py-4 rounded-full bg-accent-600 text-on-accent font-bold hover:bg-accent-500 transition-colors"
                 >
                   <Play className="w-5 h-5" />
                   {playMode === 'practice' ? 'Bắt đầu học' : 'Bắt đầu kiểm tra'}

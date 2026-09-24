@@ -13,11 +13,6 @@ export default function FlashcardStatsPage() {
 
   return (
     <div className="education-container education-path-page relative min-h-screen" style={{ color: 'var(--app-text)' }}>
-      <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[100px]" />
-      </div>
-
       <div className="dashboard-wrapper relative z-10">
         <div className="mb-8">
           <Link
@@ -65,7 +60,7 @@ export default function FlashcardStatsPage() {
         )}
 
         {isError && (
-          <div className="bg-slate-800/80 backdrop-blur-md border border-red-500/20 rounded-3xl p-8 text-center">
+          <div className="bg-slate-800/80 border border-red-500/20 rounded-3xl p-8 text-center">
             <p className="text-red-300 font-semibold mb-4">
               Không tải được thống kê flashcard.
             </p>

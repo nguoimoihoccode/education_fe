@@ -101,7 +101,7 @@ export default function QuizStatsPage() {
                               title={`${item.quizName}: ${score}%`}
                             >
                               <div
-                                className="w-full bg-gradient-to-t from-accent-600 to-fuchsia-500 rounded-t-sm group-hover:opacity-90"
+                                className="w-full bg-accent-600 rounded-t-sm group-hover:opacity-90"
                                 style={{ height: `${score}%` } as React.CSSProperties}
                               ></div>
                               <span className="text-[10px] text-slate-300 mt-1">{idx + 1}</span>

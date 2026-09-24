@@ -195,7 +195,7 @@ export default function QuizListPage() {
             className="learning-card group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-500/20 to-fuchsia-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-accent-500/10 flex items-center justify-center">
                 <TrendingUp className="w-6 h-6 text-accent-400" />
               </div>
               <div>
@@ -213,7 +213,7 @@ export default function QuizListPage() {
             className="learning-card group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
                 <Target className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
@@ -231,7 +231,7 @@ export default function QuizListPage() {
             className="learning-card group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
                 <Play className="w-6 h-6 text-amber-400" />
               </div>
               <div>
@@ -330,12 +330,12 @@ export default function QuizListPage() {
 
       {/* Quiz modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="quiz-form-title"
-            className="bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-[0_0_60px_rgba(0,0,0,0.5)] border border-white/10 max-w-2xl w-full my-8 p-8"
+            className="bg-slate-900/95 rounded-3xl border border-white/10 max-w-2xl w-full my-8 p-8"
           >
             <div className="flex items-center justify-between mb-8">
               <div>

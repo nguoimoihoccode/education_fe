@@ -102,11 +102,6 @@ export default function LessonView() {
 
     return (
         <div className="education-container education-path-page lesson-page" style={{ color: 'var(--app-text)' }}>
-            <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[100px]"></div>
-            </div>
-
             <div className="lesson-wrapper fade-in-entry">
                 <div className="flex items-center justify-between mb-8">
                     <Link to={`/education/courses/${lesson.courseId}`} className="btn-back group">
@@ -154,11 +149,9 @@ export default function LessonView() {
 
                 {/* Content Area */}
                 <div className="lesson-panel min-h-[500px] relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-accent-500/10 to-transparent pointer-events-none rounded-tr-3xl"></div>
-
                     {lesson.type === 'quiz' ? (
                         <div className="fade-in-entry relative z-10 flex flex-col items-center text-center py-16 px-6">
-                            <div className="w-24 h-24 rounded-3xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-8 shadow-[0_0_40px_rgba(245,158,11,0.15)]">
+                            <div className="w-24 h-24 rounded-3xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-8">
                                 <ClipboardList className="w-12 h-12" />
                             </div>
                             <h2 className="text-3xl md:text-4xl font-black font-headline text-white mb-4">
@@ -262,7 +255,7 @@ function TuVungCard({ vocab }: { vocab: Vocabulary }) {
         >
             <div className="lesson-flashcard-inner">
                 <div className="lesson-flashcard-face">
-                    <span className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-accent-400 to-fuchsia-400 mb-4">{vocab.word}</span>
+                    <span className="text-5xl font-extrabold text-accent-400 mb-4">{vocab.word}</span>
                     {vocab.pronunciation && (
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-slate-400 text-sm font-mono">
                             <Volume2 className="w-3 h-3" /> /{vocab.pronunciation}/
@@ -305,7 +298,7 @@ function BaiTapList({
                     {passed ? <Award className="w-16 h-16 text-emerald-400" /> : <XCircle className="w-16 h-16 text-rose-400" />}
                 </div>
                 <h2 className="text-4xl font-bold text-white mb-4">{passed ? 'Hoàn thành tốt!' : 'Cần luyện thêm'}</h2>
-                <div className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mb-8 font-mono">{Math.round(results.score)}%</div>
+                <div className="text-6xl font-extrabold text-white mb-8 font-mono">{Math.round(results.score)}%</div>
                 {!passed && (
                     <button type="button" onClick={onRetry} className="lesson-secondary-btn flex items-center gap-2">
                         <RotateCcw className="w-5 h-5" /> Làm lại bài tập
@@ -322,7 +315,7 @@ function BaiTapList({
             {exercises.map((ex, i: number) => (
                 <div key={ex.id} className="lesson-exercise-card">
                     <div className="flex items-center gap-4 mb-6">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-500 to-fuchsia-500 flex items-center justify-center text-on-accent font-bold text-lg shadow-lg">{i + 1}</div>
+                        <div className="w-10 h-10 rounded-xl bg-accent-500 flex items-center justify-center text-on-accent font-bold text-lg">{i + 1}</div>
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{ex.type.replace('_', ' ')}</span>
                     </div>
                     <p className="text-2xl font-medium text-white mb-8 leading-normal">{ex.question}</p>

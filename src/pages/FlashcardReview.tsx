@@ -111,9 +111,7 @@ export default function FlashcardReviewPage() {
   // Loading state
   if (isLoadingSession) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-900 relative overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[100px]"></div>
+      <div className="flex items-center justify-center min-h-screen bg-slate-900">
         <div className="w-12 h-12 border-2 border-accent-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -122,13 +120,9 @@ export default function FlashcardReviewPage() {
   // No cards to review
   if (!isLoadingSession && (!activeSession || flashcards.length === 0)) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-900 p-4 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[100px]"></div>
-        </div>
-        <div className="text-center max-w-md relative z-10 bg-slate-800/80 backdrop-blur-md p-10 rounded-3xl border border-white/10 shadow-2xl">
-          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+      <div className="flex items-center justify-center min-h-screen bg-slate-900 p-4">
+        <div className="text-center max-w-md bg-slate-800/80 p-10 rounded-3xl border border-white/10">
+          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
             <CheckCircle className="w-12 h-12 text-emerald-400" />
           </div>
           <h2 className="text-3xl font-black font-headline text-white mb-2">All Caught Up!</h2>
@@ -154,18 +148,14 @@ export default function FlashcardReviewPage() {
       : 0;
 
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-900 p-4 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-amber-500/10 blur-[100px]"></div>
-        </div>
-        <div className="text-center max-w-lg w-full relative z-10 bg-slate-800/80 backdrop-blur-md p-10 rounded-3xl border border-white/10 shadow-2xl">
-          <div className="w-28 h-28 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent-500 to-amber-500 flex items-center justify-center shadow-[0_0_40px_rgba(139,92,246,0.4)] relative">
+      <div className="flex items-center justify-center min-h-screen bg-slate-900 p-4">
+        <div className="text-center max-w-lg w-full bg-slate-800/80 p-10 rounded-3xl border border-white/10">
+          <div className="w-28 h-28 mx-auto mb-6 rounded-full bg-accent-500 flex items-center justify-center relative">
             <div className="absolute inset-0 rounded-full border border-white/20"></div>
             <Award className="w-14 h-14 text-white" />
           </div>
 
-          <h2 className="text-4xl font-black font-headline text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400 mb-2">Review Complete!</h2>
+          <h2 className="text-4xl font-black font-headline text-white mb-2">Review Complete!</h2>
           <p className="text-slate-400 mb-8 text-lg">Great job on completing your review session</p>
 
           <div className="grid grid-cols-3 gap-4 mb-8">
@@ -190,7 +180,7 @@ export default function FlashcardReviewPage() {
             </div>
             <div className="h-3 bg-white/5 rounded-full overflow-hidden border border-white/5">
               <div
-                className="h-full bg-gradient-to-r from-accent-500 to-amber-400 transition-all duration-1000 ease-out"
+                className="h-full bg-accent-500 transition-all duration-1000 ease-out"
                 style={{ width: `${accuracy}%` }}
               />
             </div>
@@ -206,7 +196,7 @@ export default function FlashcardReviewPage() {
             </button>
             <button
               onClick={handleGoHome}
-              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-accent-600 to-indigo-600 text-on-accent font-bold shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 active:scale-95 transition-all"
+              className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-accent-600 text-on-accent font-bold hover:bg-accent-500 transition-colors"
             >
               <Home className="w-5 h-5 fill-current" />
               Go to Decks

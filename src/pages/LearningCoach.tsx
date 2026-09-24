@@ -100,7 +100,7 @@ function CoachDashboard({ data }: { data: LearningCoachSummary }) {
               </div>
             </div>
 
-            <div className={`rounded-[2rem] p-5 shadow-[var(--app-glass-shadow)] backdrop-blur ${CARD}`}>
+            <div className={`rounded-[2rem] p-5 shadow-[var(--app-glass-shadow)] ${CARD}`}>
               <div className="grid place-items-center py-2">
                 <div
                   className="grid h-44 w-44 place-items-center rounded-full bg-[conic-gradient(var(--app-primary)_var(--progress),var(--app-border-strong)_0)] p-3"

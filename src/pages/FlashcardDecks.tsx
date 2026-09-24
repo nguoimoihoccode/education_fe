@@ -151,11 +151,6 @@ export default function FlashcardDecks() {
 
   return (
     <div className="education-container education-path-page relative min-h-screen" style={{ color: 'var(--app-text)' }}>
-      <div className="absolute inset-0 z-0 pointer-events-none w-full h-full overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-accent-600/10 blur-[100px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-emerald-600/10 blur-[100px]"></div>
-      </div>
-
       <div className="dashboard-wrapper relative z-10">
         {/* Header */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
@@ -189,7 +184,7 @@ export default function FlashcardDecks() {
             className="learning-card group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center">
                 <BookOpen className="w-6 h-6 text-indigo-400" />
               </div>
               <div>
@@ -209,7 +204,7 @@ export default function FlashcardDecks() {
             className="learning-card group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-green-400" />
               </div>
               <div>
@@ -227,7 +222,7 @@ export default function FlashcardDecks() {
             className="learning-card group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
                 <TrendingUp className="w-6 h-6 text-purple-400" />
               </div>
               <div>
@@ -334,7 +329,7 @@ export default function FlashcardDecks() {
 
       {/* Deck modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-slate-900/80 flex items-center justify-center z-50 p-4">
           <div
             role="dialog"
             aria-modal="true"

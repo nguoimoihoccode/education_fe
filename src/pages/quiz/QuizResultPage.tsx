@@ -117,7 +117,7 @@ export default function QuizResultPage() {
                 href={certificateUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-on-accent font-medium hover:scale-105 transition-transform"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-amber-500 text-on-accent font-medium hover:bg-amber-400 transition-colors"
               >
                 <Trophy className="w-5 h-5" />
                 Tải chứng chỉ

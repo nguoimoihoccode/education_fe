@@ -529,7 +529,7 @@ export default function QuizSessionPage() {
 
           <div className="mt-4 h-2 bg-slate-700/30 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-accent-600 to-fuchsia-600 transition-all"
+              className="h-full bg-accent-600 transition-all"
               style={{ width: `${progressPercent}%` }}
             ></div>
           </div>
