@@ -50,10 +50,10 @@ vscp() { scp "${SSH_OPTS[@]}" "$@"; }
 healthcheck_frontend() {
   log "Waiting for frontend health..."
   for _ in $(seq 1 40); do
-    # nginx container serves on port 8080 -> / returns the SPA
-    code=$(vssh "curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/ 2>/dev/null || echo 000")
+    # nginx container serves on port 8090 -> / returns the SPA
+    code=$(vssh "curl -s -o /dev/null -w '%{http_code}' http://localhost:8090/ 2>/dev/null || echo 000")
     if [ "$code" = "200" ]; then
-      log "Frontend healthy (HTTP 200 on :8080)."
+      log "Frontend healthy (HTTP 200 on :8090)."
       return 0
     fi
     sleep 5
