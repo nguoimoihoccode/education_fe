@@ -12,6 +12,7 @@ import {
   Target,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { StudyConsoleFigure } from '@/components/anatomy/StudyConsoleFigure';
 
 const quickActions = [
   {
@@ -128,7 +129,20 @@ export default function DashboardLanding() {
           ))}
         </section>
 
-        <section className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <section className="mt-8">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">3D Interactive Console</p>
+              <h2 className="mt-1 text-2xl font-black text-slate-950 sm:text-3xl">Trạm học tập mô phỏng 3D</h2>
+            </div>
+            <span className="text-xs font-medium text-slate-500">
+              Rê chuột hoặc dùng phím ← → để xoay kim đo tiến độ
+            </span>
+          </div>
+          <StudyConsoleFigure theme="light" className="mx-auto max-w-5xl" />
+        </section>
+
+        <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.07)] sm:p-8">
             <div className="mb-7 flex items-end justify-between gap-4">
               <div>

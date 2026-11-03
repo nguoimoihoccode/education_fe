@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Design workspace: standalone preview pages, screenshots and the generator
+# (build.mjs imports an absolute path under ~/.gemini). The app ships
+# src/components/anatomy/{study-console.svg,anatomy.css} instead.
+/anatomy/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
