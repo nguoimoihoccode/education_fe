@@ -130,6 +130,7 @@ export const learningNavSections: NavSection[] = [
       // `/teaching/timetable` is deliberately absent: it renders the same
       // `MyTimetablePanel` as the "Thời khoá biểu" tab above, so listing both
       // gave one page two menu entries. The route stays valid and reachable.
+      { icon: <ClipboardList size={20} />, label: 'Chấm bài AI', to: '/teaching/assessments', roles: SCHOOL_WRITE_ROLES },
       { icon: <Presentation size={20} />, label: 'Lớp chủ nhiệm', to: '/teaching', roles: SCHOOL_WRITE_ROLES },
     ],
   },

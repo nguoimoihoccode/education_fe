@@ -359,14 +359,14 @@ export default function GradebookPage() {
                           <div className="flex flex-wrap gap-1.5">
                             {entries.map((e) => {
                               const title = `${e.date} · hệ số ${e.coefficient}${
-                                e.homeworkId ? ' · tự sinh từ BTVN' : ''
+                                e.source?.kind === 'assessment' ? ' · Chấm bài AI — sửa trong đợt chấm' : e.homeworkId ? ' · tự sinh từ BTVN' : ''
                               }`;
                               const tone = `rounded-lg border px-2 py-0.5 text-xs font-black ${TEST_TYPE_TONES[t]}`;
                               // A read-only visitor (student, parent) may open this
                               // grid -- GET /grades narrows them to their own rows --
                               // but POST/PATCH/DELETE /grades stay TEACHER+ on the
                               // BE, so the chips are inert for them.
-                              if (!canWrite) {
+                              if (!canWrite || e.source?.kind === 'assessment') {
                                 // `title` alone only reaches a mouse; the label keeps
                                 // date/coefficient available to assistive tech. Touch
                                 // users still cannot reveal it -- that needs a tap

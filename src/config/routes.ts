@@ -35,6 +35,7 @@ export const ROUTES = {
 
   // Teaching hub (GVCN) + parent portal — SCHOOL_PLATFORM_PLAN.md Phase 2–3
   TEACHING: '/teaching',
+  TEACHING_ASSESSMENTS: '/teaching/assessments',
   TEACHING_CLASS: (id: string) => `/teaching/classes/${id}`,
   TEACHING_TIMETABLE: '/teaching/timetable',
   TEACHING_ATTENDANCE: (id: string) => `/teaching/classes/${id}/attendance`,
@@ -92,6 +93,7 @@ export const ROUTE_TITLES: Record<string, string> = {
   [ROUTES.PRINCIPAL_TEACHERS]: 'Giáo viên',
   [ROUTES.PRINCIPAL_TIMETABLE]: 'Thời khoá biểu',
   [ROUTES.TEACHING]: 'Lớp chủ nhiệm',
+  [ROUTES.TEACHING_ASSESSMENTS]: 'Chấm bài AI',
   [ROUTES.TEACHING_TIMETABLE]: 'TKK của tôi',
   [ROUTES.PARENT]: 'Con của tôi',
   [ROUTES.ME_SCHOOL]: 'Trường của tôi',

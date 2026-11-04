@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authApi, type User } from '../api/auth.api';
-import { clearClientSessionStorage } from '../api/session-cleanup';
+import { clearApiSessionState } from '../api/client';
 
 
 interface AuthState {
@@ -30,6 +30,7 @@ export const useAuthStore = create<AuthState>()(
       error: null,
 
       login: async (identifier: string, password: string) => {
+        clearApiSessionState();
         set({ isLoading: true, error: null });
         try {
           const response = await authApi.login({ identifier, password });
@@ -48,6 +49,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       register: async (email: string, password: string, displayName?: string) => {
+        clearApiSessionState();
         set({ isLoading: true, error: null });
         try {
           const response = await authApi.register({ email, password, displayName });
@@ -74,10 +76,11 @@ export const useAuthStore = create<AuthState>()(
           error: null,
         });
 
-        clearClientSessionStorage();
+        clearApiSessionState();
       },
 
       setTokens: (accessToken: string, refreshToken: string, user?: User | null) => {
+        if (user && get().user && user.id !== get().user?.id) clearApiSessionState();
         set({
           accessToken,
           refreshToken,

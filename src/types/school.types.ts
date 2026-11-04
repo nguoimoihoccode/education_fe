@@ -410,6 +410,7 @@ export type GradeTestType = 'oral' | '15min' | '45min' | 'final';
 
 /** Một đầu điểm — view của GradeEntry (BE grades.service GradeEntryView). */
 export interface GradeEntryView {
+  source?: { kind: 'assessment'; publicationId: string } | null;
   id: string;
   classId: string;
   subjectId: string;

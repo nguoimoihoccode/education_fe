@@ -41,6 +41,7 @@ export const apiClient = setupCache(axiosInstance, {
 
 let refreshPromise: Promise<string> | null = null;
 let sessionGeneration = 0;
+const requestGenerations = new WeakMap<object, number>();
 
 export const clearApiSessionState = () => {
   sessionGeneration += 1;
@@ -80,6 +81,10 @@ export const CACHE_PROFILES = {
 // Request interceptor để thêm token vào header
 apiClient.interceptors.request.use(
   (config) => {
+    requestGenerations.set(config, sessionGeneration);
+    // Late responses from an earlier login must not populate the next
+    // account's cache namespace, even if they finish after cache cleanup.
+    config.id = `session:${sessionGeneration}:${useAuthStore.getState().user?.id ?? 'anonymous'}:${apiClient.generateKey(config)}`;
     const token = useAuthStore.getState().accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -93,9 +98,18 @@ apiClient.interceptors.request.use(
 
 // Response interceptor để handle token refresh
 apiClient.interceptors.response.use(
-  (response) => response,
+  async (response) => {
+    if (requestGenerations.get(response.config) !== sessionGeneration) {
+      if (response.config.id) await apiClient.storage.remove(response.config.id);
+      throw new axios.CanceledError('Session changed during request');
+    }
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
+    if (originalRequest && requestGenerations.get(originalRequest) !== sessionGeneration) {
+      throw new axios.CanceledError('Session changed during request');
+    }
 
     // Chỉ xử lý 401 và không phải request refresh token
     if (

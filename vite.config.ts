@@ -19,6 +19,7 @@ export default defineConfig({
       workbox: {
         // Precache static assets khi build
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        importScripts: ['/sw-privacy.js'],
 
         // Runtime caching - CHỈ fonts + images
         // API caching do axios-cache-interceptor + TanStack Query xử lý
@@ -49,18 +50,9 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
-          // Images
-          {
-            urlPattern: /\.(?:png|gif|jpg|jpeg|svg|webp)$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'images-cache',
-              expiration: {
-                maxEntries: 60,
-                maxAgeSeconds: 60 * 60 * 24 * 30,
-              },
-            },
-          },
+          // All runtime evidence images (including signed URLs) stay network-only.
+          { urlPattern: ({ request }) => request.destination === 'image', handler: 'NetworkOnly' },
+          { urlPattern: ({ url }) => url.pathname.includes('/assessments/'), handler: 'NetworkOnly' },
           // Video/HLS - network only
           {
             urlPattern: /\.(?:mp4|m3u8|ts)$/,

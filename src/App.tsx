@@ -6,6 +6,7 @@ import { ProtectedRoute } from '@/components/auth';
 import { queryClient } from '@/config';
 import type { User } from '@/api/auth.api';
 import { useAuthStore } from '@/store/auth.store';
+import { SCHOOL_WRITE_ROLES } from '@/hooks/useCanWriteSchool';
 import { shouldEnableQuizOfflineAuth } from '@/store/quizOfflineAuth';
 import { useSettingsStore } from '@/store/settings.store';
 import { useEffect, lazy, Suspense } from 'react';
@@ -71,6 +72,7 @@ const TimetablePage = lazy(() => import('@/pages/principal/TimetablePage'));
 const MyTimetablePage = lazy(() => import('@/pages/teacher/MyTimetablePage'));
 const ClassAttendancePage = lazy(() => import('@/pages/teacher/ClassAttendancePage'));
 const MySchoolPage = lazy(() => import('@/pages/student/MySchoolPage'));
+const AssessmentsPage = lazy(() => import('@/pages/teacher/AssessmentsPage'));
 const GradebookPage = lazy(() => import('@/pages/teacher/GradebookPage'));
 const HomeworkPage = lazy(() => import('@/pages/teacher/HomeworkPage'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
@@ -474,6 +476,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/teaching/assessments" element={<ProtectedRoute roles={SCHOOL_WRITE_ROLES}><AssessmentsPage /></ProtectedRoute>} />
               {/* Teaching hub (GVCN) — Phase 2. Open to any signed-in user: the
                   pages scope to "my classes" and the server confines every
                   read per class, so a non-GVCN gets an empty notice. */}

@@ -41,6 +41,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Test VPS image retention policy
+        run: python3 -m unittest discover -s scripts -p test_retain_docker_images.py
+
       - name: Run frontend quality gate
         run: npm run ci
 

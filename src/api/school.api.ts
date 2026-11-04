@@ -384,7 +384,7 @@ export const listGrades = async (params?: {
 }): Promise<GradeEntryView[]> => {
   const response = await apiClient.get("/grades", {
     params,
-    ...CACHE_PROFILES.DYNAMIC,
+    ...CACHE_PROFILES.NO_CACHE,
   });
   return response.data;
 };
@@ -396,7 +396,7 @@ export const getGradeReport = async (
 ): Promise<GradeReport> => {
   const response = await apiClient.get("/grades/report", {
     params: { classId, subjectId, term },
-    ...CACHE_PROFILES.DYNAMIC,
+    ...CACHE_PROFILES.NO_CACHE,
   });
   return response.data;
 };
@@ -409,7 +409,7 @@ export const getClassRanking = async (params: {
 }): Promise<GradeRanking> => {
   const response = await apiClient.get("/grades/ranking", {
     params,
-    ...CACHE_PROFILES.DYNAMIC,
+    ...CACHE_PROFILES.NO_CACHE,
   });
   return response.data;
 };
@@ -434,7 +434,7 @@ export const deleteGrade = async (id: string): Promise<void> => {
 };
 
 export const getMyGrades = async (): Promise<StudentGrades> => {
-  const response = await apiClient.get("/grades/me", CACHE_PROFILES.DYNAMIC);
+  const response = await apiClient.get("/grades/me", CACHE_PROFILES.NO_CACHE);
   return response.data;
 };
 
@@ -443,7 +443,7 @@ export const getChildGrades = async (
 ): Promise<StudentGrades> => {
   const response = await apiClient.get(
     `/parent/children/${studentId}/grades`,
-    CACHE_PROFILES.DYNAMIC,
+    CACHE_PROFILES.NO_CACHE,
   );
   return response.data;
 };

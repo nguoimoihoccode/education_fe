@@ -1,0 +1,20 @@
+.assessment-page { color: var(--stock-text-primary); max-width: 1200px; margin: auto; padding: 1.25rem; }
+.assessment-page h1 { font-size: 1.8rem; font-weight: 700; }
+.assessment-page h2 { font-size: 1.35rem; font-weight: 600; }
+.assessment-page h3, .assessment-page h4 { font-weight: 600; margin: 1rem 0 .5rem; }
+.assessment-page p { margin: .65rem 0; }
+.assessment-panel { margin: 1rem 0; padding: 1rem; border: 1px solid var(--stock-glass-border); border-radius: 12px; background: var(--shell-panel-bg); }
+.assessment-controls { display: flex; flex-wrap: wrap; gap: .8rem; align-items: end; margin: .8rem 0; }
+.assessment-page label { display: flex; flex-direction: column; gap: .35rem; margin: .4rem 0; }
+.assessment-page label:has(input[type=checkbox]) { flex-direction: row; align-items: center; }
+.assessment-page input, .assessment-page select, .assessment-page textarea { border: 1px solid var(--stock-glass-border); background: var(--shell-panel-muted-bg); color: inherit; padding: .5rem; border-radius: 6px; max-width: 100%; }
+.assessment-page button { padding: .55rem .85rem; border: 1px solid var(--stock-glass-border); border-radius: 7px; background: var(--shell-hover-bg); }
+.assessment-page button:hover { border-color: var(--stock-primary-400); }
+.assessment-page button:disabled { opacity: .45; cursor: not-allowed; }
+.assessment-page [role=alert] { color: #ef7777; }
+.assessment-page dl { padding: .3rem .75rem; border-left: 2px solid var(--stock-glass-border); overflow-wrap: anywhere; }
+.assessment-page dt { font-weight: 600; font-size: .9rem; margin-top: .4rem; }
+.assessment-page dd { white-space: pre-wrap; }
+.assessment-table { overflow-x: auto; }
+.assessment-page table { width: 100%; text-align: left; border-collapse: collapse; }
+.assessment-page th, .assessment-page td { padding: .75rem; border-bottom: 1px solid var(--stock-glass-border); }
