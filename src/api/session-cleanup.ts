@@ -1,6 +1,8 @@
+import { clearPrivateArtifacts } from './private-artifacts';
 import { queryClient } from '../config/query';
 
 export const clearClientSessionStorage = async () => {
+  clearPrivateArtifacts();
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('auth-storage');

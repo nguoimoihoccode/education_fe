@@ -18,3 +18,11 @@
 .assessment-table { overflow-x: auto; }
 .assessment-page table { width: 100%; text-align: left; border-collapse: collapse; }
 .assessment-page th, .assessment-page td { padding: .75rem; border-bottom: 1px solid var(--stock-glass-border); }
+.assessment-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .5rem; list-style: none; padding: 0; margin: 1rem 0; }
+.assessment-page .assessment-step button { width: 100%; display: flex; gap: .6rem; align-items: center; text-align: left; padding: .6rem .7rem; background: var(--shell-panel-bg); }
+.assessment-step-index { flex: none; width: 1.7rem; height: 1.7rem; border-radius: 50%; display: grid; place-items: center; font-weight: 600; border: 1px solid var(--stock-glass-border); }
+.assessment-step-text { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
+.assessment-step-text small { opacity: .75; overflow-wrap: anywhere; }
+.assessment-step.is-done .assessment-step-index { background: var(--stock-primary-400); color: #fff; border-color: transparent; }
+.assessment-page .assessment-step.is-current button { border-color: var(--stock-primary-400); border-width: 2px; }
+.assessment-step.is-todo { opacity: .7; }
