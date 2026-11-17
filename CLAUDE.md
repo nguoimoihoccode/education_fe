@@ -113,4 +113,4 @@ API domains: `/auth/*`, `/users/*`, `/education/*` (+`/today`, `/today-plan`, `/
 - **Forgot password** routes to `ComingSoon`.
 - **AI chat is not streamed** anywhere (no SSE/`getReader`) — responses render only when complete.
 - Offline quiz demo mode: `store/quizOfflineAuth.ts` + `mocks/quizOffline.ts` (guarded by `shouldEnableQuizOfflineAuth`).
-- `nginx.conf` (prod serving + API proxy) and `API_DOCUMENTATION.md`, `PAGINATION_GUIDE.md` live in this folder for extra context.
+- `nginx.conf` (prod serving + API proxy) lives in this folder for extra context.

@@ -6,7 +6,7 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
 }
 
-// Pagination types according to PAGINATION_GUIDE.md
+// Pagination types
 export interface PaginationMeta {
   page: number;
   limit: number;
