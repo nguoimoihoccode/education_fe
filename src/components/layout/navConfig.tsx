@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Star, Briefcase, BarChart3, Settings, Brain,
   GraduationCap, Bot, Crown,
   CircleHelp, School, BookOpen, Users, UserCog, Presentation, Baby,
-  CalendarDays, CalendarRange, ClipboardList, NotebookPen,
+  CalendarDays, CalendarRange, ClipboardList, NotebookPen, CircleDollarSign, FlaskConical,
 } from 'lucide-react';
 import { isSchoolStaff, SCHOOL_WRITE_ROLES } from '@/hooks/useCanWriteSchool';
 
@@ -121,6 +121,7 @@ export const learningNavSections: NavSection[] = [
       // the personal weekly grid. A principal sees both cards, and two entries
       // with one name would leave them guessing which is which.
       { icon: <CalendarDays size={20} />, label: 'Xếp thời khoá biểu', to: '/principal/timetable', roles: ['principal', 'admin'] },
+      { icon: <CircleDollarSign size={20} />, label: 'Chi phí chấm bài', to: '/principal/assessment-costs', roles: ['principal', 'admin'] },
     ],
   },
   {
@@ -138,6 +139,8 @@ export const learningNavSections: NavSection[] = [
     id: 'account',
     title: 'Tài khoản',
     items: [
+      { icon: <CircleDollarSign size={20} />, label: 'Chi phí AI', to: '/admin/costs', roles: ['admin', 'education_admin'] },
+      { icon: <FlaskConical size={20} />, label: 'Thí điểm chấm bài', to: '/admin/assessment-pilot', roles: ['admin'] },
       { icon: <Crown size={20} />, label: 'Premium', to: '/premium' },
       { icon: <Settings size={20} />, label: 'Cài đặt', to: '/settings' },
     ],

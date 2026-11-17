@@ -32,6 +32,7 @@ export const ROUTES = {
   PRINCIPAL_CLASSES: '/principal/classes',
   PRINCIPAL_TEACHERS: '/principal/teachers',
   PRINCIPAL_TIMETABLE: '/principal/timetable',
+  PRINCIPAL_ASSESSMENT_COSTS: '/principal/assessment-costs',
 
   // Teaching hub (GVCN) + parent portal — SCHOOL_PLATFORM_PLAN.md Phase 2–3
   TEACHING: '/teaching',
@@ -56,6 +57,8 @@ export const ROUTES = {
   SETTINGS: '/settings',
   SESSIONS: '/settings/sessions',
   ADMIN_SESSIONS: '/admin/sessions',
+  ADMIN_COSTS: '/admin/costs',
+  ADMIN_ASSESSMENT_PILOT: '/admin/assessment-pilot',
   DATA_LOGS: '/data-logs',
   ONBOARDING: '/onboarding',
   SCHOLAR_PROFILE: (username: string) => `/scholar/${username}`,
@@ -92,6 +95,7 @@ export const ROUTE_TITLES: Record<string, string> = {
   [ROUTES.PRINCIPAL_CLASSES]: 'Lớp học',
   [ROUTES.PRINCIPAL_TEACHERS]: 'Giáo viên',
   [ROUTES.PRINCIPAL_TIMETABLE]: 'Thời khoá biểu',
+  [ROUTES.PRINCIPAL_ASSESSMENT_COSTS]: 'Chi phí chấm bài',
   [ROUTES.TEACHING]: 'Lớp chủ nhiệm',
   [ROUTES.TEACHING_ASSESSMENTS]: 'Chấm bài AI',
   [ROUTES.TEACHING_TIMETABLE]: 'TKK của tôi',

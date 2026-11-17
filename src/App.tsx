@@ -56,6 +56,9 @@ const PremiumUpgrade = lazy(() => import('@/pages/PremiumUpgrade'));
 const AdvancedSettings = lazy(() => import('@/pages/AdvancedSettings'));
 const SessionManagement = lazy(() => import('@/pages/SessionManagement'));
 const AdminSessions = lazy(() => import('@/pages/AdminSessions'));
+const AdminCosts = lazy(() => import('@/pages/admin/AdminCosts'));
+const AdminAssessmentPilot = lazy(() => import('@/pages/admin/AdminAssessmentPilot'));
+const PrincipalAssessmentCosts = lazy(() => import('@/pages/principal/AssessmentCostsPage'));
 
 // School administration (principal area — Phase 1)
 const PrincipalDashboard = lazy(() => import('@/pages/principal/PrincipalDashboard'));
@@ -424,6 +427,30 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <SessionManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/costs"
+                element={
+                  <ProtectedRoute roles={['admin', 'education_admin']}>
+                    <AdminCosts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/assessment-pilot"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <AdminAssessmentPilot />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/principal/assessment-costs"
+                element={
+                  <ProtectedRoute roles={['principal', 'admin']}>
+                    <PrincipalAssessmentCosts />
                   </ProtectedRoute>
                 }
               />
