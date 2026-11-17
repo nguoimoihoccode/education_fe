@@ -17,8 +17,8 @@ export const Register = () => {
 
   const checkStrength = (pass: string) => {
     let score = 0;
-    if (pass.length > 6) score++;
-    if (pass.length > 8) score++;
+    if (pass.length >= 8) score++;
+    if (pass.length >= 12) score++;
     if (/[A-Z]/.test(pass)) score++;
     if (/[0-9]/.test(pass)) score++;
     return score;
@@ -42,8 +42,8 @@ export const Register = () => {
       setLocalError('Mật khẩu không khớp');
       return;
     }
-    if (password.length < 6) {
-      setLocalError('Mật khẩu phải có ít nhất 6 ký tự');
+    if (password.length < 8) {
+      setLocalError('Mật khẩu phải có ít nhất 8 ký tự');
       return;
     }
 
